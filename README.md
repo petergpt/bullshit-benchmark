@@ -14,7 +14,7 @@ This repo now uses a strict **two-step** workflow:
 
 - End-to-end rerun and publish latest viewer data: `scripts/run_end_to_end.sh`
 - Main review URL: `viewer/index.html`
-- Optional standalone snapshot: `viewer/latest_snapshot.html`
+- Public GitHub Pages URL: `https://petergpt.github.io/bullshit-benchmark/viewer/index.html`
 
 ## Files
 
@@ -26,7 +26,6 @@ This repo now uses a strict **two-step** workflow:
 - `config.example.json`: example config defaults
 - `config.v2.json`: v2 defaults (no response system prompt, reasoning sweep example, panel judging)
 - `viewer/index.html`: canonical interactive viewer
-- `viewer/latest_snapshot.html`: standalone no-server snapshot (single self-contained HTML with embedded row-level data)
 - `viewer/data/latest/*`: canonical dataset consumed by the viewer
 - `scripts/publish_latest_to_viewer.sh`: publish one run's final artifacts into `viewer/data/latest`
 - `scripts/cleanup_generated_outputs.sh`: remove generated run/archive/temp artifacts from workspace
@@ -43,13 +42,12 @@ For open-source hygiene, keep one canonical visualization path:
 - `viewer/data/latest/aggregate.jsonl`
 - `viewer/data/latest/leaderboard.csv`
 - `viewer/data/latest/manifest.json`
-- `viewer/latest_snapshot.html` (standalone snapshot; open directly, no server required)
 
 All timestamped `runs*`, interim reports, ad-hoc zips, and temporary JSON files should be treated as generated artifacts and removed before publishing.
 
 This layout provides standard benchmark-style outputs without requiring a paper:
 - stable machine-readable artifacts (`aggregate_summary.json`, `aggregate.jsonl`, `leaderboard.csv`)
-- stable human-facing views (`index.html`, `latest_snapshot.html`)
+- stable human-facing view (`index.html`)
 - one stable “latest” path (`viewer/data/latest`)
 
 ## Environment
@@ -203,8 +201,7 @@ To remove generated run/archive/temp files before sharing:
 ```
 
 This publish step also exports `viewer/data/latest/leaderboard.csv` for spreadsheet-friendly review.
-It also regenerates:
-- `viewer/latest_snapshot.html` (compact standalone snapshot with embedded aggregate rows)
+It also sanitizes local-machine path fields from the published dataset to keep open-source outputs clean.
 
 ## Scoring meaning
 

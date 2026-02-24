@@ -1,21 +1,12 @@
 {
   "panel_id": "live_v2_20260224_093029_regrade55_full3_20260224_145642",
   "timestamp_utc": "2026-02-24T16:31:37.102943+00:00",
-  "panel_dir": "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/grade_panels/live_v2_20260224_093029_regrade55_full3_20260224_145642",
-  "responses_file": "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/responses_q55.jsonl",
   "primary_judges": [
     "anthropic/claude-sonnet-4.6",
     "openai/gpt-5.2",
     "google/gemini-3.1-pro-preview"
   ],
-  "tiebreaker_model": null,
   "execution_mode": "manual_full_three_primary",
-  "primary_grade_dirs": [
-    "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/grade_panels/live_v2_20260224_093029_regrade55_full3_20260224_145642/grades/live_v2_20260224_093029_regrade55_full3_20260224_145642__anthropic_claude-sonnet-4.6",
-    "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/grade_panels/live_v2_20260224_093029_regrade55_full3_20260224_145642/grades/live_v2_20260224_093029_regrade55_full3_20260224_145642__openai_gpt-5.2",
-    "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/grade_panels/live_v2_20260224_093029_regrade55_full3_20260224_145642/grades/live_v2_20260224_093029_regrade55_full3_20260224_145642__google_gemini-3.1-pro-preview"
-  ],
-  "aggregate_dir": "/Users/peter/bullshit-benchmark/runs_live/live_v2_20260224_093029_collect/grade_panels/live_v2_20260224_093029_regrade55_full3_20260224_145642/aggregates/live_v2_20260224_093029_regrade55_full3_20260224_145642__aggregate_mean3",
   "disagreement_count": 738,
   "disagreement_rate": 0.2855,
   "consensus_method": "mean",

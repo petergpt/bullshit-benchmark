@@ -19,7 +19,6 @@ Copies the selected run artifacts into a stable viewer dataset directory:
   aggregate_summary.json
   aggregate.jsonl
   leaderboard.csv
-  viewer/latest_snapshot.html
   manifest.json
 EOF
 }
@@ -133,6 +132,112 @@ copy_file "${PANEL_SUMMARY_FILE}" "${OUTPUT_DIR}/panel_summary.json"
 copy_file "${AGGREGATE_SUMMARY_FILE}" "${OUTPUT_DIR}/aggregate_summary.json"
 copy_file "${AGGREGATE_ROWS_FILE}" "${OUTPUT_DIR}/aggregate.jsonl"
 
+python3 - <<'PY' "${OUTPUT_DIR}/panel_summary.json"
+import json
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+
+def scrub(value):
+    if isinstance(value, dict):
+        out = {}
+        for key, item in value.items():
+            key_text = str(key)
+            if key_text.endswith("_dir") or key_text.endswith("_dirs"):
+                continue
+            scrubbed = scrub(item)
+            if scrubbed is None:
+                continue
+            out[key] = scrubbed
+        return out
+    if isinstance(value, list):
+        out = []
+        for item in value:
+            scrubbed = scrub(item)
+            if scrubbed is None:
+                continue
+            out.append(scrubbed)
+        return out
+    if isinstance(value, str) and "/Users/" in value:
+        return None
+    return value
+
+data = scrub(data)
+path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+PY
+
+python3 - <<'PY' "${OUTPUT_DIR}/aggregate.jsonl"
+import json
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+
+rows = []
+buf = []
+depth = 0
+in_string = False
+escape = False
+
+for ch in text:
+    if depth == 0:
+        if ch.isspace():
+            continue
+        if ch != "{":
+            continue
+        buf = ["{"]
+        depth = 1
+        in_string = False
+        escape = False
+        continue
+
+    if in_string:
+        if escape:
+            buf.append(ch)
+            escape = False
+            continue
+        if ch == "\\":
+            buf.append(ch)
+            escape = True
+            continue
+        if ch == '"':
+            buf.append(ch)
+            in_string = False
+            continue
+        if ch == "\n":
+            buf.append("\\n")
+            continue
+        if ch == "\r":
+            buf.append("\\r")
+            continue
+        buf.append(ch)
+        continue
+
+    buf.append(ch)
+    if ch == '"':
+        in_string = True
+    elif ch == "{":
+        depth += 1
+    elif ch == "}":
+        depth -= 1
+        if depth == 0:
+            rows.append(json.loads("".join(buf)))
+            buf = []
+
+for row in rows:
+    for key in list(row.keys()):
+        if key.endswith("_grade_dir"):
+            row.pop(key, None)
+
+path.write_text(
+    "".join(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n" for row in rows),
+    encoding="utf-8",
+)
+PY
+
 generated_at_utc="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 responses_count="$(wc -l < "${OUTPUT_DIR}/responses.jsonl" | tr -d ' ')"
 aggregate_row_count="$(wc -l < "${OUTPUT_DIR}/aggregate.jsonl" | tr -d ' ')"
@@ -200,27 +305,20 @@ cat > "${OUTPUT_DIR}/manifest.json" <<EOF
 {
   "generated_at_utc": "${generated_at_utc}",
   "sources": {
-    "responses_file": "${RESPONSES_FILE}",
-    "collection_stats_file": "${COLLECTION_STATS_FILE}",
-    "panel_summary_file": "${PANEL_SUMMARY_FILE}",
-    "aggregate_summary_file": "${AGGREGATE_SUMMARY_FILE}",
-    "aggregate_rows_file": "${AGGREGATE_ROWS_FILE}"
+    "responses_file": "${OUTPUT_DIR}/responses.jsonl",
+    "collection_stats_file": "${OUTPUT_DIR}/collection_stats.json",
+    "panel_summary_file": "${OUTPUT_DIR}/panel_summary.json",
+    "aggregate_summary_file": "${OUTPUT_DIR}/aggregate_summary.json",
+    "aggregate_rows_file": "${OUTPUT_DIR}/aggregate.jsonl"
   },
   "counts": {
     "responses_rows": ${responses_count},
     "aggregate_rows": ${aggregate_row_count}
   },
   "exports": {
-    "leaderboard_csv": "${OUTPUT_DIR}/leaderboard.csv",
-    "snapshot_html": "viewer/latest_snapshot.html"
+    "leaderboard_csv": "${OUTPUT_DIR}/leaderboard.csv"
   }
 }
 EOF
-
-python3 scripts/generate_snapshot_html.py \
-  --summary-json "${OUTPUT_DIR}/aggregate_summary.json" \
-  --aggregate-jsonl "${OUTPUT_DIR}/aggregate.jsonl" \
-  --manifest-json "${OUTPUT_DIR}/manifest.json" \
-  --output-html "viewer/latest_snapshot.html"
 
 echo "Published viewer dataset to ${OUTPUT_DIR}"
