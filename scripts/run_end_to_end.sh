@@ -12,7 +12,7 @@ Runs the full benchmark flow:
   3) publish latest viewer dataset
 
 Options:
-  --config <path>       Config file (default: config.v2.json)
+  --config <path>       Config file (default: config.json)
   --output-dir <dir>    Output base dir (default: runs)
   --run-id <id>         Explicit run id (default: auto timestamp)
   --panel-id <id>       Explicit panel id (default: <run-id>_panel)
@@ -26,7 +26,7 @@ EOF
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
-CONFIG_PATH="config.v2.json"
+CONFIG_PATH="config.json"
 OUTPUT_DIR="runs"
 RUN_ID=""
 PANEL_ID=""
@@ -166,7 +166,7 @@ echo ""
 echo "Complete."
 echo "Run ID: ${RUN_ID}"
 echo "Panel ID: ${PANEL_ID}"
-echo "Viewer data: ${ROOT_DIR}/viewer/data/latest"
+echo "Viewer data: ${ROOT_DIR}/data/latest"
 echo "Open UI after serving:"
 echo "  /viewer/index.html"
 

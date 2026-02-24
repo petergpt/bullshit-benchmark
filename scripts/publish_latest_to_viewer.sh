@@ -10,7 +10,7 @@ Usage:
     --panel-summary <path/to/panel_summary.json> \
     --aggregate-summary <path/to/aggregate_summary.json> \
     --aggregate-rows <path/to/aggregate.jsonl> \
-    [--output-dir viewer/data/latest]
+    [--output-dir data/latest]
 
 Copies the selected run artifacts into a stable viewer dataset directory:
   responses.jsonl
@@ -26,7 +26,7 @@ EOF
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
-OUTPUT_DIR="viewer/data/latest"
+OUTPUT_DIR="data/latest"
 RESPONSES_FILE=""
 COLLECTION_STATS_FILE=""
 PANEL_SUMMARY_FILE=""

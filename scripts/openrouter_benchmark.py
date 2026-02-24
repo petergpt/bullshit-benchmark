@@ -209,7 +209,7 @@ JUDGE_RESPONSE_FORMAT_GOOGLE: dict[str, Any] = {
 
 
 COLLECT_DEFAULTS: dict[str, Any] = {
-    "questions": "questions_v2.json",
+    "questions": "questions.json",
     "models": "",
     "models_file": "",
     "output_dir": "runs",
@@ -367,7 +367,7 @@ def parse_args() -> argparse.Namespace:
         "collect",
         help="Collect model responses for benchmark questions (stateless requests).",
     )
-    collect.add_argument("--questions", default="questions_v2.json")
+    collect.add_argument("--questions", default="questions.json")
     collect.add_argument("--models", default="")
     collect.add_argument("--models-file", default="")
     collect.add_argument("--config", default="config.json")
@@ -4020,7 +4020,7 @@ def run_aggregate(args: argparse.Namespace) -> int:
 
 def _render_report_html(data: dict[str, Any]) -> str:
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    template_path = pathlib.Path(__file__).with_name("report_template_v2.html")
+    template_path = pathlib.Path(__file__).with_name("report_template.html")
     if not template_path.exists():
         raise FileNotFoundError(f"report template not found: {template_path}")
     template_text = template_path.read_text(encoding="utf-8")
