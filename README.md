@@ -2,9 +2,9 @@
 
 Bullshit Benchmark tests whether models challenge nonsensical prompts instead of confidently answering them.
 
-## Main Chart
+## Bullshit Benchmark Results
 
-![Bullshit Benchmark main chart](docs/images/main-chart.png)
+![Bullshit Benchmark Results](docs/images/bullshit-benchmark-results.png)
 
 Updated: 2026-02-25
 
