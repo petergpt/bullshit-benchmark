@@ -4,7 +4,9 @@ Bullshit Benchmark tests whether models challenge nonsensical prompts instead of
 
 ## Main Chart
 
-![Bullshit Benchmark main chart](docs/images/main-chart.svg)
+![Bullshit Benchmark main chart](docs/images/main-chart.png)
+
+Updated: 2026-02-25
 
 ## Public Viewer
 
