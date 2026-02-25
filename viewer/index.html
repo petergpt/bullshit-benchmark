@@ -719,6 +719,41 @@
       white-space: nowrap;
     }
 
+    .org-chip.filter-chip {
+      appearance: none;
+      border-radius: 8px;
+      border: 1px solid #c8d7d0;
+      background: #f4faf7;
+      padding: 4px 9px 4px 8px;
+      font-size: 0.72rem;
+      line-height: 1.1;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 120ms ease, background 120ms ease, opacity 120ms ease, transform 120ms ease;
+    }
+
+    .org-chip.filter-chip:hover {
+      border-color: #98b8ad;
+      background: #edf7f2;
+      transform: translateY(-1px);
+    }
+
+    .org-chip.filter-chip:focus-visible {
+      outline: 2px solid #5f8f7e;
+      outline-offset: 1px;
+    }
+
+    .org-chip.filter-chip.is-active {
+      border-color: #5f8f7e;
+      background: #e4f3eb;
+      color: #223831;
+      font-weight: 700;
+    }
+
+    .org-chip.filter-chip.is-muted {
+      opacity: 0.46;
+    }
+
     .org-count {
       color: #60736c;
       font-variant-numeric: tabular-nums;
@@ -1439,6 +1474,24 @@
       "prime-intellect": "#64748b",
       "z-ai": "#0f766e",
     };
+    const ORG_NAME_OVERRIDES = {
+      anthropic: "Anthropic",
+      openai: "OpenAI",
+      google: "Google",
+      "x-ai": "xAI",
+      xai: "xAI",
+      mistralai: "Mistral",
+      deepseek: "DeepSeek",
+      bytedance: "ByteDance",
+      "bytedance-seed": "ByteDance Seed",
+      xiaomi: "Xiaomi",
+      qwen: "Qwen",
+      moonshotai: "Moonshot AI",
+      minimax: "MiniMax",
+      baidu: "Baidu",
+      "prime-intellect": "Prime Intellect",
+      "z-ai": "Z.AI",
+    };
     const TECHNIQUE_LABELS = {
       authoritative_framing_of_nothing: "Confident Nonsense Framing",
       causal_chimera: "Fake Cause-and-Effect Mix",
@@ -1557,6 +1610,27 @@
       return "unknown";
     }
 
+    function displayOrg(orgValue) {
+      const raw = String(orgValue || "").trim();
+      if (!raw) {
+        return "Unknown";
+      }
+      const normalized = normalizeOrg(raw);
+      if (ORG_NAME_OVERRIDES[normalized]) {
+        return ORG_NAME_OVERRIDES[normalized];
+      }
+      const tokenAlias = {
+        ai: "AI",
+      };
+      return normalized
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((token) => tokenAlias[token] || (token.charAt(0).toUpperCase() + token.slice(1)))
+        .join(" ");
+    }
+
     function orgColor(orgValue) {
       const normalized = normalizeOrg(orgValue);
       if (ORG_COLOR_OVERRIDES[normalized]) {
@@ -1564,6 +1638,27 @@
       }
       const hue = hashString(normalized) % 360;
       return `hsl(${hue} 60% 42%)`;
+    }
+
+    function renderOrgFilterChip(org, count) {
+      const swatch = orgColor(org);
+      const orgLabel = displayOrg(org);
+      const selectedOrg = el.filterOrg && el.filterOrg.value
+        ? String(el.filterOrg.value)
+        : "all";
+      const isActive = selectedOrg === org;
+      const activeClass = isActive ? " is-active" : "";
+      const mutedClass = selectedOrg !== "all" && !isActive ? " is-muted" : "";
+      const title = isActive
+        ? "Click to show all companies"
+        : `Click to show only ${orgLabel}`;
+      return `
+        <button type="button" class="org-chip filter-chip${activeClass}${mutedClass}" data-org-toggle="${escapeHtml(org)}" title="${escapeHtml(title)}" aria-pressed="${isActive ? "true" : "false"}" aria-label="${escapeHtml(title)}">
+          <span class="org-dot" style="background:${escapeHtml(swatch)};"></span>
+          <span>${escapeHtml(orgLabel)}</span>
+          <span class="org-count">${count}</span>
+        </button>
+      `;
     }
 
     function defaultPathPrefix() {
@@ -1803,6 +1898,7 @@
         oss: "OSS",
         ai: "AI",
         it: "IT",
+        glm: "GLM",
       };
       if (alias[lower]) {
         return alias[lower];
@@ -2286,16 +2382,24 @@
       });
     }
 
-    function renderOrgColorKey(filteredRows) {
+    function orgModelCounts(rows) {
+      const byOrg = new Map();
+      rows.forEach((row) => {
+        const org = modelOrg(row);
+        const key = modelKey(row);
+        if (!byOrg.has(org)) {
+          byOrg.set(org, new Set());
+        }
+        byOrg.get(org).add(key);
+      });
+      return [...byOrg.entries()].map(([org, modelKeys]) => [org, modelKeys.size]);
+    }
+
+    function renderOrgColorKey(scopedRows) {
       if (!el.orgColorKey) {
         return;
       }
-      const counts = new Map();
-      filteredRows.forEach((row) => {
-        const org = modelOrg(row);
-        counts.set(org, (counts.get(org) || 0) + 1);
-      });
-      const entries = [...counts.entries()].sort((a, b) => {
+      const entries = orgModelCounts(scopedRows).sort((a, b) => {
         if (b[1] !== a[1]) {
           return b[1] - a[1];
         }
@@ -2306,20 +2410,11 @@
         return;
       }
       el.orgColorKey.innerHTML = entries
-        .map(([org, count]) => {
-          const swatch = orgColor(org);
-          return `
-            <span class="org-chip">
-              <span class="org-dot" style="background:${escapeHtml(swatch)};"></span>
-              <span>${escapeHtml(org)}</span>
-              <span class="org-count">${count}</span>
-            </span>
-          `;
-        })
+        .map(([org, count]) => renderOrgFilterChip(org, count))
         .join("");
     }
 
-    function applyFilters(rows) {
+    function applyFilters(rows, options = {}) {
       const org = el.filterOrg.value;
       const reasoning = el.filterReasoning.value;
       const technique = el.filterTechnique.value;
@@ -2327,10 +2422,12 @@
       const query = el.filterQuery.value.trim().toLowerCase();
       const allowedCategories = getCategorySelections();
       const excludedModelKeys = state.hiddenModels;
+      const ignoreOrgFilter = Boolean(options.ignoreOrgFilter);
 
       return rows.filter((row) => {
+        const rowOrg = modelOrg(row);
         const key = modelKey(row);
-        if (org !== "all" && modelOrg(row) !== org) {
+        if (!ignoreOrgFilter && org !== "all" && rowOrg !== org) {
           return false;
         }
         if (excludedModelKeys.has(key)) {
@@ -2518,6 +2615,16 @@
         .join("");
     }
 
+    function renderMainChartOrgGuide(scopedRows) {
+      if (!el.mainChartOrgGuide) {
+        return;
+      }
+      const entries = orgModelCounts(scopedRows).sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]));
+      el.mainChartOrgGuide.innerHTML = entries.length
+        ? `${entries.map(([org, count]) => renderOrgFilterChip(org, count)).join("")}`
+        : "";
+    }
+
     function renderSimpleModelBars(filteredRows) {
       const segmentLabel = (pct) => {
         if (pct >= 10) {
@@ -2550,28 +2657,6 @@
       });
 
       rows.sort((a, b) => b.detectRate - a.detectRate || a.label.localeCompare(b.label));
-
-      if (el.mainChartOrgGuide) {
-        const orgCounts = new Map();
-        rows.forEach((row) => {
-          orgCounts.set(row.org, (orgCounts.get(row.org) || 0) + 1);
-        });
-        const topOrgs = [...orgCounts.entries()]
-          .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
-          .slice(0, 8);
-        el.mainChartOrgGuide.innerHTML = topOrgs.length
-          ? `
-            <span class="chart-subguide-label">Company colors:</span>
-            ${topOrgs.map(([org, count]) => `
-              <span class="org-chip">
-                <span class="org-dot" style="background:${escapeHtml(orgColor(org))};"></span>
-                ${escapeHtml(org)}
-                <span class="org-count">${count}</span>
-              </span>
-            `).join("")}
-          `
-          : "";
-      }
 
       el.simpleModelBars.innerHTML = rows
         .map((row, idx) => {
@@ -2746,7 +2831,7 @@
               <td>
                 <span class="org-chip">
                   <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
-                  ${escapeHtml(row.org)}
+                  ${escapeHtml(displayOrg(row.org))}
                 </span>
               </td>
               <td>${escapeHtml(reasoningLabel)}</td>
@@ -2946,7 +3031,7 @@
             <h4 class="title model-title-with-org">
               <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
               ${escapeHtml(titlePrefix)}${escapeHtml(displayModel(row))}
-              <span class="org-chip">${escapeHtml(org)}</span>
+              <span class="org-chip">${escapeHtml(displayOrg(org))}</span>
             </h4>
             <span class="pill ${CATEGORY_META[category].colorClass}">${escapeHtml(CATEGORY_META[category].short)}</span>
           </div>
@@ -3147,7 +3232,7 @@
     }
 
     function refreshFilterOptions() {
-      fillSelect(el.filterOrg, uniqSorted(state.rows.map((r) => modelOrg(r))));
+      fillSelect(el.filterOrg, uniqSorted(state.rows.map((r) => modelOrg(r))), "all", displayOrg);
       const modelInfos = collectModelInfos(state.rows);
       renderModelToggleGrid(modelInfos);
       fillSelect(el.filterReasoning, uniqSorted(state.rows.map((r) => reasoningFilterLevel(r.model_reasoning_level))));
@@ -3164,10 +3249,12 @@
       if (!state.rows.length) {
         return;
       }
+      const scopedRows = applyFilters(state.rows, { ignoreOrgFilter: true });
       const filteredRows = applyFilters(state.rows);
       state.filteredRows = filteredRows;
       setDataState(`Showing ${filteredRows.length} of ${state.rows.length} rows.`);
-      renderOrgColorKey(filteredRows);
+      renderOrgColorKey(scopedRows);
+      renderMainChartOrgGuide(scopedRows);
       renderSimpleModelBars(filteredRows);
       renderChartDrilldown(filteredRows);
       renderLeaderboard(filteredRows);
@@ -3243,7 +3330,38 @@
     }
 
     function bindEvents() {
+      const bindOrgToggle = (container) => {
+        if (!container) {
+          return;
+        }
+        const getToggledOrg = (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) {
+            return "";
+          }
+          const chip = target.closest("[data-org-toggle]");
+          return chip ? String(chip.getAttribute("data-org-toggle") || "") : "";
+        };
+        const toggleOrg = (org) => {
+          if (!org) {
+            return;
+          }
+          const currentOrg = String(el.filterOrg.value || "all");
+          el.filterOrg.value = currentOrg === org ? "all" : org;
+          renderAll();
+        };
+        container.addEventListener("click", (event) => {
+          const org = getToggledOrg(event);
+          if (!org) {
+            return;
+          }
+          toggleOrg(org);
+        });
+      };
+
       el.clearFiltersBtn.addEventListener("click", resetFilters);
+      bindOrgToggle(el.mainChartOrgGuide);
+      bindOrgToggle(el.orgColorKey);
       el.primaryModelsBtn.addEventListener("click", () => {
         state.primaryOnly = !state.primaryOnly;
         renderModelToggleGrid(collectModelInfos(state.rows));
