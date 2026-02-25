@@ -1,14 +1,9 @@
 {
-  "elapsed_seconds": null,
-  "total_records": 2820,
-  "error_count": 5,
-  "success_count": 2815,
-  "resumed": true,
-  "checkpoint_rows_at_start": 2814,
-  "new_rows_processed": 6,
-  "variant_backfill": "v3_prefix_brief",
-  "variant_backfill_utc": "2026-02-24T14:19:14.587495+00:00",
-  "recovered_sample_ids": [
-    "live_v2_20260224_093029_collect__tc_07__anthropic_claude-sonnet-4.6_reasoning_high_e12a384702__run1"
-  ]
+  "generated_at_utc": "2026-02-25T18:35:52.761078+00:00",
+  "total_records": 2915,
+  "error_count": 0,
+  "success_count": 2915,
+  "source_base_records": 2585,
+  "source_supplement_records": 330,
+  "supplement_run_id": "codex_supplement_20260225"
 }

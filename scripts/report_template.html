@@ -55,17 +55,30 @@
       padding: 14px 16px;
       box-shadow: var(--shadow);
       display: flex;
-      align-items: baseline;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 14px;
       margin-bottom: 12px;
     }
 
+    .title-block {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
     .title {
       margin: 0;
-      font-size: 16px;
+      font-size: clamp(17px, 2.1vw, 22px);
       letter-spacing: 0.01em;
       font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      max-width: 920px;
     }
 
     .meta {
@@ -83,6 +96,12 @@
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
+    }
+
+    .panel-note {
+      margin: 0 0 8px;
+      color: var(--ink-soft);
+      font-size: 12px;
     }
 
     .tab-btn {
@@ -578,7 +597,10 @@
 <body>
   <div class="shell">
     <header class="topbar">
-      <h1 class="title">Bullshit Benchmark</h1>
+      <div class="title-block">
+        <h1 class="title">Bullshit Benchmark - Models Answering Nonsense Questions</h1>
+        <p class="subtitle">Use this report to see which models reject nonsensical prompts, where they partially engage, and where they confidently accept invalid premises.</p>
+      </div>
       <div id="headerMeta" class="meta"></div>
     </header>
 
@@ -611,6 +633,7 @@
             <select id="ovReasoning" title="Reasoning"></select>
           </div>
         </div>
+        <p class="panel-note">Green = BS Correct, Amber = BS Partial, Red = BS Missed.</p>
         <div id="overviewChart" class="overview-chart"></div>
       </div>
 
@@ -724,6 +747,12 @@
       const effort = String(row?.response_reasoning_effort || "").trim();
       if (effort) return effort;
       return "default";
+    }
+
+    function reasoningFilterLevel(value) {
+      const normalized = String(value || "default").trim().toLowerCase();
+      const base = !normalized || normalized === "default" ? "default" : normalized;
+      return base === "xhigh" ? "high" : base;
     }
 
     function shortJudgeModel(model) {
@@ -935,7 +964,7 @@
 
       const sorted = [...board]
         .filter((row) => !orgFilter || row.modelOrg === orgFilter)
-        .filter((row) => !reasoningFilter || row.reasoning === reasoningFilter)
+        .filter((row) => !reasoningFilter || reasoningFilterLevel(row.reasoning) === reasoningFilter)
         .filter((row) => row.agreementRate === null || row.agreementRate >= minAgreement)
         .sort((a, b) => {
           const valueFor = (stats) => {
@@ -1053,7 +1082,7 @@
     function rowMatchesViewerFilters(row, filters) {
       const state = getRowState(row);
       if (filters.org && rowModelOrg(row) !== filters.org) return false;
-      if (filters.reasoning && rowModelReasoning(row) !== filters.reasoning) return false;
+      if (filters.reasoning && reasoningFilterLevel(rowModelReasoning(row)) !== filters.reasoning) return false;
       if (filters.model && String(row.model || "") !== filters.model) return false;
       if (filters.technique && String(row.technique || "") !== filters.technique) return false;
       if (filters.domain && String(row.domain || "") !== filters.domain) return false;
@@ -1294,12 +1323,12 @@
     function populateOverviewFilters(rows) {
       const board = computeBoard(rows);
       fillSelect("ovOrg", Array.from(new Set(board.map((row) => String(row.modelOrg || "")).filter(Boolean))).sort(), "Org: All");
-      fillSelect("ovReasoning", Array.from(new Set(board.map((row) => String(row.reasoning || "")).filter(Boolean))).sort(), "Reasoning: All");
+      fillSelect("ovReasoning", Array.from(new Set(board.map((row) => reasoningFilterLevel(row.reasoning)).filter(Boolean))).sort(), "Reasoning: All");
     }
 
     function populateViewerFilters(rows) {
       fillSelect("vfOrg", Array.from(new Set(rows.map((row) => rowModelOrg(row)).filter(Boolean))).sort(), "Org");
-      fillSelect("vfReasoning", Array.from(new Set(rows.map((row) => rowModelReasoning(row)).filter(Boolean))).sort(), "Reasoning");
+      fillSelect("vfReasoning", Array.from(new Set(rows.map((row) => reasoningFilterLevel(rowModelReasoning(row))).filter(Boolean))).sort(), "Reasoning");
       fillSelect("vfModel", Array.from(new Set(rows.map((row) => String(row.model || "")).filter(Boolean))).sort(), "Model");
       fillSelect("vfTechnique", Array.from(new Set(rows.map((row) => String(row.technique || "")).filter(Boolean))).sort(), "Technique");
       fillSelect("vfDomain", Array.from(new Set(rows.map((row) => String(row.domain || "")).filter(Boolean))).sort(), "Domain");

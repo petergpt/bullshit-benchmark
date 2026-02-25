@@ -61,17 +61,10 @@
       font-size: clamp(1.5rem, 2.5vw, 2.2rem);
     }
 
-    .hero p {
+    .hero-subtitle {
       margin: 8px 0 0;
       color: #cde9e3;
       max-width: 920px;
-    }
-
-    .hero-links {
-      margin-top: 12px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
     }
 
     .hero-link {
@@ -433,6 +426,40 @@
       background: #fff;
     }
 
+    .chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .chart-head h2 {
+      margin: 0;
+    }
+
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 62%;
+    }
+
+    .chart-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid #cbd7d1;
+      padding: 4px 8px;
+      font-size: 0.76rem;
+      background: #fff;
+      color: #32403b;
+      white-space: nowrap;
+    }
+
     .bar-list {
       display: grid;
       gap: 8px;
@@ -487,9 +514,28 @@
 
     .stack-row {
       display: grid;
-      grid-template-columns: minmax(190px, 280px) 1fr;
+      grid-template-columns: 34px minmax(170px, 260px) 1fr;
+      grid-template-areas: "rank name bar";
       gap: 8px;
       align-items: center;
+    }
+
+    .stack-rank {
+      grid-area: rank;
+      text-align: right;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #5b6c66;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .stack-row .name {
+      grid-area: name;
+    }
+
+    .stack-row .stack-track {
+      grid-area: bar;
     }
 
     .stack-track {
@@ -1058,7 +1104,10 @@
       }
 
       .stack-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 34px 1fr;
+        grid-template-areas:
+          "rank name"
+          "bar bar";
       }
 
       .filters-grid {
@@ -1068,6 +1117,16 @@
       .filter-meta-row {
         align-items: flex-start;
       }
+
+      .chart-head {
+        flex-direction: column;
+      }
+
+      .chart-legend {
+        max-width: 100%;
+        justify-content: flex-start;
+      }
+
     }
 
     @keyframes fade-up {
@@ -1085,13 +1144,11 @@
 <body>
   <div class="page">
     <header class="hero">
-      <h1>Bullshit Benchmark Explorer</h1>
-      <p>
-        Green means the model clearly called out the nonsense. Amber means partial challenge. Red means the model
-        let nonsense pass. Use filters for high-level patterns, then compare responses side-by-side by question.
+      <h1>Bullshit Benchmark - Models Answering Nonsense Questions</h1>
+      <p class="hero-subtitle">
+        This benchmark measures whether models detect broken premises, call out the nonsense directly, and avoid confidently
+        continuing with invalid assumptions.
       </p>
-      <div class="hero-links">
-      </div>
     </header>
 
     <section class="panel filters-panel">
@@ -1134,7 +1191,7 @@
         </label>
       </div>
       <div class="filter-meta-row">
-        <span class="small-note">Categories:</span>
+        <span class="small-note">Outcome filter:</span>
         <div class="score-filter" id="scoreFilter"></div>
       </div>
       <details class="model-visibility-block">
@@ -1158,8 +1215,14 @@
     </section>
 
     <section class="panel">
-      <h2>Model Detection Breakdown (%)</h2>
-      <p class="subtle">Each bar is continuous and split into Green, Amber, and Red, sorted by Green %.</p>
+      <div class="chart-head">
+        <h2>Bullshit Benchmark - Models Answering Nonsense Questions</h2>
+        <div class="chart-legend" aria-label="Model detection legend">
+          <span class="chart-legend-item"><span class="dot score2"></span>Clear Pushback</span>
+          <span class="chart-legend-item"><span class="dot score1"></span>Partial Challenge</span>
+          <span class="chart-legend-item"><span class="dot score0"></span>Accepted Nonsense</span>
+        </div>
+      </div>
       <div class="bar-list" id="simpleModelBars"></div>
     </section>
 
@@ -1616,6 +1679,11 @@
     function normalizeReasoningLevel(value) {
       const raw = String(value || "none").toLowerCase();
       return raw === "default" ? "none" : raw;
+    }
+
+    function reasoningFilterLevel(value) {
+      const normalized = normalizeReasoningLevel(value);
+      return normalized === "xhigh" ? "high" : normalized;
     }
 
     function prettyModelName(row) {
@@ -2087,7 +2155,7 @@
         if (state.primaryOnly && !state.primaryModelKeys.has(key)) {
           return false;
         }
-        if (reasoning !== "all" && normalizeReasoningLevel(row.model_reasoning_level) !== reasoning) {
+        if (reasoning !== "all" && reasoningFilterLevel(row.model_reasoning_level) !== reasoning) {
           return false;
         }
         if (technique !== "all" && String(row.technique || "") !== technique) {
@@ -2299,7 +2367,8 @@
       rows.sort((a, b) => b.detectRate - a.detectRate || a.label.localeCompare(b.label));
 
       el.simpleModelBars.innerHTML = rows
-        .map((row) => {
+        .map((row, idx) => {
+          const rank = idx + 1;
           const selectedCategory = state.chartDrilldown && state.chartDrilldown.modelKey === row.key
             ? state.chartDrilldown.category
             : "";
@@ -2308,6 +2377,7 @@
           const redSelected = selectedCategory === "red" ? " selected" : "";
           return `
             <div class="stack-row">
+              <div class="stack-rank">${rank}</div>
               <div class="name">${escapeHtml(row.label)}</div>
               <div class="stack-track">
                 <span class="stack-seg green${greenSelected}" data-model-key="${escapeHtml(row.key)}" data-category="green" style="width:${row.greenPct.toFixed(3)}%;" title="${escapeHtml(`Click to view ${row.label} · Green (${row.greenPct.toFixed(1)}%)`)}"><span class="seg-label">${escapeHtml(segmentLabel(row.greenPct))}</span></span>
@@ -2854,7 +2924,7 @@
       fillSelect(el.filterOrg, uniqSorted(state.rows.map((r) => r.model_org || "unknown")));
       const modelInfos = collectModelInfos(state.rows);
       renderModelToggleGrid(modelInfos);
-      fillSelect(el.filterReasoning, uniqSorted(state.rows.map((r) => normalizeReasoningLevel(r.model_reasoning_level))));
+      fillSelect(el.filterReasoning, uniqSorted(state.rows.map((r) => reasoningFilterLevel(r.model_reasoning_level))));
       fillSelect(
         el.filterTechnique,
         uniqSorted(state.rows.map((r) => r.technique || "unknown")),
