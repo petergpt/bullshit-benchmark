@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="854" viewBox="0 0 1600 854">
+<rect width="100%" height="100%" fill="#f7f4ec"/>
+<rect x="24" y="24" width="1552" height="806" rx="18" fill="#fffefb" stroke="#d6ddd8"/>
+<text x="52" y="72" fill="#1f2623" font-size="40" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Bullshit Benchmark - Models Answering Nonsense Questions</text>
+<text x="52" y="104" fill="#5f6f6a" font-size="22" font-family="Segoe UI, Arial, sans-serif">Main chart: top 12 models by Clear Pushback rate</text>
+<rect x="960" y="54" width="16" height="16" rx="8" fill="#1f9d55"/>
+<text x="984" y="68" fill="#1f2623" font-size="18" font-family="Segoe UI, Arial, sans-serif">Clear Pushback</text>
+<rect x="1165" y="54" width="16" height="16" rx="8" fill="#d88710"/>
+<text x="1189" y="68" fill="#1f2623" font-size="18" font-family="Segoe UI, Arial, sans-serif">Partial Challenge</text>
+<rect x="1370" y="54" width="16" height="16" rx="8" fill="#c13d36"/>
+<text x="1394" y="68" fill="#1f2623" font-size="18" font-family="Segoe UI, Arial, sans-serif">Accepted Nonsense</text>
+<line x1="380.00" y1="142" x2="380.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="380.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">0%</text>
+<line x1="606.00" y1="142" x2="606.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="606.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">20%</text>
+<line x1="832.00" y1="142" x2="832.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="832.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">40%</text>
+<line x1="1058.00" y1="142" x2="1058.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="1058.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">60%</text>
+<line x1="1284.00" y1="142" x2="1284.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="1284.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">80%</text>
+<line x1="1510.00" y1="142" x2="1510.00" y2="782" stroke="#d6ddd8" stroke-width="1"/>
+<text x="1510.00" y="808" text-anchor="middle" fill="#5f6f6a" font-size="14" font-family="Segoe UI, Arial, sans-serif">100%</text>
+<text x="368" y="182.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">1. anthropic/claude-sonnet-4.6 (none)</text>
+<rect x="380" y="161.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="161.00" width="1068.41" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1448.41" y="161.00" width="20.57" height="30" rx="15" fill="#c13d36"/>
+<text x="914.21" y="181.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">94.5%</text>
+<text x="368" y="234.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">2. anthropic/claude-sonnet-4.6 (high)</text>
+<rect x="380" y="213.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="213.00" width="1047.85" height="30" rx="15" fill="#1f9d55"/>
+<text x="903.92" y="233.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">92.7%</text>
+<text x="368" y="286.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">3. anthropic/claude-opus-4.6 (none)</text>
+<rect x="380" y="265.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="265.00" width="1047.85" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1427.85" y="265.00" width="20.57" height="30" rx="15" fill="#c13d36"/>
+<text x="903.92" y="285.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">92.7%</text>
+<text x="368" y="338.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">4. anthropic/claude-opus-4.5 (high)</text>
+<rect x="380" y="317.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="317.00" width="1027.28" height="30" rx="15" fill="#1f9d55"/>
+<text x="893.64" y="337.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">90.9%</text>
+<text x="368" y="390.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">5. anthropic/claude-opus-4.6 (high)</text>
+<rect x="380" y="369.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="369.00" width="1006.72" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1386.72" y="369.00" width="41.13" height="30" rx="15" fill="#c13d36"/>
+<text x="883.36" y="389.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">89.1%</text>
+<text x="368" y="442.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">6. anthropic/claude-haiku-4.5 (high)</text>
+<rect x="380" y="421.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="421.00" width="986.15" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1366.15" y="421.00" width="41.13" height="30" rx="15" fill="#c13d36"/>
+<text x="873.08" y="441.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">87.3%</text>
+<text x="368" y="494.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">7. anthropic/claude-haiku-4.5 (none)</text>
+<rect x="380" y="473.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="473.00" width="924.57" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1304.57" y="473.00" width="61.59" height="30" rx="15" fill="#c13d36"/>
+<text x="842.28" y="493.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">81.8%</text>
+<text x="368" y="546.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">8. anthropic/claude-opus-4.5 (none)</text>
+<rect x="380" y="525.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="525.00" width="904.00" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1284.00" y="525.00" width="20.57" height="30" rx="15" fill="#c13d36"/>
+<text x="832.00" y="545.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">80.0%</text>
+<text x="368" y="598.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">9. qwen/qwen3.5-397b-a17b (none)</text>
+<rect x="380" y="577.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="577.00" width="739.59" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1119.59" y="577.00" width="143.85" height="30" rx="15" fill="#c13d36"/>
+<text x="749.79" y="597.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">65.5%</text>
+<text x="1191.51" y="597.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">12.7%</text>
+<text x="368" y="650.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">10. anthropic/claude-sonnet-4.5 (high)</text>
+<rect x="380" y="629.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="629.00" width="739.59" height="30" rx="15" fill="#1f9d55"/>
+<rect x="1119.59" y="629.00" width="184.87" height="30" rx="15" fill="#c13d36"/>
+<text x="749.79" y="649.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">65.5%</text>
+<text x="1212.02" y="649.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">16.4%</text>
+<text x="368" y="702.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">11. qwen/qwen3.5-397b-a17b (high)</text>
+<rect x="380" y="681.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="681.00" width="595.85" height="30" rx="15" fill="#1f9d55"/>
+<rect x="975.85" y="681.00" width="184.87" height="30" rx="15" fill="#c13d36"/>
+<text x="677.92" y="701.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">52.7%</text>
+<text x="1068.28" y="701.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">16.4%</text>
+<text x="368" y="754.00" text-anchor="end" fill="#1f2623" font-size="20" font-family="Segoe UI, Arial, sans-serif">12. anthropic/claude-sonnet-4.5 (none)</text>
+<rect x="380" y="733.00" width="1130" height="30" rx="15" fill="#eef3f0" stroke="#d6ddd8"/>
+<rect x="380.00" y="733.00" width="595.85" height="30" rx="15" fill="#1f9d55"/>
+<rect x="975.85" y="733.00" width="205.43" height="30" rx="15" fill="#c13d36"/>
+<text x="677.92" y="753.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">52.7%</text>
+<text x="1078.57" y="753.00" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">18.2%</text>
+<text x="1546" y="820" text-anchor="end" fill="#5f6f6a" font-size="16" font-family="Segoe UI, Arial, sans-serif">Updated: 2026-02-25 • Source: data/latest/leaderboard.csv</text>
+</svg>
