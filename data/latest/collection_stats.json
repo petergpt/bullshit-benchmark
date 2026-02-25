@@ -1,9 +1,12 @@
 {
-  "generated_at_utc": "2026-02-25T18:35:52.761078+00:00",
-  "total_records": 2915,
+  "generated_at_utc": "2026-02-25T20:49:11.531618+00:00",
+  "total_records": 3245,
   "error_count": 0,
-  "success_count": 2915,
+  "success_count": 3245,
   "source_base_records": 2585,
-  "source_supplement_records": 330,
-  "supplement_run_id": "codex_supplement_20260225"
+  "source_supplement_records": 660,
+  "supplement_run_ids": [
+    "codex_supplement_20260225",
+    "openai_more_20260225"
+  ]
 }

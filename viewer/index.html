@@ -460,6 +460,27 @@
       white-space: nowrap;
     }
 
+    .chart-subguide {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin: 0 0 8px;
+    }
+
+    .chart-subguide-label {
+      font-size: 0.75rem;
+      color: #5b6f68;
+      white-space: nowrap;
+    }
+
+    .chart-subguide .org-chip {
+      padding: 2px 7px;
+      font-size: 0.7rem;
+      border-color: #d6e0db;
+      background: #fbfdfc;
+    }
+
     .bar-list {
       display: grid;
       gap: 8px;
@@ -532,6 +553,12 @@
 
     .stack-row .name {
       grid-area: name;
+    }
+
+    .stack-row .name.main-chart-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
     }
 
     .stack-row .stack-track {
@@ -650,6 +677,60 @@
       font-weight: 600;
       color: #1d2d28;
       line-height: 1.25;
+    }
+
+    .model-name-with-org {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .org-key-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 10px;
+    }
+
+    .org-key-wrap .small-note {
+      margin: 0;
+    }
+
+    .org-key {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .org-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #d2ddd8;
+      border-radius: 999px;
+      background: #fff;
+      padding: 3px 8px;
+      font-size: 0.74rem;
+      color: #30433d;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .org-count {
+      color: #60736c;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .org-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+      flex: 0 0 auto;
     }
 
     .mix-cell {
@@ -836,6 +917,13 @@
       font-size: 0.88rem;
       color: #1d2d28;
       line-height: 1.25;
+    }
+
+    .response-head .title.model-title-with-org {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
     }
 
     .response-text {
@@ -1127,6 +1215,10 @@
         justify-content: flex-start;
       }
 
+      .chart-subguide-label {
+        width: 100%;
+      }
+
     }
 
     @keyframes fade-up {
@@ -1223,6 +1315,7 @@
           <span class="chart-legend-item"><span class="dot score0"></span>Accepted Nonsense</span>
         </div>
       </div>
+      <div class="chart-subguide" id="mainChartOrgGuide"></div>
       <div class="bar-list" id="simpleModelBars"></div>
     </section>
 
@@ -1239,6 +1332,10 @@
 
     <section class="panel">
       <h2>Model Leaderboard</h2>
+      <div class="org-key-wrap">
+        <span class="small-note">Company colors:</span>
+        <div class="org-key" id="orgColorKey"></div>
+      </div>
       <div class="table-wrap">
         <table>
           <thead id="leaderboardHead">
@@ -1325,6 +1422,23 @@
       error: { label: "Error", colorClass: "error", short: "Error" },
     };
     const CATEGORY_ORDER = ["green", "amber", "red", "error"];
+    const ORG_COLOR_OVERRIDES = {
+      anthropic: "#f97316",
+      openai: "#111827",
+      google: "#1a73e8",
+      "x-ai": "#6d28d9",
+      mistralai: "#ec4899",
+      deepseek: "#06b6d4",
+      bytedance: "#0ea5e9",
+      "bytedance-seed": "#0ea5e9",
+      xiaomi: "#ff6900",
+      qwen: "#7c3aed",
+      moonshotai: "#0284c7",
+      minimax: "#14b8a6",
+      baidu: "#1d4ed8",
+      "prime-intellect": "#64748b",
+      "z-ai": "#0f766e",
+    };
     const TECHNIQUE_LABELS = {
       authoritative_framing_of_nothing: "Confident Nonsense Framing",
       causal_chimera: "Fake Cause-and-Effect Mix",
@@ -1364,6 +1478,7 @@
     function cacheElements() {
       el.dataState = document.getElementById("dataState");
       el.simpleModelBars = document.getElementById("simpleModelBars");
+      el.mainChartOrgGuide = document.getElementById("mainChartOrgGuide");
       el.leaderboardHead = document.getElementById("leaderboardHead");
       el.leaderboardBody = document.getElementById("leaderboardBody");
       el.chartDrilldownPanel = document.getElementById("chartDrilldownPanel");
@@ -1374,6 +1489,7 @@
       el.scoreFilter = document.getElementById("scoreFilter");
       el.clearFiltersBtn = document.getElementById("clearFiltersBtn");
       el.filterOrg = document.getElementById("filterOrg");
+      el.orgColorKey = document.getElementById("orgColorKey");
       el.filterModelToggleSearch = document.getElementById("filterModelToggleSearch");
       el.modelToggleGrid = document.getElementById("modelToggleGrid");
       el.modelToggleNote = document.getElementById("modelToggleNote");
@@ -1413,6 +1529,41 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function normalizeOrg(value) {
+      return String(value || "unknown").trim().toLowerCase();
+    }
+
+    function hashString(text) {
+      const input = String(text || "");
+      let hash = 0;
+      for (let i = 0; i < input.length; i += 1) {
+        hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
+      }
+      return Math.abs(hash);
+    }
+
+    function modelOrg(row) {
+      const explicit = String((row && row.model_org) || "").trim();
+      if (explicit) {
+        return explicit;
+      }
+      const rawModel = String((row && row.model) || "");
+      const slash = rawModel.indexOf("/");
+      if (slash > 0) {
+        return rawModel.slice(0, slash);
+      }
+      return "unknown";
+    }
+
+    function orgColor(orgValue) {
+      const normalized = normalizeOrg(orgValue);
+      if (ORG_COLOR_OVERRIDES[normalized]) {
+        return ORG_COLOR_OVERRIDES[normalized];
+      }
+      const hue = hashString(normalized) % 360;
+      return `hsl(${hue} 60% 42%)`;
     }
 
     function defaultPathPrefix() {
@@ -2135,6 +2286,39 @@
       });
     }
 
+    function renderOrgColorKey(filteredRows) {
+      if (!el.orgColorKey) {
+        return;
+      }
+      const counts = new Map();
+      filteredRows.forEach((row) => {
+        const org = modelOrg(row);
+        counts.set(org, (counts.get(org) || 0) + 1);
+      });
+      const entries = [...counts.entries()].sort((a, b) => {
+        if (b[1] !== a[1]) {
+          return b[1] - a[1];
+        }
+        return a[0].localeCompare(b[0]);
+      });
+      if (!entries.length) {
+        el.orgColorKey.innerHTML = "";
+        return;
+      }
+      el.orgColorKey.innerHTML = entries
+        .map(([org, count]) => {
+          const swatch = orgColor(org);
+          return `
+            <span class="org-chip">
+              <span class="org-dot" style="background:${escapeHtml(swatch)};"></span>
+              <span>${escapeHtml(org)}</span>
+              <span class="org-count">${count}</span>
+            </span>
+          `;
+        })
+        .join("");
+    }
+
     function applyFilters(rows) {
       const org = el.filterOrg.value;
       const reasoning = el.filterReasoning.value;
@@ -2146,7 +2330,7 @@
 
       return rows.filter((row) => {
         const key = modelKey(row);
-        if (org !== "all" && String(row.model_org || "") !== org) {
+        if (org !== "all" && modelOrg(row) !== org) {
           return false;
         }
         if (excludedModelKeys.has(key)) {
@@ -2355,6 +2539,7 @@
         return {
           key,
           label: displayModel(sample),
+          org: modelOrg(sample),
           rows: modelRows.length,
           detectRate: greenPct,
           scored: stats.scored,
@@ -2366,6 +2551,28 @@
 
       rows.sort((a, b) => b.detectRate - a.detectRate || a.label.localeCompare(b.label));
 
+      if (el.mainChartOrgGuide) {
+        const orgCounts = new Map();
+        rows.forEach((row) => {
+          orgCounts.set(row.org, (orgCounts.get(row.org) || 0) + 1);
+        });
+        const topOrgs = [...orgCounts.entries()]
+          .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
+          .slice(0, 8);
+        el.mainChartOrgGuide.innerHTML = topOrgs.length
+          ? `
+            <span class="chart-subguide-label">Company colors:</span>
+            ${topOrgs.map(([org, count]) => `
+              <span class="org-chip">
+                <span class="org-dot" style="background:${escapeHtml(orgColor(org))};"></span>
+                ${escapeHtml(org)}
+                <span class="org-count">${count}</span>
+              </span>
+            `).join("")}
+          `
+          : "";
+      }
+
       el.simpleModelBars.innerHTML = rows
         .map((row, idx) => {
           const rank = idx + 1;
@@ -2375,10 +2582,14 @@
           const greenSelected = selectedCategory === "green" ? " selected" : "";
           const amberSelected = selectedCategory === "amber" ? " selected" : "";
           const redSelected = selectedCategory === "red" ? " selected" : "";
+          const orgSwatch = orgColor(row.org);
           return `
             <div class="stack-row">
               <div class="stack-rank">${rank}</div>
-              <div class="name">${escapeHtml(row.label)}</div>
+              <div class="name main-chart-name">
+                <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
+                <span>${escapeHtml(row.label)}</span>
+              </div>
               <div class="stack-track">
                 <span class="stack-seg green${greenSelected}" data-model-key="${escapeHtml(row.key)}" data-category="green" style="width:${row.greenPct.toFixed(3)}%;" title="${escapeHtml(`Click to view ${row.label} · Green (${row.greenPct.toFixed(1)}%)`)}"><span class="seg-label">${escapeHtml(segmentLabel(row.greenPct))}</span></span>
                 <span class="stack-seg amber${amberSelected}" data-model-key="${escapeHtml(row.key)}" data-category="amber" style="width:${row.amberPct.toFixed(3)}%;" title="${escapeHtml(`Click to view ${row.label} · Amber (${row.amberPct.toFixed(1)}%)`)}"><span class="seg-label">${escapeHtml(segmentLabel(row.amberPct))}</span></span>
@@ -2476,7 +2687,7 @@
           key,
           rank: 0,
           model: displayModel(sample),
-          org: String(sample.model_org || "unknown"),
+          org: modelOrg(sample),
           reasoning: normalizeReasoningLevel(sample.model_reasoning_level),
           ...stats,
         };
@@ -2512,6 +2723,7 @@
 
       el.leaderboardBody.innerHTML = baseline
         .map((row) => {
+          const orgSwatch = orgColor(row.org);
           const mixTotal = row.rows || 1;
           const mix = CATEGORY_ORDER
             .map((key) => {
@@ -2526,9 +2738,17 @@
             <tr>
               <td>${row.rank}</td>
               <td>
-                <div class="model-name">${escapeHtml(row.model)}</div>
+                <div class="model-name model-name-with-org">
+                  <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
+                  <span>${escapeHtml(row.model)}</span>
+                </div>
               </td>
-              <td>${escapeHtml(row.org)}</td>
+              <td>
+                <span class="org-chip">
+                  <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
+                  ${escapeHtml(row.org)}
+                </span>
+              </td>
               <td>${escapeHtml(reasoningLabel)}</td>
               <td>${formatPct(row.greenRate)}</td>
               <td>${formatPct(row.amberRate)}</td>
@@ -2706,6 +2926,8 @@
         return `<div class="response-card error"><p class="subtle">No model selected.</p></div>`;
       }
       const category = categoryKey(row);
+      const org = modelOrg(row);
+      const orgSwatch = orgColor(org);
       const judgeTooltip = [1, 2, 3]
         .map((idx) => {
           const score = row[`judge_${idx}_score`];
@@ -2721,7 +2943,11 @@
       return `
         <article class="response-card ${CATEGORY_META[category].colorClass}" title="${escapeHtml(judgeTooltip)}">
           <div class="response-head">
-            <h4 class="title">${escapeHtml(titlePrefix)}${escapeHtml(displayModel(row))}</h4>
+            <h4 class="title model-title-with-org">
+              <span class="org-dot" style="background:${escapeHtml(orgSwatch)};"></span>
+              ${escapeHtml(titlePrefix)}${escapeHtml(displayModel(row))}
+              <span class="org-chip">${escapeHtml(org)}</span>
+            </h4>
             <span class="pill ${CATEGORY_META[category].colorClass}">${escapeHtml(CATEGORY_META[category].short)}</span>
           </div>
           <p class="response-text">${escapeHtml(responseText)}</p>
@@ -2921,7 +3147,7 @@
     }
 
     function refreshFilterOptions() {
-      fillSelect(el.filterOrg, uniqSorted(state.rows.map((r) => r.model_org || "unknown")));
+      fillSelect(el.filterOrg, uniqSorted(state.rows.map((r) => modelOrg(r))));
       const modelInfos = collectModelInfos(state.rows);
       renderModelToggleGrid(modelInfos);
       fillSelect(el.filterReasoning, uniqSorted(state.rows.map((r) => reasoningFilterLevel(r.model_reasoning_level))));
@@ -2941,6 +3167,7 @@
       const filteredRows = applyFilters(state.rows);
       state.filteredRows = filteredRows;
       setDataState(`Showing ${filteredRows.length} of ${state.rows.length} rows.`);
+      renderOrgColorKey(filteredRows);
       renderSimpleModelBars(filteredRows);
       renderChartDrilldown(filteredRows);
       renderLeaderboard(filteredRows);
