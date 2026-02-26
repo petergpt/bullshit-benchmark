@@ -1,9 +1,14 @@
 {
-  "elapsed_seconds": 518.077,
-  "total_records": 495,
+  "elapsed_seconds": null,
+  "total_records": 3740,
   "error_count": 2,
-  "success_count": 493,
+  "success_count": 3738,
   "resumed": false,
   "checkpoint_rows_at_start": 0,
-  "new_rows_processed": 495
+  "new_rows_processed": 3740,
+  "source": "manual_merge",
+  "source_runs": [
+    "openai_more_20260225/merge_into_latest",
+    "full_new_models_20260226_152629"
+  ]
 }
