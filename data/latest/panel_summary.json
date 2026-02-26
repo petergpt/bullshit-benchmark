@@ -1,6 +1,6 @@
 {
-  "panel_id": "panel_merged_all_models_20260226_1730",
-  "timestamp_utc": "2026-02-26T17:26:00.775415+00:00",
+  "panel_id": "panel_merged_all_models_20260226_173526",
+  "timestamp_utc": "2026-02-26T17:35:26.424691+00:00",
   "primary_judges": [
     "anthropic/claude-sonnet-4.6",
     "openai/gpt-5.2"
@@ -10,13 +10,14 @@
   "resumed": false,
   "parallelism": 12,
   "primary_judges_max_inflight": 24,
-  "disagreement_count": 786,
-  "disagreement_rate": 0.2102,
+  "disagreement_count": 868,
+  "disagreement_rate": 0.2133,
   "consensus_method": "mixed",
-  "execution_mode": "manual_merge_two_published_snapshots",
+  "execution_mode": "manual_merge_append_latest",
   "source_panels": [
     "live_v2_20260224_093029_regrade55_full3_20260224_145642",
-    "panel_new_models_20260226_152629"
+    "panel_new_models_20260226_152629",
+    "panel_openai_new_models_20260226_165901"
   ],
-  "notes": "Merged prior 59-model snapshot with 2026-02-26 new-model panel to restore full leaderboard coverage."
+  "notes": "Appended new OpenAI GPT-5/5.1 family panel into existing merged latest snapshot without replacing prior model rows."
 }

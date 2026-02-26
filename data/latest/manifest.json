@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-26T17:26:11Z",
+  "generated_at_utc": "2026-02-26T17:35:26Z",
   "sources": {
     "responses_file": "data/latest/responses.jsonl",
     "collection_stats_file": "data/latest/collection_stats.json",
@@ -8,8 +8,8 @@
     "aggregate_rows_file": "data/latest/aggregate.jsonl"
   },
   "counts": {
-    "responses_rows": 3740,
-    "aggregate_rows": 3740
+    "responses_rows": 4070,
+    "aggregate_rows": 4070
   },
   "exports": {
     "leaderboard_csv": "data/latest/leaderboard.csv"

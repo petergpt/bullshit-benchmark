@@ -1,14 +1,16 @@
 {
   "elapsed_seconds": null,
-  "total_records": 3740,
+  "total_records": 4070,
   "error_count": 2,
-  "success_count": 3738,
+  "success_count": 4068,
   "resumed": false,
   "checkpoint_rows_at_start": 0,
-  "new_rows_processed": 3740,
+  "new_rows_processed": 4070,
   "source": "manual_merge",
   "source_runs": [
     "openai_more_20260225/merge_into_latest",
-    "full_new_models_20260226_152629"
-  ]
+    "full_new_models_20260226_152629",
+    "full_openai_new_models_20260226_165901"
+  ],
+  "notes": "Appended run full_openai_new_models_20260226_165901: added_responses=330, duplicate_responses=0; prior_run_error_count=0"
 }
