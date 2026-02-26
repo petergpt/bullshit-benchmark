@@ -1,12 +1,9 @@
 {
-  "generated_at_utc": "2026-02-25T20:49:11.531618+00:00",
-  "total_records": 3245,
-  "error_count": 0,
-  "success_count": 3245,
-  "source_base_records": 2585,
-  "source_supplement_records": 660,
-  "supplement_run_ids": [
-    "codex_supplement_20260225",
-    "openai_more_20260225"
-  ]
+  "elapsed_seconds": 518.077,
+  "total_records": 495,
+  "error_count": 2,
+  "success_count": 493,
+  "resumed": false,
+  "checkpoint_rows_at_start": 0,
+  "new_rows_processed": 495
 }
