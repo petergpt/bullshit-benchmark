@@ -359,7 +359,7 @@ def apply_config_defaults(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Bullshit benchmark runner with explicit collect and grade phases."
+        description="BullshitBench runner with explicit collect and grade phases."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -2349,7 +2349,7 @@ def render_markdown_summary(grade_meta: dict[str, Any], summary: dict[str, Any])
         return "n/a"
 
     lines: list[str] = []
-    lines.append("# Bullshit Benchmark Results")
+    lines.append("# BullshitBench Results")
     lines.append("")
     lines.append(f"- Grade ID: `{grade_meta['grade_id']}`")
     lines.append(f"- Timestamp (UTC): `{grade_meta['timestamp_utc']}`")

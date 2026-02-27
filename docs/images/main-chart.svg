@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="854" viewBox="0 0 1600 854">
 <rect width="100%" height="100%" fill="#f7f4ec"/>
 <rect x="24" y="24" width="1552" height="806" rx="18" fill="#fffefb" stroke="#d6ddd8"/>
-<text x="52" y="72" fill="#1f2623" font-size="40" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Bullshit Benchmark - Models Answering Nonsense Questions</text>
+<text x="52" y="72" fill="#1f2623" font-size="40" font-family="Segoe UI, Arial, sans-serif" font-weight="700">BullshitBench - Models Answering Nonsense Questions</text>
 <text x="52" y="104" fill="#5f6f6a" font-size="22" font-family="Segoe UI, Arial, sans-serif">Main chart: top 12 models by Clear Pushback rate</text>
 <rect x="960" y="54" width="16" height="16" rx="8" fill="#1f9d55"/>
 <text x="984" y="68" fill="#1f2623" font-size="18" font-family="Segoe UI, Arial, sans-serif">Clear Pushback</text>

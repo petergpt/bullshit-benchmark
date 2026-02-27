@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bullshit Benchmark Explorer</title>
+  <title>BullshitBench Explorer</title>
   <style>
     :root {
       --bg: #f7f4ec;
@@ -57,6 +57,25 @@
       border-radius: 18px;
       padding: 22px 24px;
       box-shadow: var(--shadow);
+    }
+
+    .hero-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-title h1 {
+      margin: 0;
+      line-height: 1;
+      transform: translateY(4px);
+    }
+
+    .hero-logo {
+      width: 96px;
+      height: auto;
+      display: block;
+      flex: 0 0 auto;
     }
 
     .hero h1 {
@@ -1347,6 +1366,18 @@
         line-height: 1.25;
       }
 
+      .hero-title {
+        align-items: flex-start;
+      }
+
+      .hero-title h1 {
+        transform: translateY(2px);
+      }
+
+      .hero-logo {
+        width: 72px;
+      }
+
       .hero-subtitle {
         font-size: 0.9rem;
       }
@@ -1390,7 +1421,10 @@
 <body>
   <div class="page">
     <header class="hero">
-      <h1>Bullshit Benchmark - Models Answering Nonsense Questions</h1>
+      <div class="hero-title">
+        <img class="hero-logo" src="../docs/images/bsbench.png" alt="BullshitBench logo">
+        <h1>BullshitBench: Models Answering Nonsense Questions</h1>
+      </div>
       <p class="hero-subtitle">
         This benchmark measures whether models detect broken premises, call out the nonsense directly, and avoid confidently
         continuing with invalid assumptions.
@@ -1398,7 +1432,7 @@
     </header>
 
     <section class="panel filters-panel">
-      <h2>Filters</h2>
+      <h2>BullshitBench: Filters</h2>
       <div class="grid-3 filters-grid">
         <label>
           <span>Search</span>
@@ -1462,7 +1496,7 @@
 
     <section class="panel">
       <div class="chart-head">
-        <h2>Bullshit Benchmark - Models Answering Nonsense Questions</h2>
+        <h2>BullshitBench: Models Answering Nonsense Questions</h2>
         <div class="chart-legend" aria-label="Model detection legend">
           <span class="chart-legend-item"><span class="dot score2"></span>Clear Pushback</span>
           <span class="chart-legend-item"><span class="dot score1"></span>Partial Challenge</span>
@@ -1476,7 +1510,7 @@
     <section class="panel hidden-block" id="chartDrilldownPanel">
       <div class="drilldown-head">
         <div>
-          <h2 id="chartDrilldownTitle">Selected Segment</h2>
+          <h2 id="chartDrilldownTitle">BullshitBench: Selected Segment</h2>
           <p class="small-note" id="chartDrilldownMeta"></p>
         </div>
         <button type="button" id="clearChartDrilldownBtn" class="alt">Clear Selection</button>
@@ -1485,7 +1519,7 @@
     </section>
 
     <section class="panel">
-      <h2>Bullshit Benchmark: How have models improved?</h2>
+      <h2>BullshitBench: How have models improved?</h2>
       <p class="small-note">Tracing performance improvements (clear pushback %) with model releases.</p>
       <div class="launch-controls">
         <label class="launch-toggle">
@@ -1498,7 +1532,7 @@
     </section>
 
     <section class="panel">
-      <h2>Model Leaderboard</h2>
+      <h2>BullshitBench: Model Leaderboard</h2>
       <div class="org-key-wrap">
         <span class="small-note">Company colors:</span>
         <div class="org-key" id="orgColorKey"></div>
@@ -1527,7 +1561,7 @@
     </section>
 
     <section class="panel">
-      <h2>Response Viewer</h2>
+      <h2>BullshitBench: Response Viewer</h2>
       <div class="compare-controls">
         <label>
           <span>Question</span>
@@ -3600,6 +3634,73 @@
       });
       const pointLabels = labelNodes.join("");
 
+      const orgLabelFontSize = chartPixelWidth <= 420 ? 9.5 : 10.6;
+      const orgLabelPadX = chartPixelWidth <= 420 ? 4.8 : 5.6;
+      const orgLabelPadY = chartPixelWidth <= 420 ? 2.8 : 3.2;
+      const orgLabelHeight = orgLabelFontSize + (orgLabelPadY * 2);
+      const orgLabelGap = orgLabelHeight + (chartPixelWidth <= 420 ? 2 : 3);
+      const orgLabelRight = width - 6;
+      const orgLabelTop = margin.top + (orgLabelHeight / 2) + 1;
+      const orgLabelBottom = (height - margin.bottom) - (orgLabelHeight / 2) - 1;
+      const orgLabelWidth = (text) => (
+        Math.min(138, Math.max(56, (text.length * (orgLabelFontSize * 0.62)) + 8))
+      );
+
+      const orgEndLabels = [...byOrg.entries()]
+        .map(([org, orgPoints]) => {
+          const latest = orgPoints[orgPoints.length - 1];
+          if (!latest) {
+            return null;
+          }
+          return {
+            org,
+            text: displayOrg(org).toUpperCase(),
+            color: orgColor(org),
+            sourceX: xFor(latest.launchDate.getTime()),
+            sourceY: yFor(latest.greenRate),
+            y: yFor(latest.greenRate),
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.y - b.y);
+
+      if (orgEndLabels.length) {
+        orgEndLabels[0].y = clamp(orgEndLabels[0].y, orgLabelTop, orgLabelBottom);
+        for (let idx = 1; idx < orgEndLabels.length; idx += 1) {
+          const targetY = clamp(orgEndLabels[idx].y, orgLabelTop, orgLabelBottom);
+          orgEndLabels[idx].y = Math.max(targetY, orgEndLabels[idx - 1].y + orgLabelGap);
+        }
+
+        if (orgEndLabels[orgEndLabels.length - 1].y > orgLabelBottom) {
+          orgEndLabels[orgEndLabels.length - 1].y = orgLabelBottom;
+          for (let idx = orgEndLabels.length - 2; idx >= 0; idx -= 1) {
+            orgEndLabels[idx].y = Math.min(orgEndLabels[idx].y, orgEndLabels[idx + 1].y - orgLabelGap);
+          }
+        }
+        if (orgEndLabels[0].y < orgLabelTop) {
+          orgEndLabels[0].y = orgLabelTop;
+          for (let idx = 1; idx < orgEndLabels.length; idx += 1) {
+            orgEndLabels[idx].y = Math.max(orgEndLabels[idx].y, orgEndLabels[idx - 1].y + orgLabelGap);
+          }
+        }
+      }
+
+      const orgLineLabels = orgEndLabels
+        .map((entry) => {
+          const textWidth = orgLabelWidth(entry.text);
+          const boxWidth = textWidth + (orgLabelPadX * 2);
+          const boxX = orgLabelRight - boxWidth;
+          const boxY = entry.y - (orgLabelHeight / 2);
+          const connectorX = boxX - 4;
+          const startX = Math.min(entry.sourceX + 5, connectorX - 2);
+          return `
+            <path d="M${startX.toFixed(2)} ${entry.sourceY.toFixed(2)} L${connectorX.toFixed(2)} ${entry.y.toFixed(2)}" fill="none" stroke="${escapeHtml(entry.color)}" stroke-opacity="0.62" stroke-width="1.2" />
+            <rect x="${boxX.toFixed(2)}" y="${boxY.toFixed(2)}" width="${boxWidth.toFixed(2)}" height="${orgLabelHeight.toFixed(2)}" rx="3.8" ry="3.8" fill="#ffffff" fill-opacity="0.88" stroke="${escapeHtml(entry.color)}" stroke-opacity="0.7" stroke-width="1.1" />
+            <text x="${(boxX + orgLabelPadX).toFixed(2)}" y="${(entry.y + (orgLabelFontSize * 0.33)).toFixed(2)}" text-anchor="start" fill="${escapeHtml(entry.color)}" font-size="${orgLabelFontSize.toFixed(1)}" font-weight="700" letter-spacing="0.35">${escapeHtml(entry.text)}</text>
+          `;
+        })
+        .join("");
+
       const circles = points
         .sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime() || a.org.localeCompare(b.org))
         .map((point) => {
@@ -3623,6 +3724,7 @@
         ${lines}
         ${pointLabels}
         ${circles}
+        ${orgLineLabels}
         <text x="${(margin.left + plotWidth / 2).toFixed(2)}" y="${(height - 14).toFixed(2)}" text-anchor="middle" fill="#425851" font-size="${axisFontSize.toFixed(1)}">Model Launch Date</text>
         <text x="16" y="${(margin.top + plotHeight / 2).toFixed(2)}" transform="rotate(-90,16,${(margin.top + plotHeight / 2).toFixed(2)})" text-anchor="middle" fill="#425851" font-size="${axisFontSize.toFixed(1)}">% Clear Pushback (Green)</text>
       `;
@@ -3655,7 +3757,7 @@
         .sort((a, b) => String(a.question_id || "").localeCompare(String(b.question_id || "")));
       const categoryMeta = CATEGORY_META[selected.category];
       const modelLabel = displayModel(modelSample);
-      el.chartDrilldownTitle.textContent = `${modelLabel} · ${categoryMeta.label}`;
+      el.chartDrilldownTitle.textContent = `BullshitBench: ${modelLabel} · ${categoryMeta.label}`;
       el.chartDrilldownMeta.textContent = `${matches.length} matching responses`;
 
       if (!matches.length) {
