@@ -1,5 +1,5 @@
 <h1>
-  <img src="docs/images/bsbench.png" alt="BullshitBench logo" width="44" />
+  <img src="docs/images/bsbench.png" alt="BullshitBench logo" width="64" />
   BullshitBench
 </h1>
 
