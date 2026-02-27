@@ -1696,6 +1696,7 @@
         key: "greenRate",
         direction: "desc",
       },
+      launchScatterWidth: 0,
     };
 
     const el = {};
@@ -3083,9 +3084,14 @@
         orgPoints.sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime() || a.label.localeCompare(b.label));
       });
 
-      const width = 1200;
-      const chartPixelWidth = Math.max(1, Math.round(el.launchScatterSvg.getBoundingClientRect().width || width));
-      const height = chartPixelWidth <= 420 ? 520 : chartPixelWidth <= 560 ? 470 : 420;
+      const measuredWidth = Math.round(el.launchScatterSvg.getBoundingClientRect().width || 0);
+      const chartPixelWidth = Math.max(320, measuredWidth || state.launchScatterWidth || 1200);
+      state.launchScatterWidth = chartPixelWidth;
+      const width = chartPixelWidth;
+      const viewportHeight = Math.max(420, Math.round((window.innerHeight || 900) * 0.62));
+      const preferredHeight = Math.round(chartPixelWidth * 0.46);
+      const baseMinHeight = chartPixelWidth <= 420 ? 360 : chartPixelWidth <= 560 ? 380 : 400;
+      const height = Math.max(320, Math.min(viewportHeight, Math.max(baseMinHeight, preferredHeight)));
       const margin = chartPixelWidth <= 420
         ? { top: 18, right: 58, bottom: 70, left: 66 }
         : chartPixelWidth <= 560
@@ -3093,8 +3099,8 @@
           : { top: 22, right: 82, bottom: 62, left: 82 };
       const plotWidth = width - margin.left - margin.right;
       const plotHeight = height - margin.top - margin.bottom;
-      const tickFontSize = chartPixelWidth <= 420 ? 10.5 : 12;
-      const axisFontSize = chartPixelWidth <= 420 ? 12 : 13;
+      const tickFontSize = chartPixelWidth <= 420 ? 11.2 : 12.8;
+      const axisFontSize = chartPixelWidth <= 420 ? 12.8 : 14;
       el.launchScatterSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
 
       const dates = rawPoints.map((point) => point.launchDate.getTime());
@@ -3246,7 +3252,7 @@
       const clamp = (value, minValue, maxValue) => Math.min(maxValue, Math.max(minValue, value));
       const labelTopY = margin.top + 10;
       const labelBottomY = height - margin.bottom - 4;
-      const labelHeight = 12;
+      const labelHeight = chartPixelWidth <= 420 ? 14 : chartPixelWidth <= 560 ? 15 : 16;
       const labelPadX = 4;
       const labelPadY = 3;
 
@@ -3616,7 +3622,7 @@
       });
 
       const placementByPoint = new Map(placed.map((entry) => [entry.point, entry]));
-      const labelFontSize = chartPixelWidth <= 420 ? 9.1 : chartPixelWidth <= 560 ? 9.6 : 10.5;
+      const labelFontSize = chartPixelWidth <= 420 ? 10.4 : chartPixelWidth <= 560 ? 11 : 12;
       const labelNodes = [];
       selectedLabelPoints.forEach((point) => {
         const entry = placementByPoint.get(point);
@@ -3635,7 +3641,7 @@
       });
       const pointLabels = labelNodes.join("");
 
-      const orgLabelFontSize = chartPixelWidth <= 420 ? 9.5 : 10.6;
+      const orgLabelFontSize = chartPixelWidth <= 420 ? 11 : 12.4;
       const orgLabelPadX = chartPixelWidth <= 420 ? 4.8 : 5.6;
       const orgLabelPadY = chartPixelWidth <= 420 ? 2.8 : 3.2;
       const orgLabelHeight = orgLabelFontSize + (orgLabelPadY * 2);
@@ -4547,7 +4553,7 @@
         });
       }
       let resizeTimer = 0;
-      window.addEventListener("resize", () => {
+      const rerenderLaunchScatter = () => {
         if (!state.rows.length) {
           return;
         }
@@ -4555,7 +4561,19 @@
         resizeTimer = window.setTimeout(() => {
           renderLaunchScatter(state.rows);
         }, 120);
-      });
+      };
+      window.addEventListener("resize", rerenderLaunchScatter);
+      if (typeof ResizeObserver === "function" && el.launchScatterSvg) {
+        const chartResizeObserver = new ResizeObserver((entries) => {
+          const entry = entries && entries[0];
+          const nextWidth = Math.round(entry?.contentRect?.width || 0);
+          if (!nextWidth || Math.abs(nextWidth - state.launchScatterWidth) < 2) {
+            return;
+          }
+          rerenderLaunchScatter();
+        });
+        chartResizeObserver.observe(el.launchScatterSvg);
+      }
       [1, 2, 3].forEach((judgeIndex) => {
         const toggle = el[`judge${judgeIndex}Toggle`];
         toggle.addEventListener("change", () => {
