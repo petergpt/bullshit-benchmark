@@ -10,6 +10,8 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 ![BullshitBench Results](docs/images/bullshit-benchmark-results.png)
 
+![BullshitBench Viewer Chart (Screenshot)](docs/images/viewer-chart-screenshot.png)
+
 ## What This Measures
 
 - `Clear Pushback`: the model clearly rejects the broken premise.
