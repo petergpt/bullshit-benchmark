@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-26T17:35:26Z",
+  "generated_at_utc": "2026-02-27T13:53:48Z",
   "sources": {
     "responses_file": "data/latest/responses.jsonl",
     "collection_stats_file": "data/latest/collection_stats.json",
@@ -12,6 +12,8 @@
     "aggregate_rows": 4070
   },
   "exports": {
-    "leaderboard_csv": "data/latest/leaderboard.csv"
+    "leaderboard_csv": "data/latest/leaderboard.csv",
+    "leaderboard_with_launch_csv": "data/latest/leaderboard_with_launch.csv",
+    "model_launch_dates_csv": "data/latest/model_launch_dates.csv"
   }
 }

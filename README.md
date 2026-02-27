@@ -57,6 +57,31 @@ Use this when you already have run outputs and only want to refresh `data/latest
 
 The publish step strips local-machine path fields from public artifacts.
 
+## Launch-Date Metadata Pipeline
+
+Build model launch-date inventory/buckets and export review/candidate/canonical launch datasets:
+
+```bash
+./scripts/model_launch_pipeline.py run
+```
+
+This writes:
+
+- `data/model_metadata/tested_models_inventory.csv`
+- `data/model_metadata/model_buckets.csv`
+- `data/model_metadata/model_launch_sources.csv` (template if missing)
+- `data/model_metadata/model_launch_collection.csv`
+- `data/model_metadata/model_launch_judged.csv`
+- `data/model_metadata/model_launch_attempts.csv`
+- `data/model_metadata/model_launch_dates_review.csv`
+- `data/model_metadata/model_launch_dates_candidates.csv`
+- `data/model_metadata/model_launch_dates.csv` (canonical accepted rows)
+
+Publishing now also exports:
+
+- `data/latest/model_launch_dates.csv`
+- `data/latest/leaderboard_with_launch.csv`
+
 ## Current Config Notes
 
 - Main config: `config.json`
@@ -83,6 +108,8 @@ The publish step strips local-machine path fields from public artifacts.
 - `aggregate_summary.json`
 - `aggregate.jsonl`
 - `leaderboard.csv`
+- `leaderboard_with_launch.csv`
+- `model_launch_dates.csv`
 - `manifest.json`
 
 ## Environment

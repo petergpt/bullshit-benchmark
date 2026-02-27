@@ -19,6 +19,8 @@ Copies the selected run artifacts into a stable viewer dataset directory:
   aggregate_summary.json
   aggregate.jsonl
   leaderboard.csv
+  leaderboard_with_launch.csv
+  model_launch_dates.csv
   manifest.json
 EOF
 }
@@ -131,6 +133,14 @@ copy_file "${COLLECTION_STATS_FILE}" "${OUTPUT_DIR}/collection_stats.json"
 copy_file "${PANEL_SUMMARY_FILE}" "${OUTPUT_DIR}/panel_summary.json"
 copy_file "${AGGREGATE_SUMMARY_FILE}" "${OUTPUT_DIR}/aggregate_summary.json"
 copy_file "${AGGREGATE_ROWS_FILE}" "${OUTPUT_DIR}/aggregate.jsonl"
+
+MODEL_LAUNCH_CANONICAL="${ROOT_DIR}/data/model_metadata/model_launch_dates.csv"
+MODEL_LAUNCH_HEADERS="model_id,org,launch_date,evidence_url,evidence_title,evidence_published_date,evidence_type,judge_status,notes,updated_at_utc"
+if [[ -f "${MODEL_LAUNCH_CANONICAL}" ]]; then
+  copy_file "${MODEL_LAUNCH_CANONICAL}" "${OUTPUT_DIR}/model_launch_dates.csv"
+else
+  printf '%s\n' "${MODEL_LAUNCH_HEADERS}" > "${OUTPUT_DIR}/model_launch_dates.csv"
+fi
 
 python3 - <<'PY' "${OUTPUT_DIR}/panel_summary.json"
 import json
@@ -301,6 +311,82 @@ with csv_path.open("w", encoding="utf-8", newline="") as handle:
         )
 PY
 
+python3 - <<'PY' "${OUTPUT_DIR}/leaderboard.csv" "${OUTPUT_DIR}/model_launch_dates.csv" "${OUTPUT_DIR}/leaderboard_with_launch.csv" "${generated_at_utc}"
+import csv
+import datetime as dt
+import pathlib
+import re
+import sys
+
+leaderboard_path = pathlib.Path(sys.argv[1])
+launch_path = pathlib.Path(sys.argv[2])
+output_path = pathlib.Path(sys.argv[3])
+generated_at_utc = str(sys.argv[4] or "").strip()
+generated_date: dt.date | None = None
+if generated_at_utc:
+    try:
+        generated_date = dt.datetime.fromisoformat(generated_at_utc.replace("Z", "+00:00")).date()
+    except ValueError:
+        generated_date = None
+
+def base_model(model: str) -> str:
+    return re.sub(r"@reasoning=[^@]+$", "", str(model or ""))
+
+launch_map: dict[str, dict[str, str]] = {}
+if launch_path.exists():
+    with launch_path.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            model_id = str(row.get("model_id", "")).strip()
+            if model_id:
+                launch_map[model_id] = row
+
+with leaderboard_path.open("r", encoding="utf-8", newline="") as handle:
+    board_rows = list(csv.DictReader(handle))
+
+fieldnames = list(board_rows[0].keys()) if board_rows else [
+    "rank",
+    "model",
+    "org",
+    "reasoning",
+    "avg_score",
+    "green_rate",
+    "red_rate",
+    "score_2",
+    "score_1",
+    "score_0",
+    "nonsense_count",
+    "error_count",
+]
+for extra in ("model_base", "launch_date", "model_age_days", "launch_evidence_url"):
+    if extra not in fieldnames:
+        fieldnames.append(extra)
+
+with output_path.open("w", encoding="utf-8", newline="") as handle:
+    writer = csv.DictWriter(handle, fieldnames=fieldnames)
+    writer.writeheader()
+    for row in board_rows:
+        model_text = str(row.get("model", ""))
+        model_base = base_model(model_text)
+        launch = launch_map.get(model_base, {})
+        launch_date_raw = str(launch.get("launch_date", "")).strip()
+        launch_evidence_url = str(launch.get("evidence_url", "")).strip()
+        model_age_days = ""
+        if launch_date_raw and generated_date:
+            try:
+                launch_date = dt.date.fromisoformat(launch_date_raw)
+            except ValueError:
+                launch_date = None
+            if launch_date is not None and launch_date <= generated_date:
+                model_age_days = str((generated_date - launch_date).days)
+
+        out = dict(row)
+        out["model_base"] = model_base
+        out["launch_date"] = launch_date_raw
+        out["model_age_days"] = model_age_days
+        out["launch_evidence_url"] = launch_evidence_url
+        writer.writerow(out)
+PY
+
 cat > "${OUTPUT_DIR}/manifest.json" <<EOF
 {
   "generated_at_utc": "${generated_at_utc}",
@@ -316,7 +402,9 @@ cat > "${OUTPUT_DIR}/manifest.json" <<EOF
     "aggregate_rows": ${aggregate_row_count}
   },
   "exports": {
-    "leaderboard_csv": "${OUTPUT_DIR}/leaderboard.csv"
+    "leaderboard_csv": "${OUTPUT_DIR}/leaderboard.csv",
+    "leaderboard_with_launch_csv": "${OUTPUT_DIR}/leaderboard_with_launch.csv",
+    "model_launch_dates_csv": "${OUTPUT_DIR}/model_launch_dates.csv"
   }
 }
 EOF

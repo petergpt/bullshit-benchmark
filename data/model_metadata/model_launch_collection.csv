@@ -1,0 +1,2 @@
+model_id,org,proposed_launch_date,evidence_url,evidence_domain,evidence_title,evidence_published_date,evidence_type,supporting_snippet,notes,collector_agent,collected_at_utc,attempt_count
+xiaomi/mimo-v2-flash,xiaomi,,,,,,docs_release_note,,Unresolved under strict first-party-domain rule: no Xiaomi-owned web page with an explicit MiMo-V2-Flash launch date was found in reachable sources. Dated references found were third-party or on non-Xiaomi domains.,collector_apac_longtail,2026-02-27T00:00:00Z,3
