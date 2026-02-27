@@ -53,3 +53,11 @@ Then open `http://localhost:8877/viewer/index.html`.
 
 - This README is intentionally audience-facing.
 - Technical and maintainer-oriented content lives in `docs/TECHNICAL.md`.
+
+## Star History
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&theme=dark" />
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date" />
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date" />
+</picture>
