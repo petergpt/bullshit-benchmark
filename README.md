@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="docs/images/bsbench.png" alt="BullshitBench logo" width="140" />
-</p>
-
-# BullshitBench
+<h1>
+  <img src="docs/images/bsbench.png" alt="BullshitBench logo" width="44" />
+  BullshitBench
+</h1>
 
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
