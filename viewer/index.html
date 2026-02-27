@@ -42,8 +42,13 @@
       width: min(1600px, 96vw);
       margin: 28px auto 48px;
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 18px;
       animation: fade-up 500ms ease-out both;
+    }
+
+    .page > * {
+      min-width: 0;
     }
 
     .hero {
@@ -91,6 +96,7 @@
       box-shadow: var(--shadow);
       padding: 16px;
       animation: fade-up 550ms ease both;
+      min-width: 0;
     }
 
     .panel h2 {
@@ -490,6 +496,46 @@
       padding-right: 4px;
     }
 
+    .launch-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 4px 0 10px;
+    }
+
+    .launch-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: #31433e;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .launch-toggle input {
+      margin: 0;
+      width: 15px;
+      height: 15px;
+      accent-color: #1f9d55;
+    }
+
+    .launch-plot-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .launch-plot-empty {
+      border: 1px dashed #c6d4ce;
+      border-radius: 10px;
+      padding: 16px;
+      color: #4f645d;
+      background: #f8fbfa;
+      font-size: 0.84rem;
+    }
+
     #simpleModelBars {
       max-height: none;
       overflow: visible;
@@ -850,6 +896,30 @@
     .compare-actions {
       margin-top: 8px;
       margin-bottom: 14px;
+    }
+
+    .compare-actions .btn-green-red-primary {
+      border: 1px solid #25584f;
+      background: #1d7268;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      letter-spacing: 0.01em;
+      min-width: 112px;
+      box-shadow: 0 4px 10px rgba(17, 54, 48, 0.16);
+    }
+
+    .compare-actions .btn-green-red-primary:hover {
+      background: #1a665e;
+      box-shadow: 0 6px 12px rgba(17, 54, 48, 0.2);
+    }
+
+    .compare-actions .btn-green-red-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     button.alt.btn-best {
@@ -1226,6 +1296,10 @@
         text-align: left;
       }
 
+      .compare-actions .btn-green-red-primary {
+        width: 100%;
+      }
+
       .stack-row {
         grid-template-columns: 34px 1fr;
         grid-template-areas:
@@ -1254,6 +1328,51 @@
         width: 100%;
       }
 
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: 100%;
+        margin: 10px 0 24px;
+        gap: 12px;
+      }
+
+      .hero {
+        border-radius: 0;
+        padding: 14px 12px;
+      }
+
+      .hero h1 {
+        font-size: 1.34rem;
+        line-height: 1.25;
+      }
+
+      .hero-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .panel {
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 6px 18px rgba(20, 35, 30, 0.08);
+      }
+
+      .button-row button,
+      .button-row .file-pill {
+        width: 100%;
+        justify-content: center;
+      }
+
+      #simpleModelBars {
+        max-height: 52vh;
+        overflow: auto;
+        padding-right: 2px;
+      }
+
+      .table-wrap {
+        border-radius: 10px;
+        max-height: 62vh;
+      }
     }
 
     @keyframes fade-up {
@@ -1366,6 +1485,19 @@
     </section>
 
     <section class="panel">
+      <h2>Bullshit Benchmark: How have models improved?</h2>
+      <p class="small-note">Tracing performance improvements (clear pushback %) with model releases.</p>
+      <div class="launch-controls">
+        <label class="launch-toggle">
+          <input type="checkbox" id="launchBestOnlyToggle" checked>
+          <span>Best models from the same release</span>
+        </label>
+      </div>
+      <svg id="launchScatterSvg" class="launch-plot-svg" viewBox="0 0 1200 420" role="img" aria-label="Green percentage timeline for Anthropic OpenAI and Google models"></svg>
+      <p id="launchScatterMeta" class="small-note"></p>
+    </section>
+
+    <section class="panel">
       <h2>Model Leaderboard</h2>
       <div class="org-key-wrap">
         <span class="small-note">Company colors:</span>
@@ -1379,6 +1511,8 @@
               <th class="sortable-th" data-sort-key="model">Model <span class="sort-ind" data-sort-ind="model"></span></th>
               <th class="sortable-th" data-sort-key="org">Org <span class="sort-ind" data-sort-ind="org"></span></th>
               <th class="sortable-th" data-sort-key="reasoning">Reasoning <span class="sort-ind" data-sort-ind="reasoning"></span></th>
+              <th class="sortable-th" data-sort-key="launchDate">Launch Date <span class="sort-ind" data-sort-ind="launchDate"></span></th>
+              <th class="sortable-th" data-sort-key="modelAgeDays">Model Age (days) <span class="sort-ind" data-sort-ind="modelAgeDays"></span></th>
               <th class="sortable-th" data-sort-key="greenRate">Green % <span class="sort-ind" data-sort-ind="greenRate"></span></th>
               <th class="sortable-th" data-sort-key="amberRate">Amber % <span class="sort-ind" data-sort-ind="amberRate"></span></th>
               <th class="sortable-th" data-sort-key="redRate">Red % <span class="sort-ind" data-sort-ind="redRate"></span></th>
@@ -1427,8 +1561,7 @@
         </label>
       </div>
       <div class="button-row compare-actions">
-        <button type="button" id="randomPairBtn" class="alt">Random Pair</button>
-        <button type="button" id="randomGreenRedBtn" class="alt">Random Green vs Red</button>
+        <button type="button" id="randomGreenRedBtn" class="btn-green-red-primary">Random</button>
         <button type="button" id="randomBestQuestionBtn" class="alt btn-best">Random Best Question</button>
         <button type="button" id="randomWorstQuestionBtn" class="alt btn-worst">Random Worst Question</button>
       </div>
@@ -1448,6 +1581,7 @@
       panelSummary: "data/latest/panel_summary.json",
       aggregateSummary: "data/latest/aggregate_summary.json",
       aggregateRows: "data/latest/aggregate.jsonl",
+      launchMetadata: "data/latest/model_launch_dates.csv",
     };
 
     const CATEGORY_META = {
@@ -1511,10 +1645,13 @@
       panelSummary: null,
       aggregateSummary: null,
       aggregateRows: [],
+      launchMetadataRows: [],
+      launchByModel: new Map(),
       rows: [],
       filteredRows: [],
       bySampleId: new Map(),
       questionRows: [],
+      lastCompareQuestionId: "",
       hiddenModels: new Set(),
       primaryOnly: false,
       primaryModelKeys: new Set(),
@@ -1534,6 +1671,9 @@
       el.mainChartOrgGuide = document.getElementById("mainChartOrgGuide");
       el.leaderboardHead = document.getElementById("leaderboardHead");
       el.leaderboardBody = document.getElementById("leaderboardBody");
+      el.launchScatterSvg = document.getElementById("launchScatterSvg");
+      el.launchScatterMeta = document.getElementById("launchScatterMeta");
+      el.launchBestOnlyToggle = document.getElementById("launchBestOnlyToggle");
       el.chartDrilldownPanel = document.getElementById("chartDrilldownPanel");
       el.chartDrilldownTitle = document.getElementById("chartDrilldownTitle");
       el.chartDrilldownMeta = document.getElementById("chartDrilldownMeta");
@@ -1564,7 +1704,6 @@
       el.compareModelB = document.getElementById("compareModelB");
       el.compareViewMode = document.getElementById("compareViewMode");
       el.compareQuestionBand = document.getElementById("compareQuestionBand");
-      el.randomPairBtn = document.getElementById("randomPairBtn");
       el.randomGreenRedBtn = document.getElementById("randomGreenRedBtn");
       el.randomBestQuestionBtn = document.getElementById("randomBestQuestionBtn");
       el.randomWorstQuestionBtn = document.getElementById("randomWorstQuestionBtn");
@@ -1674,6 +1813,7 @@
         panelSummary: `${prefix}${DEFAULT_PATHS.panelSummary}`,
         aggregateSummary: `${prefix}${DEFAULT_PATHS.aggregateSummary}`,
         aggregateRows: `${prefix}${DEFAULT_PATHS.aggregateRows}`,
+        launchMetadata: `${prefix}${DEFAULT_PATHS.launchMetadata}`,
       };
     }
 
@@ -1790,6 +1930,58 @@
           throw strictError;
         }
       }
+    }
+
+    function parseCsvLine(line) {
+      const out = [];
+      let token = "";
+      let inQuotes = false;
+      for (let idx = 0; idx < line.length; idx += 1) {
+        const ch = line[idx];
+        if (inQuotes) {
+          if (ch === "\"") {
+            if (line[idx + 1] === "\"") {
+              token += "\"";
+              idx += 1;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            token += ch;
+          }
+        } else if (ch === "\"") {
+          inQuotes = true;
+        } else if (ch === ",") {
+          out.push(token);
+          token = "";
+        } else {
+          token += ch;
+        }
+      }
+      out.push(token);
+      return out;
+    }
+
+    function parseCsv(text, filename) {
+      const lines = String(text || "")
+        .replace(/\r\n/g, "\n")
+        .split("\n")
+        .filter((line) => line.trim().length > 0);
+      if (!lines.length) {
+        return [];
+      }
+      const header = parseCsvLine(lines[0]).map((cell) => String(cell || "").trim());
+      if (!header.length || header.some((key) => !key)) {
+        throw new Error(`${filename}: invalid CSV header`);
+      }
+      return lines.slice(1).map((line) => {
+        const cells = parseCsvLine(line);
+        const row = {};
+        header.forEach((key, idx) => {
+          row[key] = cells[idx] !== undefined ? String(cells[idx]) : "";
+        });
+        return row;
+      });
     }
 
     function fetchCandidates(path) {
@@ -1963,6 +2155,56 @@
       return `${org}/${name}@reasoning=${reasoning}`;
     }
 
+    function baseModelIdFromRow(row) {
+      if (!row) {
+        return "";
+      }
+      const modelId = String((row && row.model_id) || "").trim();
+      if (modelId) {
+        return modelId.replace(/@reasoning=[^@]+$/i, "");
+      }
+      const key = modelKey(row);
+      return String(key || "").replace(/@reasoning=[^@]+$/i, "");
+    }
+
+    function parseIsoDate(value) {
+      const text = String(value || "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+        return null;
+      }
+      const date = new Date(`${text}T00:00:00Z`);
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+      return date;
+    }
+
+    function launchMetadataForRow(row) {
+      const modelBase = baseModelIdFromRow(row);
+      if (!modelBase) {
+        return null;
+      }
+      return state.launchByModel.get(modelBase) || null;
+    }
+
+    function modelAgeDaysForRow(row) {
+      const launch = launchMetadataForRow(row);
+      if (!launch) {
+        return null;
+      }
+      const launchDate = parseIsoDate(launch.launch_date);
+      if (!launchDate) {
+        return null;
+      }
+      const now = new Date();
+      const utcToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const diffMs = utcToday.getTime() - launchDate.getTime();
+      if (diffMs < 0) {
+        return null;
+      }
+      return Math.floor(diffMs / 86400000);
+    }
+
     function baseModelGroupKey(row) {
       const org = String((row && row.model_org) || "unknown");
       const name = rawModelName(row) || "model";
@@ -2127,6 +2369,18 @@
         return "N/A";
       }
       return prettyModelName(row);
+    }
+
+    function launchChartModelLabel(text) {
+      return String(text || "")
+        .replace(/:thinking\b/ig, "")
+        .replace(/\bpreview\b/ig, "")
+        .replace(/\s*\((?:x?high|low)\)/ig, "")
+        .replace(/\bflash\s+0*01\b/ig, "Flash")
+        .replace(/\b20\d{2}[ _-]\d{2}[ _-]\d{2}\b/g, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/\s+\)/g, ")")
+        .trim();
     }
 
     function normalizeRows(aggregateRows, responses) {
@@ -2686,6 +2940,696 @@
         .join("");
     }
 
+    function renderLaunchScatter(rows) {
+      if (!el.launchScatterSvg || !el.launchScatterMeta) {
+        return;
+      }
+
+      const RELEASE_WINDOW_DAYS = 3;
+      const RELEASE_WINDOW_MS = RELEASE_WINDOW_DAYS * 86400000;
+      const targetOrgs = new Set(["anthropic", "openai", "google"]);
+      const byModel = groupBy(rows, (row) => modelKey(row));
+      const rawPoints = [...byModel.entries()]
+        .map(([, modelRows]) => {
+          const sample = modelRows[0] || {};
+          const org = normalizeOrg(modelOrg(sample));
+          if (!targetOrgs.has(org)) {
+            return null;
+          }
+          const launch = launchMetadataForRow(sample);
+          if (!launch) {
+            return null;
+          }
+          const launchDate = parseIsoDate(launch.launch_date);
+          if (!launchDate) {
+            return null;
+          }
+          const stats = summarizeRows(modelRows);
+          const modelLabel = displayModel(sample);
+          return {
+            label: modelLabel,
+            chartLabel: launchChartModelLabel(modelLabel),
+            org,
+            modelBase: baseModelIdFromRow(sample),
+            launchDate,
+            launchDateText: String(launch.launch_date || "").trim(),
+            evidenceUrl: String(launch.evidence_url || "").trim(),
+            greenRate: stats.greenRate,
+          };
+        })
+        .filter(Boolean);
+
+      if (!rawPoints.length) {
+        el.launchScatterSvg.innerHTML = `<text x="50%" y="52%" text-anchor="middle" fill="#5d726b" font-size="16">No launch-mapped rows found for Anthropic, OpenAI, or Google.</text>`;
+        el.launchScatterMeta.textContent = "Check data/latest/model_launch_dates.csv coverage.";
+        return;
+      }
+
+      const bestOnly = !el.launchBestOnlyToggle || el.launchBestOnlyToggle.checked;
+      const pickBestPoint = (windowPoints) => windowPoints
+        .slice()
+        .sort((a, b) => (
+          b.greenRate - a.greenRate
+          || b.launchDate.getTime() - a.launchDate.getTime()
+          || a.label.localeCompare(b.label)
+        ))[0];
+
+      const points = bestOnly
+        ? (() => {
+            const kept = [];
+            const pointsByOrg = new Map();
+            rawPoints.forEach((point) => {
+              if (!pointsByOrg.has(point.org)) {
+                pointsByOrg.set(point.org, []);
+              }
+              pointsByOrg.get(point.org).push(point);
+            });
+            pointsByOrg.forEach((orgPoints) => {
+              const sorted = orgPoints
+                .slice()
+                .sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime() || a.label.localeCompare(b.label));
+              let bucket = [];
+              let bucketStart = null;
+              sorted.forEach((point) => {
+                const pointTime = point.launchDate.getTime();
+                if (bucketStart === null || pointTime - bucketStart <= RELEASE_WINDOW_MS) {
+                  if (bucketStart === null) {
+                    bucketStart = pointTime;
+                  }
+                  bucket.push(point);
+                  return;
+                }
+                kept.push(pickBestPoint(bucket));
+                bucket = [point];
+                bucketStart = pointTime;
+              });
+              if (bucket.length) {
+                kept.push(pickBestPoint(bucket));
+              }
+            });
+            return kept;
+          })()
+        : rawPoints.slice();
+
+      if (!points.length) {
+        el.launchScatterSvg.innerHTML = `<text x="50%" y="52%" text-anchor="middle" fill="#5d726b" font-size="16">No rows left after release-window selection.</text>`;
+        el.launchScatterMeta.textContent = "Try disabling the release-window toggle.";
+        return;
+      }
+
+      const byOrg = new Map();
+      points.forEach((point) => {
+        if (!byOrg.has(point.org)) {
+          byOrg.set(point.org, []);
+        }
+        byOrg.get(point.org).push(point);
+      });
+      byOrg.forEach((orgPoints) => {
+        orgPoints.sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime() || a.label.localeCompare(b.label));
+      });
+
+      const width = 1200;
+      const chartPixelWidth = Math.max(1, Math.round(el.launchScatterSvg.getBoundingClientRect().width || width));
+      const height = chartPixelWidth <= 420 ? 520 : chartPixelWidth <= 560 ? 470 : 420;
+      const margin = chartPixelWidth <= 420
+        ? { top: 18, right: 58, bottom: 70, left: 66 }
+        : chartPixelWidth <= 560
+          ? { top: 20, right: 68, bottom: 66, left: 74 }
+          : { top: 22, right: 82, bottom: 62, left: 82 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const tickFontSize = chartPixelWidth <= 420 ? 10.5 : 12;
+      const axisFontSize = chartPixelWidth <= 420 ? 12 : 13;
+      el.launchScatterSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+      const dates = rawPoints.map((point) => point.launchDate.getTime());
+      const minDateRaw = Math.min(...dates);
+      const maxDateRaw = Math.max(...dates);
+      const quarterStartUtc = (timeMs) => {
+        const date = new Date(timeMs);
+        const year = date.getUTCFullYear();
+        const month = Math.floor(date.getUTCMonth() / 3) * 3;
+        return Date.UTC(year, month, 1);
+      };
+      const addQuarterUtc = (timeMs, quarterCount = 1) => {
+        const date = new Date(timeMs);
+        return Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + (quarterCount * 3), 1);
+      };
+      const quarterLabel = (timeMs) => {
+        const date = new Date(timeMs);
+        const quarter = Math.floor(date.getUTCMonth() / 3) + 1;
+        return `Q${quarter} ${date.getUTCFullYear()}`;
+      };
+      const minDate = quarterStartUtc(minDateRaw);
+      const maxDate = addQuarterUtc(quarterStartUtc(maxDateRaw), 1);
+      const span = Math.max(1, maxDate - minDate);
+      const xFor = (timeMs) => margin.left + ((timeMs - minDate) / span) * plotWidth;
+      const yFor = (pctValue) => margin.top + ((100 - pctValue) / 100) * plotHeight;
+      const isoDay = (timeMs) => new Date(timeMs).toISOString().slice(0, 10);
+
+      const yTicks = [0, 20, 40, 60, 80, 100];
+      let xTicks = [];
+      for (let tick = minDate; tick <= maxDate; tick = addQuarterUtc(tick, 1)) {
+        xTicks.push(tick);
+        if (xTicks.length > 32) {
+          break;
+        }
+      }
+      if (!xTicks.length) {
+        xTicks = [minDate, maxDate];
+      }
+      const maxXTicks = chartPixelWidth <= 420 ? 4
+        : chartPixelWidth <= 560 ? 5
+          : chartPixelWidth <= 760 ? 6
+            : 9;
+      if (xTicks.length > maxXTicks) {
+        const step = Math.ceil(xTicks.length / maxXTicks);
+        xTicks = xTicks.filter((_value, idx) => idx % step === 0 || idx === xTicks.length - 1);
+      }
+
+      const gridY = yTicks
+        .map((tick) => {
+          const y = yFor(tick);
+          return `
+            <line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${width - margin.right}" y2="${y.toFixed(2)}" stroke="#d8e2dd" stroke-width="1" />
+            <text x="${(margin.left - 10).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end" fill="#586d66" font-size="${tickFontSize.toFixed(1)}">${tick}%</text>
+          `;
+        })
+        .join("");
+
+      const gridX = xTicks
+        .map((tick, idx) => {
+          const x = xFor(tick);
+          const isFirst = idx === 0;
+          const isLast = idx === xTicks.length - 1;
+          const anchor = isFirst ? "start" : isLast ? "end" : "middle";
+          const labelX = isFirst ? x + 2 : isLast ? x - 2 : x;
+          return `
+            <line x1="${x.toFixed(2)}" y1="${margin.top}" x2="${x.toFixed(2)}" y2="${(height - margin.bottom).toFixed(2)}" stroke="#edf2ef" stroke-width="1" />
+            <text x="${labelX.toFixed(2)}" y="${(height - margin.bottom + 18).toFixed(2)}" text-anchor="${anchor}" fill="#586d66" font-size="${tickFontSize.toFixed(1)}">${escapeHtml(quarterLabel(tick))}</text>
+          `;
+        })
+        .join("");
+
+      const mainLineData = [...byOrg.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([org, orgPoints]) => {
+          const color = orgColor(org);
+          const plotPoints = orgPoints.map((point) => ({
+            x: xFor(point.launchDate.getTime()),
+            y: yFor(point.greenRate),
+          }));
+          const path = plotPoints
+            .map((pt, pointIdx) => `${pointIdx === 0 ? "M" : "L"}${pt.x.toFixed(2)} ${pt.y.toFixed(2)}`)
+            .join(" ");
+          return { org, color, plotPoints, path };
+        });
+
+      const lines = mainLineData
+        .map((line) => `
+            <path d="${line.path}" fill="none" stroke="${escapeHtml(line.color)}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          `)
+        .join("");
+
+      const dayScale = 86400000;
+      const trendLineData = [...byOrg.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([org, orgPoints]) => {
+          if (orgPoints.length < 3) {
+            return null;
+          }
+          const xValues = orgPoints.map((point) => point.launchDate.getTime() / dayScale);
+          const yValues = orgPoints.map((point) => point.greenRate);
+          const meanX = xValues.reduce((sum, value) => sum + value, 0) / xValues.length;
+          const meanY = yValues.reduce((sum, value) => sum + value, 0) / yValues.length;
+          let cov = 0;
+          let varianceX = 0;
+          for (let idx = 0; idx < xValues.length; idx += 1) {
+            const dx = xValues[idx] - meanX;
+            cov += dx * (yValues[idx] - meanY);
+            varianceX += dx * dx;
+          }
+          if (varianceX <= 0) {
+            return null;
+          }
+          const slope = cov / varianceX;
+          const intercept = meanY - (slope * meanX);
+          const startXValue = Math.min(...xValues);
+          const endXValue = Math.max(...xValues);
+          const startY = Math.max(0, Math.min(100, (slope * startXValue) + intercept));
+          const endY = Math.max(0, Math.min(100, (slope * endXValue) + intercept));
+          return {
+            org,
+            color: orgColor(org),
+            x1: xFor(startXValue * dayScale),
+            y1: yFor(startY),
+            x2: xFor(endXValue * dayScale),
+            y2: yFor(endY),
+          };
+        })
+        .filter(Boolean);
+
+      const trendLines = trendLineData
+        .map((line) => `
+            <line x1="${line.x1.toFixed(2)}" y1="${line.y1.toFixed(2)}" x2="${line.x2.toFixed(2)}" y2="${line.y2.toFixed(2)}" stroke="${escapeHtml(line.color)}" stroke-opacity="0.38" stroke-width="1.4" stroke-dasharray="4 5" />
+          `)
+        .join("");
+
+      const plotSegments = [];
+      mainLineData.forEach((line) => {
+        for (let idx = 1; idx < line.plotPoints.length; idx += 1) {
+          const prev = line.plotPoints[idx - 1];
+          const curr = line.plotPoints[idx];
+          plotSegments.push({ x1: prev.x, y1: prev.y, x2: curr.x, y2: curr.y, kind: "main" });
+        }
+      });
+      trendLineData.forEach((line) => {
+        plotSegments.push({ x1: line.x1, y1: line.y1, x2: line.x2, y2: line.y2, kind: "trend" });
+      });
+
+      const approxLabelWidth = (text) => Math.min(190, Math.max(34, text.length * 5.8 + 6));
+      const clamp = (value, minValue, maxValue) => Math.min(maxValue, Math.max(minValue, value));
+      const labelTopY = margin.top + 10;
+      const labelBottomY = height - margin.bottom - 4;
+      const labelHeight = 12;
+      const labelPadX = 4;
+      const labelPadY = 3;
+
+      const labelBudget = chartPixelWidth <= 420 ? 8
+        : chartPixelWidth <= 560 ? 11
+          : chartPixelWidth <= 760 ? 14
+            : chartPixelWidth <= 980 ? 18
+              : Number.POSITIVE_INFINITY;
+      const pointPriority = new Map();
+      const pinnedPoints = new Set();
+      byOrg.forEach((orgPoints) => {
+        if (!orgPoints.length) {
+          return;
+        }
+        const sorted = orgPoints.slice().sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime());
+        const bestPoint = sorted.reduce((best, point) => (point.greenRate > best.greenRate ? point : best), sorted[0]);
+        const worstPoint = sorted.reduce((worst, point) => (point.greenRate < worst.greenRate ? point : worst), sorted[0]);
+        pinnedPoints.add(sorted[0]);
+        pinnedPoints.add(sorted[sorted.length - 1]);
+        pinnedPoints.add(bestPoint);
+        if (chartPixelWidth > 560) {
+          pinnedPoints.add(worstPoint);
+        }
+        sorted.forEach((point, idx) => {
+          const prev = idx > 0 ? sorted[idx - 1] : null;
+          const next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+          const changeBefore = prev ? Math.abs(point.greenRate - prev.greenRate) : 0;
+          const changeAfter = next ? Math.abs(next.greenRate - point.greenRate) : 0;
+          const slopeTurn = prev && next
+            ? Math.abs((next.greenRate - point.greenRate) - (point.greenRate - prev.greenRate))
+            : 0;
+          const recency = sorted.length === 1 ? 1 : idx / (sorted.length - 1);
+          const edgeBonus = idx === 0 || idx === sorted.length - 1 ? 18 : 0;
+          const importance = (changeBefore + changeAfter) * 1.3
+            + (slopeTurn * 0.6)
+            + (point.greenRate * 0.07)
+            + (recency * 7)
+            + edgeBonus;
+          pointPriority.set(point, importance);
+        });
+      });
+
+      const selectedLabelPoints = (() => {
+        if (!Number.isFinite(labelBudget) || points.length <= labelBudget) {
+          return points.slice();
+        }
+
+        const selected = new Set();
+        pinnedPoints.forEach((point) => selected.add(point));
+
+        const minPerOrg = chartPixelWidth <= 560 ? 2 : 3;
+        byOrg.forEach((orgPoints) => {
+          const ranked = orgPoints
+            .slice()
+            .sort((a, b) => (
+              (pointPriority.get(b) || 0) - (pointPriority.get(a) || 0)
+              || a.launchDate.getTime() - b.launchDate.getTime()
+            ));
+          let count = orgPoints.filter((point) => selected.has(point)).length;
+          for (const point of ranked) {
+            if (count >= minPerOrg || selected.size >= labelBudget) {
+              break;
+            }
+            if (!selected.has(point)) {
+              selected.add(point);
+              count += 1;
+            }
+          }
+        });
+
+        const rankedAll = points
+          .slice()
+          .sort((a, b) => (
+            (pointPriority.get(b) || 0) - (pointPriority.get(a) || 0)
+            || a.launchDate.getTime() - b.launchDate.getTime()
+          ));
+        for (const point of rankedAll) {
+          if (selected.size >= labelBudget) {
+            break;
+          }
+          selected.add(point);
+        }
+
+        if (selected.size > labelBudget) {
+          const nonPinned = [...selected]
+            .filter((point) => !pinnedPoints.has(point))
+            .sort((a, b) => (
+              (pointPriority.get(a) || 0) - (pointPriority.get(b) || 0)
+              || a.launchDate.getTime() - b.launchDate.getTime()
+            ));
+          for (const point of nonPinned) {
+            if (selected.size <= labelBudget) {
+              break;
+            }
+            selected.delete(point);
+          }
+        }
+
+        return points.filter((point) => selected.has(point));
+      })();
+
+      const entries = selectedLabelPoints.map((point) => ({
+        point,
+        px: xFor(point.launchDate.getTime()),
+        py: yFor(point.greenRate),
+        labelText: point.chartLabel || point.label,
+        textWidth: approxLabelWidth(point.chartLabel || point.label),
+        priority: pointPriority.get(point) || 0,
+      }));
+
+      entries.forEach((entry) => {
+        let nearest = Infinity;
+        entries.forEach((other) => {
+          if (entry === other) {
+            return;
+          }
+          const d = Math.hypot(entry.px - other.px, entry.py - other.py);
+          if (d < nearest) {
+            nearest = d;
+          }
+        });
+        entry.crowd = Number.isFinite(nearest) ? nearest : 999;
+      });
+
+      const placementOrder = entries
+        .slice()
+        .sort((a, b) => a.crowd - b.crowd || b.priority - a.priority || b.px - a.px || a.py - b.py);
+
+      const nearDx = chartPixelWidth <= 420 ? 6 : 8;
+      const farDx = chartPixelWidth <= 420 ? 10 : 14;
+      const nearDyUp = chartPixelWidth <= 420 ? -7 : -8;
+      const nearDyDown = chartPixelWidth <= 420 ? 9 : 10;
+      const midDyUp = chartPixelWidth <= 420 ? -9 : -11;
+      const midDyDown = chartPixelWidth <= 420 ? 11 : 13;
+      const candidateOffsets = [
+        { dx: nearDx, dy: nearDyUp, anchor: "start", tier: 0 },
+        { dx: nearDx, dy: nearDyDown, anchor: "start", tier: 0 },
+        { dx: -nearDx, dy: nearDyUp, anchor: "end", tier: 0 },
+        { dx: -nearDx, dy: nearDyDown, anchor: "end", tier: 0 },
+        { dx: 0, dy: midDyUp, anchor: "middle", tier: 0 },
+        { dx: 0, dy: midDyDown, anchor: "middle", tier: 0 },
+        { dx: farDx, dy: midDyUp, anchor: "start", tier: 1 },
+        { dx: farDx, dy: midDyDown, anchor: "start", tier: 1 },
+        { dx: -farDx, dy: midDyUp, anchor: "end", tier: 1 },
+        { dx: -farDx, dy: midDyDown, anchor: "end", tier: 1 },
+      ];
+      const labelManualNudge = (labelText) => {
+        const canonical = String(labelText || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, " ")
+          .trim();
+        if (canonical.includes("claude opus 4 6")) {
+          return { dx: 4, dy: 4, preferAnchor: "start" };
+        }
+        if (canonical.includes("claude opus 4 5")) {
+          return { dx: 3, dy: 4, preferAnchor: "start" };
+        }
+        if (canonical.includes("claude opus 4 1")) {
+          return { dx: 2, dy: 3, preferAnchor: "start" };
+        }
+        if (canonical === "claude opus 4") {
+          return { dx: 2, dy: 4, preferAnchor: "start" };
+        }
+        if (canonical.includes("gpt 5 1 chat")) {
+          return { dx: -12, dy: -6, preferAnchor: "end" };
+        }
+        if (canonical.includes("gpt 5 2 codex")) {
+          return { dx: 2, dy: -14, preferAnchor: "start" };
+        }
+        if (canonical === "gpt 5 2") {
+          return { dx: 12, dy: -1, preferAnchor: "start" };
+        }
+        if (canonical.includes("gpt 5 3 codex")) {
+          return { dx: 14, dy: 4, preferAnchor: "start" };
+        }
+        if (canonical.includes("gpt 5 codex")) {
+          return { dx: 2, dy: 4, preferAnchor: "start" };
+        }
+        if (canonical.includes("gemini 3 pro")) {
+          return { dx: 2, dy: 10, preferAnchor: "start", preferDown: true };
+        }
+        if (canonical.includes("gemini 3 1 pro")) {
+          return { dx: 12, dy: 0, preferAnchor: "start" };
+        }
+        return { dx: 0, dy: 0 };
+      };
+
+      const labelBBox = (x, y, anchor, widthValue) => {
+        const left = anchor === "start"
+          ? x - labelPadX
+          : anchor === "end"
+            ? x - widthValue - labelPadX
+            : x - (widthValue / 2) - labelPadX;
+        const right = left + widthValue + (labelPadX * 2);
+        return {
+          left,
+          right,
+          top: y - labelHeight + labelPadY,
+          bottom: y + labelPadY,
+        };
+      };
+
+      const clampLabelX = (x, anchor, widthValue) => {
+        if (anchor === "start") {
+          return clamp(x, margin.left + 4, width - margin.right - widthValue - 4);
+        }
+        if (anchor === "end") {
+          return clamp(x, margin.left + widthValue + 4, width - margin.right - 4);
+        }
+        return clamp(x, margin.left + (widthValue / 2) + 4, width - margin.right - (widthValue / 2) - 4);
+      };
+
+      const pointInRect = (x, y, rect) => (
+        x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+      );
+      const orientation = (ax, ay, bx, by, cx, cy) => (
+        ((bx - ax) * (cy - ay)) - ((by - ay) * (cx - ax))
+      );
+      const onSegment = (ax, ay, bx, by, cx, cy) => (
+        Math.min(ax, bx) - 0.0001 <= cx
+        && cx <= Math.max(ax, bx) + 0.0001
+        && Math.min(ay, by) - 0.0001 <= cy
+        && cy <= Math.max(ay, by) + 0.0001
+      );
+      const segmentsIntersect = (a1x, a1y, a2x, a2y, b1x, b1y, b2x, b2y) => {
+        const o1 = orientation(a1x, a1y, a2x, a2y, b1x, b1y);
+        const o2 = orientation(a1x, a1y, a2x, a2y, b2x, b2y);
+        const o3 = orientation(b1x, b1y, b2x, b2y, a1x, a1y);
+        const o4 = orientation(b1x, b1y, b2x, b2y, a2x, a2y);
+
+        if ((o1 > 0 && o2 < 0 || o1 < 0 && o2 > 0) && (o3 > 0 && o4 < 0 || o3 < 0 && o4 > 0)) {
+          return true;
+        }
+        if (Math.abs(o1) < 0.0001 && onSegment(a1x, a1y, a2x, a2y, b1x, b1y)) {
+          return true;
+        }
+        if (Math.abs(o2) < 0.0001 && onSegment(a1x, a1y, a2x, a2y, b2x, b2y)) {
+          return true;
+        }
+        if (Math.abs(o3) < 0.0001 && onSegment(b1x, b1y, b2x, b2y, a1x, a1y)) {
+          return true;
+        }
+        return Math.abs(o4) < 0.0001 && onSegment(b1x, b1y, b2x, b2y, a2x, a2y);
+      };
+      const segmentIntersectsRect = (x1, y1, x2, y2, rect) => {
+        if (pointInRect(x1, y1, rect) || pointInRect(x2, y2, rect)) {
+          return true;
+        }
+        const edges = [
+          [rect.left, rect.top, rect.right, rect.top],
+          [rect.right, rect.top, rect.right, rect.bottom],
+          [rect.right, rect.bottom, rect.left, rect.bottom],
+          [rect.left, rect.bottom, rect.left, rect.top],
+        ];
+        return edges.some((edge) => segmentsIntersect(x1, y1, x2, y2, edge[0], edge[1], edge[2], edge[3]));
+      };
+
+      const placed = [];
+      placementOrder.forEach((entry) => {
+        const manualNudge = labelManualNudge(entry.labelText);
+        let best = null;
+        candidateOffsets.forEach((candidate) => {
+          const x = clampLabelX(entry.px + candidate.dx + manualNudge.dx, candidate.anchor, entry.textWidth);
+          const y = clamp(entry.py + candidate.dy + manualNudge.dy, labelTopY, labelBottomY);
+          const bbox = labelBBox(x, y, candidate.anchor, entry.textWidth);
+          const connectorX = candidate.anchor === "start"
+            ? x - 2
+            : candidate.anchor === "end"
+              ? x + 2
+              : x;
+          const lineLen = Math.hypot(connectorX - entry.px, y - entry.py);
+
+          let overlapPenalty = 0;
+          let proximityPenalty = 0;
+          placed.forEach((other) => {
+            const overlapX = Math.max(0, Math.min(bbox.right, other.bbox.right) - Math.max(bbox.left, other.bbox.left));
+            const overlapY = Math.max(0, Math.min(bbox.bottom, other.bbox.bottom) - Math.max(bbox.top, other.bbox.top));
+            if (overlapX > 0 && overlapY > 0) {
+              overlapPenalty += 100000 + (overlapX * overlapY * 35);
+              return;
+            }
+            const gapX = bbox.right < other.bbox.left
+              ? other.bbox.left - bbox.right
+              : bbox.left > other.bbox.right
+                ? bbox.left - other.bbox.right
+                : 0;
+            const gapY = bbox.bottom < other.bbox.top
+              ? other.bbox.top - bbox.bottom
+              : bbox.top > other.bbox.bottom
+                ? bbox.top - other.bbox.bottom
+                : 0;
+            if (gapX < 4 && gapY < 8) {
+              proximityPenalty += (4 - gapX) * (8 - gapY) * 22;
+            }
+          });
+
+          const expandedLabelRect = {
+            left: bbox.left - 1.2,
+            right: bbox.right + 1.2,
+            top: bbox.top - 1.2,
+            bottom: bbox.bottom + 1.2,
+          };
+          let lineOverlapPenalty = 0;
+          plotSegments.forEach((seg) => {
+            if (segmentIntersectsRect(seg.x1, seg.y1, seg.x2, seg.y2, expandedLabelRect)) {
+              lineOverlapPenalty += seg.kind === "main" ? 320 : 160;
+            }
+          });
+
+          const innerLeft = margin.left + (plotWidth * 0.15);
+          const innerRight = margin.left + (plotWidth * 0.85);
+          let edgeAnchorPenalty = 0;
+          if (entry.px < innerLeft && candidate.anchor === "end") {
+            edgeAnchorPenalty += 18;
+          }
+          if (entry.px > innerRight && candidate.anchor === "start") {
+            edgeAnchorPenalty += 18;
+          }
+
+          let boundaryPenalty = 0;
+          if (entry.py < margin.top + 24 && candidate.dy < 0) {
+            boundaryPenalty += 10;
+          }
+          if (entry.py > (height - margin.bottom - 24) && candidate.dy > 0) {
+            boundaryPenalty += 10;
+          }
+
+          let manualAnchorPenalty = 0;
+          if (manualNudge.preferAnchor && candidate.anchor !== manualNudge.preferAnchor) {
+            manualAnchorPenalty += 18;
+          }
+          let manualVerticalPenalty = 0;
+          if (manualNudge.preferDown && candidate.dy < 0) {
+            manualVerticalPenalty += 24;
+          }
+          if (manualNudge.preferUp && candidate.dy > 0) {
+            manualVerticalPenalty += 24;
+          }
+
+          const score = overlapPenalty
+            + proximityPenalty
+            + lineOverlapPenalty
+            + edgeAnchorPenalty
+            + boundaryPenalty
+            + manualAnchorPenalty
+            + manualVerticalPenalty
+            + (lineLen * 1.6)
+            + (Math.abs(candidate.dy) * 0.9)
+            + (candidate.tier * 18);
+          if (!best || score < best.score) {
+            best = {
+              ...entry,
+              anchor: candidate.anchor,
+              x,
+              y,
+              bbox,
+              connectorX,
+              lineLen,
+              score,
+            };
+          }
+        });
+
+        if (best) {
+          placed.push(best);
+        }
+      });
+
+      const placementByPoint = new Map(placed.map((entry) => [entry.point, entry]));
+      const labelFontSize = chartPixelWidth <= 420 ? 9.1 : chartPixelWidth <= 560 ? 9.6 : 10.5;
+      const labelNodes = [];
+      selectedLabelPoints.forEach((point) => {
+        const entry = placementByPoint.get(point);
+        if (!entry) {
+          return;
+        }
+        const labelColor = orgColor(entry.point.org);
+        if (entry.lineLen > 5) {
+          labelNodes.push(`
+            <path d="M${entry.px.toFixed(2)} ${entry.py.toFixed(2)} L${entry.connectorX.toFixed(2)} ${entry.y.toFixed(2)}" fill="none" stroke="#8aa09a" stroke-opacity="0.55" stroke-width="0.9" />
+          `);
+        }
+        labelNodes.push(`
+          <text x="${entry.x.toFixed(2)}" y="${entry.y.toFixed(2)}" text-anchor="${entry.anchor}" fill="${escapeHtml(labelColor)}" font-size="${labelFontSize.toFixed(1)}" stroke="#f4faf7" stroke-width="2.6" paint-order="stroke fill">${escapeHtml(entry.labelText)}</text>
+        `);
+      });
+      const pointLabels = labelNodes.join("");
+
+      const circles = points
+        .sort((a, b) => a.launchDate.getTime() - b.launchDate.getTime() || a.org.localeCompare(b.org))
+        .map((point) => {
+          const cx = xFor(point.launchDate.getTime());
+          const cy = yFor(point.greenRate);
+          const color = orgColor(point.org);
+          const evidenceText = point.evidenceUrl ? ` | ${point.evidenceUrl}` : "";
+          const title = `${displayOrg(point.org)} | ${point.chartLabel || point.label} | ${point.launchDateText} | Green ${point.greenRate.toFixed(1)}%${evidenceText}`;
+          return `
+            <circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="5.2" fill="${escapeHtml(color)}" fill-opacity="0.9" stroke="#17211e" stroke-opacity="0.4" stroke-width="0.9">
+              <title>${escapeHtml(title)}</title>
+            </circle>
+          `;
+        })
+        .join("");
+
+      el.launchScatterSvg.innerHTML = `
+        ${gridY}
+        ${gridX}
+        ${trendLines}
+        ${lines}
+        ${pointLabels}
+        ${circles}
+        <text x="${(margin.left + plotWidth / 2).toFixed(2)}" y="${(height - 14).toFixed(2)}" text-anchor="middle" fill="#425851" font-size="${axisFontSize.toFixed(1)}">Model Launch Date</text>
+        <text x="16" y="${(margin.top + plotHeight / 2).toFixed(2)}" transform="rotate(-90,16,${(margin.top + plotHeight / 2).toFixed(2)})" text-anchor="middle" fill="#425851" font-size="${axisFontSize.toFixed(1)}">% Clear Pushback (Green)</text>
+      `;
+
+      el.launchScatterMeta.textContent = "Note: Percentage of time the model scored 'Green' (pushed back clearly). Best score only if multiple models from the same release were tested (e.g. multiple reasoning levels).";
+    }
+
     function renderChartDrilldown(filteredRows) {
       if (!el.chartDrilldownPanel || !el.chartDrilldownBody) {
         return;
@@ -2768,12 +3712,19 @@
       const rows = [...byModel.entries()].map(([key, modelRows]) => {
         const sample = modelRows[0] || {};
         const stats = summarizeRows(modelRows);
+        const launch = launchMetadataForRow(sample);
+        const launchDate = launch ? String(launch.launch_date || "").trim() : "";
+        const launchEvidenceUrl = launch ? String(launch.evidence_url || "").trim() : "";
+        const modelAgeDays = modelAgeDaysForRow(sample);
         return {
           key,
           rank: 0,
           model: displayModel(sample),
           org: modelOrg(sample),
           reasoning: normalizeReasoningLevel(sample.model_reasoning_level),
+          launchDate,
+          launchEvidenceUrl,
+          modelAgeDays,
           ...stats,
         };
       });
@@ -2791,11 +3742,24 @@
         "redRate",
         "errorRate",
         "rows",
+        "modelAgeDays",
       ]);
       const dir = direction === "asc" ? 1 : -1;
       baseline.sort((a, b) => {
         let cmp = 0;
-        if (numericKeys.has(key)) {
+        if (key === "launchDate") {
+          const dateA = parseIsoDate(a.launchDate);
+          const dateB = parseIsoDate(b.launchDate);
+          if (dateA && dateB) {
+            cmp = dateA.getTime() - dateB.getTime();
+          } else if (dateA) {
+            cmp = -1;
+          } else if (dateB) {
+            cmp = 1;
+          } else {
+            cmp = 0;
+          }
+        } else if (numericKeys.has(key)) {
           cmp = Number(a[key] || 0) - Number(b[key] || 0);
         } else {
           cmp = String(a[key] || "").localeCompare(String(b[key] || ""));
@@ -2819,6 +3783,11 @@
             row.reasoning && row.reasoning !== "none"
               ? row.reasoning.charAt(0).toUpperCase() + row.reasoning.slice(1)
               : "None";
+          const launchDateText = row.launchDate || "Unknown";
+          const launchDateCell = row.launchEvidenceUrl
+            ? `<a href="${escapeHtml(row.launchEvidenceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(launchDateText)}</a>`
+            : escapeHtml(launchDateText);
+          const modelAgeText = Number.isFinite(row.modelAgeDays) ? String(row.modelAgeDays) : "Unknown";
           return `
             <tr>
               <td>${row.rank}</td>
@@ -2835,6 +3804,8 @@
                 </span>
               </td>
               <td>${escapeHtml(reasoningLabel)}</td>
+              <td>${launchDateCell}</td>
+              <td>${escapeHtml(modelAgeText)}</td>
               <td>${formatPct(row.greenRate)}</td>
               <td>${formatPct(row.amberRate)}</td>
               <td>${formatPct(row.redRate)}</td>
@@ -2911,10 +3882,19 @@
           return `<option value="${escapeHtml(entry.questionId)}">${escapeHtml(label)}</option>`;
         })
         .join("");
+      let changed = false;
       if (prev && entries.some((entry) => entry.questionId === prev)) {
         el.compareQuestion.value = prev;
       } else if (entries[0]) {
         el.compareQuestion.value = entries[0].questionId;
+        changed = true;
+      } else {
+        changed = true;
+      }
+      if (changed) {
+        // Reset selections so a new default question starts with a fresh contrast pair.
+        el.compareModelA.value = "";
+        el.compareModelB.value = "";
       }
     }
 
@@ -2954,12 +3934,37 @@
         el.compareModelB.value = existingB;
       }
 
+      const questionId = String(el.compareQuestion.value || "");
+      const questionChanged = questionId !== state.lastCompareQuestionId;
       const byKey = new Map(questionRows.map((row) => [modelKey(row), row]));
+      const existingRowA = byKey.get(el.compareModelA.value);
+      const existingRowB = byKey.get(el.compareModelB.value);
+      const hasValidExistingPair = Boolean(
+        existingRowA && existingRowB && modelKey(existingRowA) !== modelKey(existingRowB),
+      );
       const pickGreenRedPair = () => {
         const greens = questionRows.filter((row) => categoryKey(row) === "green");
         const reds = questionRows.filter((row) => categoryKey(row) === "red");
         if (greens.length && reds.length) {
-          return [greens[0], reds[0]];
+          const strictPairs = [];
+          greens.forEach((greenRow) => {
+            reds.forEach((redRow) => {
+              if (
+                modelKey(greenRow) !== modelKey(redRow)
+                && baseModelIdFromRow(greenRow) !== baseModelIdFromRow(redRow)
+              ) {
+                strictPairs.push([greenRow, redRow]);
+              }
+            });
+          });
+          if (strictPairs.length) {
+            return randomItem(strictPairs);
+          }
+          const greenPick = randomItem(greens);
+          const redPick = randomItem(reds);
+          if (greenPick && redPick && modelKey(greenPick) !== modelKey(redPick)) {
+            return [greenPick, redPick];
+          }
         }
         return null;
       };
@@ -2975,7 +3980,10 @@
         return null;
       };
 
-      if (!el.compareModelA.value || !el.compareModelB.value) {
+      const shouldSeedContrastPair = !el.compareModelA.value
+        || !el.compareModelB.value
+        || (questionChanged && !hasValidExistingPair);
+      if (shouldSeedContrastPair) {
         const pair = pickGreenRedPair() || pickBestWorstPair();
         if (pair) {
           el.compareModelA.value = modelKey(pair[0]);
@@ -3004,6 +4012,7 @@
         const fallback = models.find((m) => m.key !== el.compareModelA.value);
         el.compareModelB.value = fallback ? fallback.key : models[0].key;
       }
+      state.lastCompareQuestionId = questionId;
     }
 
     function renderSingleResponseCard(row, titlePrefix = "") {
@@ -3051,10 +4060,32 @@
       if (!rows || rows.length < 2) {
         return null;
       }
+      const differentBaseModel = (a, b) => {
+        if (!a || !b) {
+          return false;
+        }
+        if (modelKey(a) === modelKey(b)) {
+          return false;
+        }
+        const baseA = baseModelIdFromRow(a);
+        const baseB = baseModelIdFromRow(b);
+        return !baseA || !baseB || baseA !== baseB;
+      };
       const greens = rows.filter((row) => categoryKey(row) === "green");
       const reds = rows.filter((row) => categoryKey(row) === "red");
 
       if (mode === "green_red" && greens.length && reds.length) {
+        const strictPairs = [];
+        greens.forEach((greenRow) => {
+          reds.forEach((redRow) => {
+            if (differentBaseModel(greenRow, redRow)) {
+              strictPairs.push([greenRow, redRow]);
+            }
+          });
+        });
+        if (strictPairs.length) {
+          return randomItem(strictPairs);
+        }
         const a = randomItem(greens);
         const b = randomItem(reds);
         if (a && b && modelKey(a) !== modelKey(b)) {
@@ -3065,7 +4096,7 @@
       if (mode === "green_red") {
         const best = [...rows].sort((a, b) => categoryRank(categoryKey(b)) - categoryRank(categoryKey(a)))[0];
         const worst = [...rows].sort((a, b) => categoryRank(categoryKey(a)) - categoryRank(categoryKey(b)))[0];
-        if (best && worst && modelKey(best) !== modelKey(worst)) {
+        if (best && worst && differentBaseModel(best, worst)) {
           return [best, worst];
         }
       }
@@ -3075,10 +4106,10 @@
       while (j === i && rows.length > 1) {
         j = Math.floor(Math.random() * rows.length);
       }
-      if (rows[i] && rows[j] && modelKey(rows[i]) !== modelKey(rows[j])) {
+      if (rows[i] && rows[j] && differentBaseModel(rows[i], rows[j])) {
         return [rows[i], rows[j]];
       }
-      const fallback = rows.filter((row) => modelKey(row) !== modelKey(rows[i]));
+      const fallback = rows.filter((row) => differentBaseModel(row, rows[i]));
       if (fallback.length) {
         return [rows[i], fallback[0]];
       }
@@ -3194,10 +4225,8 @@
       const showAll = viewMode === "all";
 
       const questionEntries = getBandFilteredQuestionEntries(filteredRows, false);
-      const hasAnyQuestion = questionEntries.length > 0;
       const hasAnyPair = questionEntries.some((entry) => entry.rows.length >= 2);
       const hasGreenRedPair = questionEntries.some((entry) => entry.rows.length >= 2 && entry.hasGreen && entry.hasRed);
-      el.randomPairBtn.disabled = !hasAnyPair;
       el.randomGreenRedBtn.disabled = !hasGreenRedPair;
       el.randomBestQuestionBtn.disabled = !hasAnyPair;
       el.randomWorstQuestionBtn.disabled = !hasAnyPair;
@@ -3256,6 +4285,7 @@
       renderOrgColorKey(scopedRows);
       renderMainChartOrgGuide(scopedRows);
       renderSimpleModelBars(filteredRows);
+      renderLaunchScatter(state.rows);
       renderChartDrilldown(filteredRows);
       renderLeaderboard(filteredRows);
       renderCompareSection(filteredRows);
@@ -3267,8 +4297,21 @@
       state.panelSummary = payload.panelSummary;
       state.aggregateSummary = payload.aggregateSummary;
       state.aggregateRows = payload.aggregateRows;
+      state.launchMetadataRows = payload.launchMetadataRows || [];
+      state.launchByModel = new Map(
+        state.launchMetadataRows
+          .map((row) => {
+            const modelId = String((row && row.model_id) || "").trim();
+            if (!modelId) {
+              return null;
+            }
+            return [modelId, row];
+          })
+          .filter(Boolean),
+      );
       state.rows = normalizeRows(payload.aggregateRows, payload.responses);
       state.bySampleId = new Map(state.rows.map((row) => [row.sample_id, row]));
+      state.lastCompareQuestionId = "";
       refreshJudgeFilterLabels();
       state.primaryModelKeys = computePrimaryModelKeys(state.rows);
       refreshFilterOptions();
@@ -3292,15 +4335,26 @@
           setDataState("Loaded core files. Aggregate rows are missing, so comparison detail is limited.");
         }
 
+        let launchMetadataText = "";
+        try {
+          launchMetadataText = await fetchText(paths.launchMetadata);
+        } catch (_error) {
+          launchMetadataText = "";
+        }
+
         const payload = {
           responses: parseJsonl(required[0], "responses.jsonl"),
           collectionStats: JSON.parse(required[1]),
           panelSummary: JSON.parse(required[2]),
           aggregateSummary: JSON.parse(required[3]),
           aggregateRows: aggregateRowsText ? parseJsonl(aggregateRowsText, "aggregate.jsonl") : [],
+          launchMetadataRows: launchMetadataText ? parseCsv(launchMetadataText, "model_launch_dates.csv") : [],
         };
         ingestData(payload);
-        setDataState(`Loaded ${payload.responses.length} responses.`);
+        setDataState(
+          `Loaded ${payload.responses.length} responses. `
+          + `Launch metadata rows: ${payload.launchMetadataRows.length}.`,
+        );
       } catch (error) {
         setDataState(`Could not load benchmark files: ${error.message}`);
       }
@@ -3321,10 +4375,14 @@
       state.primaryOnly = false;
       el.filterModelToggleSearch.value = "";
       el.filterQuery.value = "";
+      if (el.launchBestOnlyToggle) {
+        el.launchBestOnlyToggle.checked = true;
+      }
       [...document.querySelectorAll('input[name="scoreFilter"]')].forEach((node) => {
         node.checked = true;
       });
       state.primaryModelKeys = computePrimaryModelKeys(state.rows);
+      state.lastCompareQuestionId = "";
       renderModelToggleGrid(collectModelInfos(state.rows));
       renderAll();
     }
@@ -3380,6 +4438,21 @@
       el.filterModelToggleSearch.addEventListener("input", () => {
         renderModelToggleGrid(collectModelInfos(state.rows));
       });
+      if (el.launchBestOnlyToggle) {
+        el.launchBestOnlyToggle.addEventListener("change", () => {
+          renderLaunchScatter(state.rows);
+        });
+      }
+      let resizeTimer = 0;
+      window.addEventListener("resize", () => {
+        if (!state.rows.length) {
+          return;
+        }
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          renderLaunchScatter(state.rows);
+        }, 120);
+      });
       [1, 2, 3].forEach((judgeIndex) => {
         const toggle = el[`judge${judgeIndex}Toggle`];
         toggle.addEventListener("change", () => {
@@ -3413,9 +4486,6 @@
         }
         renderModelToggleGrid(collectModelInfos(state.rows));
         renderAll();
-      });
-      el.randomPairBtn.addEventListener("click", () => {
-        randomizeQuestionPair("any");
       });
       el.randomGreenRedBtn.addEventListener("click", () => {
         randomizeQuestionPair("green_red");
@@ -3464,7 +4534,10 @@
               state.leaderboardSort.direction === "asc" ? "desc" : "asc";
           } else {
             state.leaderboardSort.key = key;
-            state.leaderboardSort.direction = key === "model" || key === "org" || key === "reasoning" ? "asc" : "desc";
+            state.leaderboardSort.direction =
+              key === "model" || key === "org" || key === "reasoning" || key === "launchDate"
+                ? "asc"
+                : "desc";
           }
           renderAll();
         });
