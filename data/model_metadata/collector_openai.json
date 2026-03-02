@@ -1,19 +1,5 @@
 [
   {
-    "model_id": "openai/chatgpt-4o-latest",
-    "org": "openai",
-    "proposed_launch_date": "2024-08-15",
-    "evidence_url": "https://developers.openai.com/api/docs/changelog",
-    "evidence_domain": "developers.openai.com",
-    "evidence_title": "Changelog | OpenAI API",
-    "evidence_published_date": "2024-08-15",
-    "evidence_type": "api_changelog_entry",
-    "supporting_snippet": "Aug 15 changelog entry introduces the dynamic chatgpt-4o-latest alias.",
-    "notes": "Explicitly named in dated API changelog entry.",
-    "collector_agent": "collector_openai",
-    "collected_at_utc": "2026-02-27T09:56:46Z"
-  },
-  {
     "model_id": "openai/gpt-4.1",
     "org": "openai",
     "proposed_launch_date": "2025-04-14",

@@ -1,0 +1,24 @@
+{
+  "panel_id": "run_v2_latest146_claude_only_20260301_015128_panel",
+  "timestamp_utc": "2026-03-01T15:58:26.014073+00:00",
+  "panel_mode": "full",
+  "judge_models": [
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.2",
+    "google/gemini-3.1-pro-preview"
+  ],
+  "judge_count": 3,
+  "primary_judges": [
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.2"
+  ],
+  "parallel_primary_judges": true,
+  "resumed": true,
+  "parallelism": 12,
+  "primary_judges_max_inflight": 36,
+  "grade_dirs_for_aggregate": [],
+  "disagreement_count": 1302,
+  "disagreement_rate": 0.1808,
+  "consensus_method": "mean",
+  "fail_on_error": false
+}

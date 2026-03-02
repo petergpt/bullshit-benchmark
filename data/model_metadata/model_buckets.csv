@@ -25,7 +25,6 @@ google/gemma-3-27b-it,google,collector_google,google
 minimax/minimax-m2.5,minimax,collector_apac_longtail,apac_longtail
 mistralai/mistral-large-2512,mistralai,collector_frontier_other,frontier_other
 moonshotai/kimi-k2.5,moonshotai,collector_apac_longtail,apac_longtail
-openai/chatgpt-4o-latest,openai,collector_openai,openai
 openai/gpt-4.1,openai,collector_openai,openai
 openai/gpt-4o,openai,collector_openai,openai
 openai/gpt-4o-2024-08-06,openai,collector_openai,openai

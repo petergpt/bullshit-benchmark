@@ -25,7 +25,6 @@ google/gemma-3-27b-it,google,true,true,true,1,google/gemma-3-27b-it@reasoning=de
 minimax/minimax-m2.5,minimax,true,true,true,2,minimax/minimax-m2.5@reasoning=high;minimax/minimax-m2.5@reasoning=low
 mistralai/mistral-large-2512,mistralai,true,true,true,1,mistralai/mistral-large-2512@reasoning=default
 moonshotai/kimi-k2.5,moonshotai,true,true,true,2,moonshotai/kimi-k2.5@reasoning=high;moonshotai/kimi-k2.5@reasoning=none
-openai/chatgpt-4o-latest,openai,false,false,true,1,openai/chatgpt-4o-latest@reasoning=default
 openai/gpt-4.1,openai,true,false,true,1,openai/gpt-4.1@reasoning=default
 openai/gpt-4o,openai,true,false,true,1,openai/gpt-4o@reasoning=default
 openai/gpt-4o-2024-08-06,openai,true,false,true,1,openai/gpt-4o-2024-08-06@reasoning=default
