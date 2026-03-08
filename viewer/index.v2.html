@@ -3,24 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BullshitBench v2 Explorer</title>
+  <title>BullshitBench Viewer</title>
   <link rel="icon" href="../docs/images/bsbench.png">
   <style>
     :root {
-      --bg: #f7f4ec;
-      --panel: #fffefb;
-      --ink: #1f2623;
-      --muted: #5f6f6a;
-      --line: #d6ddd8;
-      --teal: #0f766e;
-      --teal-soft: #d8f3ef;
-      --green: #1f9d55;
-      --amber: #d88710;
-      --red: #c13d36;
-      --deep-red: #8a1f1a;
-      --error: #4a5350;
-      --shadow: 0 10px 30px rgba(20, 35, 30, 0.08);
-      --radius: 14px;
+      --bg: #f2eee6;
+      --panel: #fcfbf7;
+      --panel-alt: #f1ede4;
+      --ink: #1d2521;
+      --muted: #5c6861;
+      --line: #cfd6ce;
+      --line-strong: #aab5ad;
+      --teal: #1d5b50;
+      --teal-soft: #e6efe9;
+      --green: #23804d;
+      --amber: #b97816;
+      --red: #b6493f;
+      --deep-red: #8b2b25;
+      --error: #505856;
+      --shadow: 0 1px 2px rgba(20, 35, 30, 0.06);
+      --radius: 10px;
     }
 
     * { box-sizing: border-box; }
@@ -28,125 +30,200 @@
     html, body {
       margin: 0; padding: 0; min-height: 100%;
       color: var(--ink);
-      background: radial-gradient(1200px 700px at 100% -50%, #d9efe9 0%, transparent 70%),
-        radial-gradient(1000px 600px at -10% 10%, #f6ecd8 0%, transparent 70%),
-        var(--bg);
-      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+      background: var(--bg);
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
     }
 
     .page {
-      width: min(1600px, 96vw);
-      margin: 28px auto 48px;
+      width: min(1480px, calc(100vw - 32px));
+      margin: 16px auto 36px;
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 18px;
-      animation: fade-up 500ms ease-out both;
+      gap: 14px;
     }
 
     .page > * { min-width: 0; }
 
     .hero {
-      background: linear-gradient(132deg, #113630 0%, #1b5f55 60%, #1d7268 100%);
-      color: #f2faf8;
-      border-radius: 18px;
-      padding: 16px 22px;
+      background: #18493f;
+      color: #f3f7f4;
+      border: 1px solid #143c34;
+      border-radius: var(--radius);
+      padding: 16px 18px;
       box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 14px 24px;
     }
 
-    .hero-left { display: flex; align-items: center; gap: 12px; }
-    .hero-logo { width: 74px; height: auto; display: block; flex: 0 0 auto; }
+    .hero-left { display: flex; align-items: flex-start; gap: 14px; min-width: 0; }
+    .hero-body { display: grid; gap: 8px; min-width: 0; }
+    .hero-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-logo { width: 60px; height: auto; display: block; flex: 0 0 auto; }
 
     .hero h1 {
       margin: 0;
-      font-family: "Rockwell", "Georgia", serif;
-      letter-spacing: 0.2px;
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
-      line-height: 1.2;
-      color: #fff;
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      letter-spacing: 0;
+      font-size: clamp(1.45rem, 2.2vw, 1.95rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: #f7fbf9;
     }
     .hero-subtitle {
-      margin: 2px 0 0;
-      font-size: 0.86rem;
-      color: #d5ebe5;
-      max-width: none;
-      white-space: nowrap;
+      margin: 0;
+      font-size: 0.92rem;
+      color: #d8e8e1;
+      max-width: 760px;
+      white-space: normal;
+      line-height: 1.4;
     }
-    .hero-version-inline { display: inline-flex; margin-top: 6px; }
+    .hero-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-version-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      max-width: 100%;
+    }
+    .hero-version-inline span {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: rgba(232, 241, 236, 0.9);
+      white-space: nowrap;
+      letter-spacing: 0;
+      text-transform: none;
+    }
 
     .hero-meta {
-      display: grid;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
       gap: 8px;
-      justify-items: end;
       text-align: right;
+      align-self: stretch;
     }
     .hero-version-inline select {
-      border: 1px solid rgba(255,255,255,0.34);
-      background: rgba(255,255,255,0.12);
-      color: #f3faf8;
-      border-radius: 999px;
-      padding: 5px 12px;
-      font-size: 0.86rem;
-      font-weight: 700;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 1px solid rgba(232, 241, 236, 0.18);
+      background:
+        linear-gradient(45deg, transparent 50%, rgba(236, 244, 240, 0.92) 50%) calc(100% - 16px) calc(50% - 1px) / 5px 5px no-repeat,
+        linear-gradient(135deg, rgba(236, 244, 240, 0.92) 50%, transparent 50%) calc(100% - 11px) calc(50% - 1px) / 5px 5px no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(221, 232, 226, 0.06) 100%);
+      color: #f2f7f4;
+      border-radius: 9px;
+      padding: 7px 32px 7px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
       line-height: 1;
       min-height: 32px;
+      width: 154px;
+      max-width: 100%;
       cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+    }
+    .hero-version-inline select:hover {
+      border-color: rgba(232, 241, 236, 0.26);
+      background:
+        linear-gradient(45deg, transparent 50%, rgba(236, 244, 240, 0.96) 50%) calc(100% - 16px) calc(50% - 1px) / 5px 5px no-repeat,
+        linear-gradient(135deg, rgba(236, 244, 240, 0.96) 50%, transparent 50%) calc(100% - 11px) calc(50% - 1px) / 5px 5px no-repeat,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(221, 232, 226, 0.08) 100%);
     }
     .hero-version-inline select:focus {
-      outline: 2px solid rgba(186, 234, 219, 0.66);
-      outline-offset: 1px;
-      box-shadow: none;
+      outline: none;
+      border-color: rgba(232, 241, 236, 0.28);
+      box-shadow: 0 0 0 2px rgba(232, 241, 236, 0.08);
     }
     .hero-version-inline select option {
-      background: #173f37;
-      color: #f3faf8;
+      background: #fff;
+      color: var(--ink);
     }
     .hero-created {
-      font-size: 0.82rem;
-      color: #d8eee9;
+      font-size: 0.8rem;
+      color: #d9e9e2;
       white-space: nowrap;
     }
-    .hero-links { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .hero-links {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      justify-content: flex-end;
+    }
     .hero-link {
-      border: 1px solid rgba(255,255,255,0.32);
-      color: #eaf7f3;
-      background: rgba(255,255,255,0.09);
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.74rem;
+      color: #f6fbf9;
+      background: none;
+      border: 0;
+      padding: 0;
+      font-size: 0.8rem;
+      font-weight: 600;
       line-height: 1;
       text-decoration: none;
       white-space: nowrap;
+      opacity: 0.95;
     }
-    .hero-link:hover { background: rgba(255,255,255,0.16); }
+    .hero-link:hover {
+      text-decoration: underline;
+      opacity: 1;
+    }
+    .hero-link:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.36);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
 
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 16px;
-      animation: fade-up 550ms ease both;
+      padding: 14px 16px;
       min-width: 0;
     }
 
     .panel h2 {
       margin: 0 0 12px;
-      font-size: clamp(1.28rem, 1.7vw, 1.58rem);
-      line-height: 1.18;
-      font-family: "Rockwell", "Georgia", serif;
+      font-size: clamp(1.08rem, 1.5vw, 1.24rem);
+      line-height: 1.25;
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      font-weight: 700;
     }
 
-    .panel h3 { margin: 0 0 8px; font-size: 1rem; }
-    .subtle { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .panel h3 { margin: 0 0 8px; font-size: 0.96rem; }
+    .subtle { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .section-legend {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
 
     /* KPI cards */
     .kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-    .kpi { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: #fff; }
+    .kpi { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: #fff; }
     .kpi .label { font-size: 0.79rem; color: var(--muted); margin-bottom: 4px; }
     .kpi .value { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.1px; }
     .kpi .hint { font-size: 0.77rem; color: #667a74; margin-top: 2px; }
@@ -158,15 +235,13 @@
     /* Sticky domain bar */
     .domain-bar {
       position: sticky; top: 0; z-index: 95;
-      background: rgba(255, 254, 251, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: 0 4px 20px rgba(20,35,30,0.06);
-      padding: 10px 14px;
+      box-shadow: none;
+      padding: 12px 14px;
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
     .domain-bar-top {
       display: flex;
@@ -177,62 +252,61 @@
     }
     .domain-bar-pills { display: inline-flex; gap: 7px; flex-wrap: wrap; align-items: center; }
     .domain-bar-label {
-      font-size: 0.76rem; color: #5b6d67; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.55px; white-space: nowrap;
+      font-size: 0.82rem; color: var(--ink); font-weight: 700;
+      white-space: nowrap;
     }
     .domain-pill {
       display: inline-flex; align-items: center; gap: 0;
-      border: 1px solid #b8c8c1; border-radius: 999px;
-      padding: 5px 13px; font-size: 0.8rem; font-weight: 700;
-      color: #35423e; background: #fff; cursor: pointer;
-      transition: all 120ms ease; user-select: none; white-space: nowrap;
-      min-height: 30px;
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 6px 10px; font-size: 0.79rem; font-weight: 600;
+      color: #35423e; background: var(--panel-alt); cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+      user-select: none; white-space: nowrap;
+      min-height: 32px;
     }
-    .domain-pill:hover { border-color: #76a99a; background: #eef8f4; }
+    .domain-pill:hover { border-color: var(--line-strong); background: #ebe7de; }
     .domain-pill.active {
-      background: var(--teal); color: #fff; border-color: var(--teal);
+      background: #dfe8e3; color: #17332c; border-color: #7c8f86;
     }
-    .domain-pill.active:hover { background: #0e6960; }
+    .domain-pill.active:hover { background: #d6e1db; }
     .domain-pill.overall {
-      border-color: #88b4a8;
-      border-style: dashed;
-      background: #f7fbf9;
-      color: #1f5f54;
+      border-color: var(--line-strong);
+      background: #fff;
+      color: #1d312b;
       font-weight: 700;
     }
-    .domain-pill.overall:hover { border-color: #5f9688; background: #eef7f3; }
+    .domain-pill.overall:hover { border-color: #7c8f86; background: #f6f3ed; }
     .domain-pill.overall.active {
-      border-style: solid;
-      background: linear-gradient(180deg, #eaf6f1 0%, #deeee8 100%);
-      color: #17483f;
-      border-color: #6ea393;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+      background: #d9e4de;
+      color: #17342d;
+      border-color: #71867b;
+      box-shadow: none;
     }
     .domain-bar-sep {
       width: 1px; height: 22px; background: var(--line); flex-shrink: 0;
     }
     .domain-bar .filter-count {
-      font-size: 0.78rem; color: #5a6f67; white-space: nowrap;
+      font-size: 0.78rem; color: var(--muted); white-space: nowrap;
     }
     .domain-bar-filter-toggle {
       margin-left: auto;
       white-space: nowrap;
-      border-radius: 999px;
-      padding: 6px 14px;
+      border-radius: 8px;
+      padding: 7px 12px;
       font-size: 0.78rem;
-      font-weight: 700;
-      min-height: 30px;
+      font-weight: 600;
+      min-height: 32px;
     }
     .domain-bar-filter-toggle[aria-expanded="true"] {
-      background: #e7f4ef;
-      border-color: #6ea393;
-      color: #1f5f54;
+      background: var(--panel-alt);
+      border-color: #7f9087;
+      color: var(--ink);
     }
     .domain-bar-filters {
       display: none;
       width: 100%;
-      border-top: 1px solid #d4dfda;
-      padding-top: 9px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
       margin-top: 2px;
     }
     .domain-bar-filters[open] { display: block; }
@@ -250,34 +324,34 @@
     .filters-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 8px;
+      gap: 10px;
     }
-    label { display: grid; gap: 5px; font-size: 0.87rem; color: #394440; }
+    label { display: grid; gap: 6px; font-size: 0.82rem; color: #394440; }
     input[type="text"], select {
-      border: 1px solid #bcc9c2; border-radius: 10px; padding: 9px 10px;
-      font-size: 0.9rem; background: #fff; color: var(--ink); outline: none; width: 100%;
+      border: 1px solid var(--line-strong); border-radius: 8px; padding: 9px 10px;
+      font-size: 0.88rem; background: #fff; color: var(--ink); outline: none; width: 100%;
     }
     input[type="text"]:focus, select:focus {
-      border-color: #5aa495;
-      box-shadow: 0 0 0 2px rgba(51, 129, 112, 0.14);
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(29, 91, 80, 0.12);
     }
 
     .button-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     button {
-      border: 1px solid #25584f; background: #1d7268; color: #fff;
-      border-radius: 10px; padding: 8px 12px; font-size: 0.86rem;
-      cursor: pointer; transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      border: 1px solid #25584f; background: #25584f; color: #fff;
+      border-radius: 8px; padding: 8px 12px; font-size: 0.84rem;
+      cursor: pointer; transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     }
-    button:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(27, 82, 75, 0.2); background: #1a665e; }
-    button.alt { background: #fff; border-color: #bcc9c2; color: #30403a; box-shadow: none; }
-    button.alt:hover { background: #f4f8f6; }
+    button:hover { background: #1e4a42; border-color: #1e4a42; box-shadow: none; transform: none; }
+    button.alt { background: #fff; border-color: var(--line-strong); color: #30403a; box-shadow: none; }
+    button.alt:hover { background: var(--panel-alt); border-color: #95a39a; }
 
     .score-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
     .score-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      border-radius: 999px; border: 1px solid #cbd7d1;
-      padding: 6px 9px; font-size: 0.8rem; background: #fff; color: #32403b;
+      border-radius: 8px; border: 1px solid var(--line);
+      padding: 5px 8px; font-size: 0.78rem; background: #fff; color: #32403b;
     }
     .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
     .dot.score0 { background: var(--red); }
@@ -291,23 +365,23 @@
     }
     .org-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      border: 1px solid #d2ddd8; border-radius: 999px; background: #fff;
-      padding: 4px 10px; font-size: 0.72rem; color: #2f423c; white-space: nowrap;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      padding: 4px 8px; font-size: 0.72rem; color: #2f423c; white-space: nowrap;
       line-height: 1;
     }
     .org-chip.filter-chip {
-      appearance: none; border-radius: 999px; border: 1px solid #cad9d2;
-      background: #fff; padding: 4px 10px; font-size: 0.71rem;
+      appearance: none; border-radius: 8px; border: 1px solid var(--line);
+      background: var(--panel-alt); padding: 4px 8px; font-size: 0.71rem;
       cursor: pointer; user-select: none;
       transition: border-color 120ms ease, background 120ms ease, opacity 120ms ease;
     }
-    .org-chip.filter-chip:hover { border-color: #9bb9ae; background: #f2f8f5; }
+    .org-chip.filter-chip:hover { border-color: #94a39a; background: #ebe7de; }
     .org-chip.filter-chip.is-active {
-      border-color: #5f8f7e;
-      background: #e6f3ec;
+      border-color: #6f877b;
+      background: #dfe8e3;
       color: #21463c;
       font-weight: 700;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.55);
+      box-shadow: none;
     }
     .org-chip.filter-chip.is-muted { opacity: 0.46; }
 
@@ -317,12 +391,12 @@
       grid-template-columns: 34px minmax(170px, 260px) 1fr;
       grid-template-areas: "rank name bar";
       gap: 8px; align-items: center;
-      border-radius: 10px;
-      padding: 3px 6px;
+      border-radius: 8px;
+      padding: 1px 4px;
     }
     .stack-row.row-selected {
-      background: #eaf5f1;
-      box-shadow: inset 0 0 0 1px #9dcabf;
+      background: #e6ece8;
+      box-shadow: inset 0 0 0 1px #a7b8b0;
     }
     .stack-row.is-focused-org .name {
       color: #1d4037;
@@ -333,9 +407,9 @@
     }
     .stack-row.is-unfocused-org .name { color: #4f5f5a; }
     .stack-row.is-unfocused-org .stack-track { opacity: 0.9; }
-    .stack-rank { grid-area: rank; text-align: right; font-size: 0.8rem; font-weight: 700; color: #5b6c66; }
+    .stack-rank { grid-area: rank; text-align: right; font-size: 0.8rem; font-weight: 700; color: #5b6c66; line-height: 1; }
     .stack-row .name { grid-area: name; }
-    .stack-row .name.main-chart-name { display: inline-flex; align-items: center; gap: 7px; }
+    .stack-row .name.main-chart-name { display: inline-flex; align-items: center; gap: 7px; line-height: 1.1; }
     .stack-row .name.main-chart-name.main-chart-name-toggle {
       cursor: pointer;
       user-select: none;
@@ -357,22 +431,20 @@
       min-height: 0;
     }
     .model-avg-scope {
-      border: 1px solid #cad8d2;
-      border-radius: 999px;
-      background: #f6fbf9;
-      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-alt);
+      padding: 3px 8px;
       font-size: 0.64rem;
-      color: #436158;
+      color: var(--muted);
       font-weight: 700;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
       white-space: nowrap;
     }
     .model-avg-pill {
-      border: 1px solid #c8d8d2;
-      border-radius: 999px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
       background: #fff;
-      padding: 2px 8px;
+      padding: 3px 7px;
       font-size: 0.7rem;
       font-weight: 700;
       line-height: 1.2;
@@ -399,8 +471,8 @@
       background: #e8f4ef;
     }
     .stack-track {
-      width: 100%; height: 20px; border-radius: 999px; overflow: hidden;
-      display: flex; border: 1px solid #d1dad5; background: #edf3f0;
+      width: 100%; height: 20px; border-radius: 8px; overflow: hidden;
+      display: flex; border: 1px solid var(--line); background: #ece9e1;
     }
     .stack-seg {
       height: 100%; display: flex; align-items: center; justify-content: center;
@@ -420,8 +492,8 @@
       padding: 6px 8px; border: 1px solid #e2e8e4; text-align: center; white-space: nowrap;
     }
     .heatmap th {
-      background: #f1f6f4; font-size: 0.74rem; color: #314740;
-      text-transform: uppercase; letter-spacing: 0.3px; position: sticky; top: 0; z-index: 2;
+      background: #f2eee6; font-size: 0.74rem; color: #314740;
+      position: sticky; top: 0; z-index: 2; font-weight: 700;
     }
     .heatmap .model-col { text-align: left; font-weight: 600; color: #1d2d28; min-width: 200px; }
     .heatmap .model-col-header { text-align: left; min-width: 200px; }
@@ -435,9 +507,9 @@
       margin-top: 10px;
     }
     .domain-insight-card {
-      border: 1px solid #d6e0db;
-      border-radius: 12px;
-      background: #fbfdfc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
       padding: 10px;
       min-width: 0;
       display: grid;
@@ -467,8 +539,8 @@
       min-width: 0;
     }
     .domain-avg-row.is-overall {
-      background: #f0f8f4;
-      border-radius: 10px;
+      background: #f2efe7;
+      border-radius: 8px;
     }
     .domain-avg-row.is-active .domain-avg-label {
       color: #165147;
@@ -483,11 +555,11 @@
     .domain-avg-track {
       position: relative;
       height: 24px;
-      border: 1px solid #d3ded9;
-      border-radius: 999px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
       overflow: hidden;
       display: flex;
-      background: #edf3f0;
+      background: #ece9e1;
       min-width: 0;
     }
     .domain-avg-seg {
@@ -516,7 +588,7 @@
     /* Difficulty bars */
     .diff-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .diff-card {
-      border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff;
+      border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fff;
     }
     .diff-card h3 { margin: 0 0 4px; font-size: 0.95rem; }
     .diff-card .sub { font-size: 0.78rem; color: var(--muted); margin: 0 0 10px; }
@@ -525,12 +597,12 @@
       margin-bottom: 4px;
     }
     .diff-bar {
-      height: 14px; border-radius: 999px; background: #f1f5f2;
-      border: 1px solid #d4ddd8; overflow: hidden;
+      height: 14px; border-radius: 8px; background: #ece9e1;
+      border: 1px solid var(--line); overflow: hidden;
     }
     .diff-bar > span {
-      height: 100%; display: block; border-radius: 999px;
-      background: linear-gradient(90deg, #6dc5b2 0%, #1f9d55 100%);
+      height: 100%; display: block; border-radius: 8px;
+      background: var(--green);
       transition: width 280ms ease;
     }
     .diff-bar-val { font-size: 0.78rem; font-weight: 600; color: #294137; text-align: right; }
@@ -544,12 +616,12 @@
     }
     .token-row .name { font-size: 0.82rem; color: #22312c; display: inline-flex; align-items: center; gap: 7px; }
     .token-bar {
-      height: 16px; border-radius: 999px; overflow: hidden;
-      border: 1px solid #d4ddd8; background: #f1f5f2; display: flex;
+      height: 16px; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--line); background: #ece9e1; display: flex;
     }
-    .token-bar .completion-seg { background: #3b82f6; height: 100%; }
-    .token-bar .reasoning-seg { background: #8b5cf6; height: 100%; }
-    .token-bar .prompt-seg { background: #94a3b8; height: 100%; }
+    .token-bar .completion-seg { background: #24584d; height: 100%; }
+    .token-bar .reasoning-seg { background: #8b6c2b; height: 100%; }
+    .token-bar .prompt-seg { background: #8d9892; height: 100%; }
     .token-bar-val { font-size: 0.78rem; font-weight: 600; color: #294137; text-align: right; }
     .token-legend {
       display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; font-size: 0.8rem; color: #3b4b45;
@@ -563,19 +635,20 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 6px;
-      margin: 8px 0 6px;
-      min-height: 24px;
+      gap: 5px;
+      margin: 6px 0 4px;
+      min-height: 0;
     }
+    .chart-legend:empty { display: none; margin: 0; }
     .chart-legend-chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      border: 1px solid #d2ddd8;
-      border-radius: 999px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
       background: #fff;
       color: #30433d;
-      padding: 4px 10px;
+      padding: 4px 8px;
       font-size: 0.72rem;
       white-space: nowrap;
       line-height: 1;
@@ -587,17 +660,17 @@
       padding: 0 2px;
     }
     .chart-legend-toggle {
-      border: 1px solid #c9d7d1;
-      background: #f2faf6;
+      border: 1px solid var(--line);
+      background: var(--panel-alt);
       color: #2f443d;
-      border-radius: 999px;
-      padding: 4px 10px;
+      border-radius: 8px;
+      padding: 4px 8px;
       font-size: 0.72rem;
       line-height: 1;
       cursor: pointer;
       white-space: nowrap;
     }
-    .chart-legend-toggle:hover { background: #eaf5ef; }
+    .chart-legend-toggle:hover { background: #ebe7de; }
 
     .size-scatter-panel {
       display: flex;
@@ -606,7 +679,7 @@
     .size-scatter-copy {
       display: grid;
       gap: 8px;
-      min-height: 96px;
+      min-height: 0;
       align-content: start;
     }
     .size-scatter-copy h2,
@@ -624,34 +697,36 @@
     .reasoning-mode-switch {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      border: 1px solid #c9d7d1;
-      border-radius: 999px;
-      background: #f4faf7;
-      padding: 2px;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-alt);
+      overflow: hidden;
     }
     .reasoning-mode-btn {
       border: 0;
-      border-radius: 999px;
+      border-right: 1px solid var(--line);
       background: transparent;
       color: #365149;
-      padding: 4px 10px;
+      padding: 7px 11px;
       font-size: 0.73rem;
       font-weight: 700;
       line-height: 1;
-      min-height: 24px;
+      min-height: 32px;
       box-shadow: none;
     }
-    .reasoning-mode-btn:hover { background: #e8f3ee; transform: none; }
+    .reasoning-mode-btn:last-child { border-right: 0; }
+    .reasoning-mode-btn:hover { background: #e6e2d8; transform: none; }
     .reasoning-mode-btn.is-active {
-      background: #1d7268;
+      background: #fff;
       color: #fff;
+      color: var(--ink);
     }
 
     /* Floating tooltip for scatter plots */
     .scatter-tooltip {
       position: fixed; pointer-events: none; z-index: 1000;
-      background: rgba(30,50,44,0.94); color: #e8f5f0; border-radius: 8px;
+      background: rgba(29, 37, 33, 0.96); color: #f3f1eb; border-radius: 8px;
       padding: 7px 10px; font-size: 0.78rem; line-height: 1.4;
       box-shadow: 0 4px 14px rgba(0,0,0,0.22); white-space: nowrap;
       display: none; max-width: 320px;
@@ -672,20 +747,20 @@
     /* Technique examples */
     .tech-examples {
       margin-top: 4px; padding: 8px 10px;
-      border: 1px solid #d6e0db; border-radius: 10px; background: #f9fcfa;
+      border: 1px solid var(--line); border-radius: 10px; background: #f8f5ef;
       display: none; /* toggled via JS */
     }
     .tech-examples.open { display: block; }
     .tech-example-item {
       margin-bottom: 8px; padding: 6px 8px;
-      border: 1px solid #dbe4df; border-radius: 8px; background: #fff;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff;
     }
     .tech-example-item:last-child { margin-bottom: 0; }
     .tech-example-q { font-size: 0.82rem; font-weight: 600; color: #1d2d28; margin: 0 0 4px; }
     .tech-example-resp {
       font-size: 0.78rem; color: #233530; margin: 0;
       white-space: pre-wrap; max-height: 120px; overflow: auto;
-      border: 1px solid #e6ece9; border-radius: 6px; padding: 5px 7px; background: #fdfefd;
+      border: 1px solid #e2ddd3; border-radius: 8px; padding: 5px 7px; background: #fbfaf7;
     }
 
     /* Clickable heatmap cells */
@@ -693,12 +768,19 @@
     .heatmap td.heat-cell-click:hover { outline: 2px solid var(--teal); outline-offset: -2px; }
 
     /* Technique bar clickable */
+    #techniqueChart { display: grid; gap: 3px; }
     .tech-bar-row {
       cursor: pointer; transition: background 100ms ease, border-color 100ms ease;
-      border-radius: 8px; border: 1px solid transparent; padding: 4px 6px;
+      display: grid; grid-template-columns: 220px 1fr 58px 118px; gap: 6px; align-items: center;
+      border-radius: 8px; border: 1px solid transparent; padding: 2px 4px;
     }
-    .tech-bar-row:hover { background: #f0f6f3; border-color: #d7e4dd; }
+    .tech-bar-row:hover { background: #f2efe7; border-color: #d7d4cb; }
     .tech-bar-row:focus-visible { outline: 2px solid #6da896; outline-offset: 1px; }
+    .tech-bar-label {
+      font-size: 0.8rem; line-height: 1.1; color: #22312c; text-align: right;
+    }
+    .tech-bar-row .diff-bar { height: 12px; border-radius: 7px; }
+    .tech-bar-row .diff-bar > span { border-radius: 7px; }
     .tech-expand-hint {
       display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px;
       font-size: 0.73rem; color: #4f6660; white-space: nowrap;
@@ -710,24 +792,24 @@
     /* Domain drilldown */
     .domain-drilldown {
       margin-top: 10px; padding: 10px;
-      border: 1px solid #d2dbd6; border-radius: 10px; background: #fbfcfb;
+      border: 1px solid var(--line); border-radius: 10px; background: #faf8f2;
     }
     .domain-drilldown-close {
-      float: right; background: none; border: 1px solid #bcc9c2;
+      float: right; background: none; border: 1px solid var(--line-strong);
       border-radius: 6px; padding: 3px 8px; font-size: 0.76rem;
       cursor: pointer; color: #30403a;
     }
 
     /* Table */
-    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
     table { width: 100%; border-collapse: collapse; min-width: 1020px; }
     th, td { border-bottom: 1px solid #e2e8e4; padding: 8px 9px; text-align: left; vertical-align: top; font-size: 0.82rem; }
     th {
-      position: sticky; top: 0; z-index: 2; background: #f1f6f4;
-      font-size: 0.78rem; letter-spacing: 0.3px; color: #314740; text-transform: uppercase;
+      position: sticky; top: 0; z-index: 2; background: #f2eee6;
+      font-size: 0.78rem; color: #314740; font-weight: 700;
     }
     th.sortable { cursor: pointer; user-select: none; }
-    th.sortable:hover { background: #e8f2ee; }
+    th.sortable:hover { background: #ebe7de; }
     .sort-ind { display: inline-block; min-width: 10px; margin-left: 4px; color: #5e736b; font-size: 0.7rem; }
     tr:hover td { background: #f7faf9; }
     .model-name { font-weight: 600; color: #1d2d28; }
@@ -743,8 +825,8 @@
     .size-meta .size-main { font-weight: 700; color: #1f322d; }
     .size-meta .size-subtle { color: #647871; }
     .mini-mix {
-      height: 12px; border-radius: 999px; border: 1px solid #d7e0db;
-      background: #f1f4f3; overflow: hidden; display: flex; width: 180px;
+      height: 12px; border-radius: 8px; border: 1px solid var(--line);
+      background: #ece9e1; overflow: hidden; display: flex; width: 180px;
     }
     .mix-seg { height: 100%; }
     .mix-seg.score0 { background: var(--red); }
@@ -753,7 +835,7 @@
     .mix-seg.error { background: var(--error); }
 
     .pill {
-      display: inline-flex; align-items: center; border-radius: 999px;
+      display: inline-flex; align-items: center; border-radius: 8px;
       padding: 3px 8px; font-size: 0.75rem; border: 1px solid transparent; font-weight: 600; white-space: nowrap;
     }
     .pill.score0 { color: #7e1f1a; background: #fdecea; border-color: #efc2bd; }
@@ -762,26 +844,103 @@
     .pill.error { color: #27312e; background: #ecefee; border-color: #cdd4d1; }
 
     /* Response viewer */
+    .compare-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .compare-head h2 {
+      margin: 0;
+    }
+    .compare-share-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #31443d;
+      box-shadow: none;
+      flex: 0 0 auto;
+    }
+    .compare-share-btn:hover {
+      background: #f6f4ef;
+      border-color: #d4cec2;
+    }
+    .compare-share-btn:focus-visible {
+      outline: 2px solid rgba(40, 83, 61, 0.18);
+      outline-offset: 2px;
+    }
+    .compare-share-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .compare-share-toast {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 10px);
+      transform: translateY(-50%) translateX(-4px);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #d7ddd8;
+      background: rgba(255, 255, 255, 0.96);
+      color: #31443d;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(34, 47, 41, 0.08);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+    .compare-share-toast::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -5px;
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      border-left: 1px solid #d7ddd8;
+      border-bottom: 1px solid #d7ddd8;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .compare-share-toast.is-visible {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
     .compare-controls {
       display: grid; gap: 10px;
       grid-template-columns: 1.2fr 1fr 1fr 0.85fr;
       align-items: end; margin-bottom: 10px;
     }
     .question-context {
-      border: 1px solid var(--line); border-radius: 12px; background: #fff;
+      border: 1px solid var(--line); border-radius: 10px; background: #fff;
       padding: 10px; margin-bottom: 10px; display: grid; gap: 8px;
     }
-    .question-context .question { margin: 0; font-size: 1.2rem; font-weight: 700; line-height: 1.4; color: #1f2e29; }
+    .question-context .question { margin: 0; font-size: 1.08rem; font-weight: 700; line-height: 1.4; color: #1f2e29; }
     .question-context .q-meta { font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
     .q-meta-tag {
-      background: #f1f6f4; border: 1px solid #d0dbd6; border-radius: 8px;
+      background: var(--panel-alt); border: 1px solid var(--line); border-radius: 8px;
       padding: 3px 8px; font-size: 0.78rem;
     }
     .ab-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
     .all-responses-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
     .hidden-block { display: none !important; }
     .response-card {
-      border: 2px solid #cfd9d4; border-radius: 12px; padding: 10px;
+      border: 1px solid var(--line); border-radius: 10px; padding: 10px;
       background: #fff;
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
@@ -789,15 +948,15 @@
       gap: 8px;
       min-height: 260px;
     }
-    .response-card.score0 { border-color: #e4a6a2; background: linear-gradient(180deg, #fff7f6 0%, #fff 24%); }
-    .response-card.score1 { border-color: #e7cb89; background: linear-gradient(180deg, #fffaf0 0%, #fff 24%); }
-    .response-card.score2 { border-color: #9fd2ae; background: linear-gradient(180deg, #f2fbf5 0%, #fff 24%); }
+    .response-card.score0 { background: #fff; }
+    .response-card.score1 { background: #fff; }
+    .response-card.score2 { background: #fff; }
     .response-head { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
     .response-head .title { margin: 0; font-size: 0.88rem; color: #1d2d28; display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; }
     .response-text {
       margin: 0; white-space: pre-wrap; line-height: 1.44; font-size: 0.82rem; color: #233530;
-      max-height: 360px; overflow: auto; border: 1px solid #dbe4df;
-      border-radius: 9px; background: #fdfefd; padding: 8px;
+      max-height: 360px; overflow: auto; border: 1px solid #e1ddd3;
+      border-radius: 8px; background: #fbfaf7; padding: 8px;
     }
     .response-meta {
       font-size: 0.76rem;
@@ -815,7 +974,8 @@
       white-space: nowrap;
     }
 
-    .small-note { margin-top: 6px; color: #5b6f68; font-size: 0.8rem; }
+    .small-note { margin-top: 6px; color: var(--muted); font-size: 0.78rem; }
+    .small-note:empty { display: none; }
 
     /* Two-col layout */
     .two-col { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -827,24 +987,24 @@
     .drilldown-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
     .drilldown-list { margin-top: 10px; display: grid; gap: 10px; }
     .drilldown-item {
-      border: 1px solid #d6e0db; border-radius: 10px; background: #fff; padding: 9px; display: grid; gap: 7px;
+      border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 9px; display: grid; gap: 7px;
     }
     .drilldown-item .meta { font-size: 0.78rem; color: #506660; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .drilldown-item .question { margin: 0; font-size: 0.98rem; line-height: 1.36; color: #1b2a25; font-weight: 650; }
     .drilldown-item .response {
       margin: 0; white-space: pre-wrap; font-size: 0.82rem; line-height: 1.4; color: #223530;
-      border: 1px solid #dbe4df; border-radius: 8px; background: #fcfdfd; padding: 8px;
+      border: 1px solid #e1ddd3; border-radius: 8px; background: #fbfaf7; padding: 8px;
     }
 
     /* Model toggle */
     .model-toggle-grid {
-      margin-top: 8px; border: 1px solid #d2dbd6; border-radius: 10px; background: #fff;
+      margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; background: #fff;
       padding: 8px; max-height: 180px; overflow: auto;
       display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px;
     }
     .model-toggle-item {
       display: flex; align-items: center; gap: 8px;
-      border: 1px solid #d4dfda; border-radius: 8px; background: #f8fbfa;
+      border: 1px solid var(--line); border-radius: 8px; background: #f8f5ef;
       padding: 6px 8px; font-size: 0.78rem; color: #25453b;
     }
     .model-toggle-item input[type="checkbox"] { width: 15px; height: 15px; margin: 0; accent-color: #1d7268; cursor: pointer; flex: 0 0 auto; }
@@ -854,7 +1014,7 @@
     .judge-filter-row { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
     .judge-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      border: 1px solid #cfdbd5; border-radius: 999px; background: #f8fbfa;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff;
       color: #2c433c; padding: 4px 8px; font-size: 0.74rem;
     }
     .judge-chip input[type="checkbox"] { margin: 0; width: 13px; height: 13px; accent-color: #1d7268; cursor: pointer; flex: 0 0 auto; }
@@ -867,19 +1027,19 @@
       margin-left: 4px;
     }
     .variant-mode-toggle {
-      border-radius: 999px;
+      border-radius: 8px;
       padding: 5px 11px;
       font-size: 0.76rem;
       line-height: 1.1;
       white-space: nowrap;
     }
     .variant-mode-toggle.active {
-      background: #e7f4ef;
-      border-color: #6ea393;
-      color: #1f5f54;
+      background: #dfe8e3;
+      border-color: #71867b;
+      color: #1d3b34;
       font-weight: 700;
     }
-    .model-visibility-block { margin-top: 8px; border: 1px solid #d2dbd6; border-radius: 10px; background: #fbfcfb; padding: 6px 8px 8px; }
+    .model-visibility-block { margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; background: #faf8f2; padding: 6px 8px 8px; }
     .model-visibility-block summary {
       list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
       font-size: 0.82rem; font-weight: 600; color: #32443e; user-select: none;
@@ -891,12 +1051,12 @@
 
     .tab-bar { display: flex; gap: 4px; margin-bottom: 10px; }
     .tab-btn {
-      border: 1px solid #c8d7d0; background: #f4faf7; color: #30403a;
+      border: 1px solid var(--line); background: var(--panel-alt); color: #30403a;
       border-radius: 8px; padding: 6px 14px; font-size: 0.82rem; cursor: pointer;
       transition: background 120ms ease;
     }
-    .tab-btn:hover { background: #edf7f2; }
-    .tab-btn.active { background: #1d7268; color: #fff; border-color: #25584f; }
+    .tab-btn:hover { background: #ebe7de; }
+    .tab-btn.active { background: #fff; color: var(--ink); border-color: #7d8d84; }
 
     @media (max-width: 1100px) {
       .two-col, .diff-grid, .four-chart-grid { grid-template-columns: 1fr; }
@@ -907,17 +1067,22 @@
       .ab-grid { grid-template-columns: 1fr; }
       .stack-row { grid-template-columns: 34px 1fr; grid-template-areas: "rank name" "bar bar"; }
       .compare-controls { grid-template-columns: 1fr; }
-      .hero-subtitle { white-space: normal; }
-      .hero-meta { justify-items: start; text-align: left; width: 100%; }
-      .hero-links { justify-content: flex-start; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-meta { align-items: flex-start; justify-content: flex-start; text-align: left; width: 100%; }
+      .hero-links { align-items: flex-start; justify-content: flex-start; }
     }
     @media (max-width: 640px) {
-      .page { width: 100%; margin: 10px 0 24px; gap: 12px; }
-      .hero { border-radius: 0; padding: 14px 12px; }
-      .domain-bar { border-radius: 0; padding: 10px 12px; top: 0; }
-      .panel { border-radius: 12px; padding: 12px; }
+      .page { width: calc(100vw - 12px); margin: 6px auto 20px; gap: 10px; }
+      .hero { padding: 14px 12px; }
+      .hero-left { gap: 10px; }
+      .hero-logo { width: 52px; }
+      .domain-bar { padding: 10px 12px; top: 0; }
+      .panel { padding: 12px; }
+      .tech-bar-row { grid-template-columns: 150px 1fr 44px 18px; gap: 5px; }
+      .tech-bar-label { font-size: 0.78rem; }
+      .tech-expand-hint { font-size: 0.68rem; gap: 0; justify-content: center; }
+      .tech-expand-text { display: none; }
     }
-    @keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -926,10 +1091,13 @@
     <header class="hero">
       <div class="hero-left">
         <img class="hero-logo" src="../docs/images/bsbench.png" alt="BullshitBench logo">
-        <div>
-          <h1 id="heroTitle">BullshitBench v2</h1>
-          <p class="hero-subtitle" id="heroSubtitle">Measures models' ability to detect nonsense across 100 plausible-sounding nonsense prompts in software, medical, legal, finance, and physics.</p>
+        <div class="hero-body">
+          <div class="hero-title-row">
+            <h1 id="heroTitle">BullshitBench</h1>
+          </div>
+          <p class="hero-subtitle" id="heroSubtitle">Compare benchmark results, failure patterns, and example responses across benchmark versions.</p>
           <label class="hero-version-inline" for="benchmarkVersionSelect">
+            <span>Version</span>
             <select id="benchmarkVersionSelect" aria-label="Benchmark version">
               <option value="v2">V2 (New)</option>
               <option value="v1">V1 (Original)</option>
@@ -938,12 +1106,12 @@
         </div>
       </div>
       <div class="hero-meta">
-        <span class="hero-created">Created by Peter Gostev</span>
-        <div class="hero-links">
+        <span class="hero-created">By Peter Gostev</span>
+        <nav class="hero-links" aria-label="Project links">
           <a class="hero-link" href="https://x.com/petergostev" target="_blank" rel="noopener noreferrer">X</a>
           <a class="hero-link" href="https://www.linkedin.com/in/peter-gostev/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a class="hero-link" href="https://github.com/petergpt/bullshit-benchmark" target="_blank" rel="noopener noreferrer">GitHub</a>
-        </div>
+        </nav>
       </div>
     </header>
 
@@ -1000,12 +1168,12 @@
 
     <!-- Main Chart: Stacked Bars -->
     <section class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px;">
+      <div class="section-head">
         <div>
-          <h2 data-bench-heading="Detection Rate by Model" style="margin:0;">BullshitBench v2: Detection Rate by Model</h2>
+          <h2 data-bench-heading="Detection Rate by Model" style="margin:0;">BullshitBench: Detection Rate by Model</h2>
           <p class="subtle" style="margin-top:2px;">Percentage of nonsense questions each model detected (green), partially challenged (amber), or accepted (red).</p>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <div class="section-legend">
           <span class="score-chip"><span class="dot score2"></span>Clear Pushback</span>
           <span class="score-chip"><span class="dot score1"></span>Partial Challenge</span>
           <span class="score-chip"><span class="dot score0"></span>Accepted Nonsense</span>
@@ -1013,7 +1181,7 @@
       </div>
       <div id="modelAvgSummary" class="model-avg-summary"></div>
       <div id="orgGuide" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;"></div>
-      <div id="modelBars" style="display:grid;gap:6px;"></div>
+      <div id="modelBars" style="display:grid;gap:2px;"></div>
     </section>
 
     <!-- Drilldown (hidden by default) -->
@@ -1030,7 +1198,7 @@
 
     <!-- Domain Performance Heatmap -->
     <section class="panel" id="domainHeatmapSection">
-      <h2 data-bench-heading="Detection Rate by Domain">BullshitBench v2: Detection Rate by Domain</h2>
+      <h2 data-bench-heading="Detection Rate by Domain">BullshitBench: Detection Rate by Domain</h2>
       <p class="subtle">Green rate (%) for each model across the 5 domain groups. Darker green = higher detection. Click any cell to see example responses.</p>
       <div class="heatmap-wrap" style="max-height:520px;overflow:auto;">
         <table class="heatmap" id="domainHeatmap"></table>
@@ -1039,7 +1207,7 @@
     </section>
 
     <section class="panel" id="domainInsightsSection">
-      <h2 data-bench-heading="Domain Landscape">BullshitBench v2: Domain Landscape</h2>
+      <h2 data-bench-heading="Domain Landscape">BullshitBench: Domain Landscape</h2>
       <p class="subtle">Detection mix by domain to compare overall vs each domain at a glance.</p>
       <div class="domain-insights-grid">
         <div class="domain-insight-card">
@@ -1053,12 +1221,12 @@
 
     <!-- Release Date vs Green Score: All Orgs -->
     <section class="panel">
-      <h2 data-bench-heading="Detection Rate Over Time">BullshitBench v2: Detection Rate Over Time</h2>
-      <p class="subtle">Release date vs. green rate (clear pushback %) for all organizations. Best model per release window shown.</p>
+      <h2 data-bench-heading="Detection Rate Over Time">BullshitBench: Detection Rate Over Time</h2>
+      <p class="subtle">Release date vs. green rate (clear pushback %) for all organizations. Best model per release date shown.</p>
       <div class="launch-controls">
         <label class="launch-toggle">
           <input type="checkbox" id="launchBestOnlyToggle" checked>
-          <span>Best per release window only</span>
+          <span>Best per release date only</span>
         </label>
       </div>
       <svg id="launchAllOrgs" class="scatter-svg" viewBox="0 0 1200 480" role="img"></svg>
@@ -1068,14 +1236,14 @@
     <!-- 2x2 Chart Grid -->
     <div class="two-col">
       <section class="panel">
-        <h2 data-bench-heading="Do Newer Models Perform Better?">BullshitBench v2: Do Newer Models Perform Better?</h2>
+        <h2 data-bench-heading="Do Newer Models Perform Better?">BullshitBench: Do Newer Models Perform Better?</h2>
         <p class="subtle">Every tested model plotted by release date vs. green rate.</p>
         <div class="chart-legend" id="allModelsLegend"></div>
         <svg id="allModelsScatter" class="scatter-svg" viewBox="0 0 600 420"></svg>
       </section>
       <section class="panel">
         <div class="reasoning-panel-head">
-          <h2 id="reasoningScatterTitle" data-bench-heading="Does Thinking Harder Help?">BullshitBench v2: Does Thinking Harder Help?</h2>
+          <h2 id="reasoningScatterTitle" data-bench-heading="Does Thinking Harder Help?">BullshitBench: Does Thinking Harder Help?</h2>
           <div class="reasoning-mode-switch" role="group" aria-label="Reasoning chart mode">
             <button type="button" class="reasoning-mode-btn is-active" data-reasoning-mode="tokens">Tokens</button>
             <button type="button" class="reasoning-mode-btn" data-reasoning-mode="cost">Cost</button>
@@ -1090,7 +1258,7 @@
     <div class="two-col">
       <section class="panel size-scatter-panel">
         <div class="size-scatter-copy">
-          <h2 data-bench-heading="Do Bigger Models Perform Better?">BullshitBench v2: Do Bigger Models Perform Better?</h2>
+          <h2 data-bench-heading="Do Bigger Models Perform Better?">BullshitBench: Do Bigger Models Perform Better?</h2>
           <p class="subtle">Public total parameter counts vs. green rate. The x-axis uses a log scale so 8B through 1T remain readable.</p>
         </div>
         <div class="chart-legend" id="sizeScatterTotalLegend"></div>
@@ -1099,7 +1267,7 @@
       </section>
       <section class="panel size-scatter-panel">
         <div class="size-scatter-copy">
-          <h2 data-bench-heading="Do Active Parameters Matter?">BullshitBench v2: Do Active Parameters Matter?</h2>
+          <h2 data-bench-heading="Do Active Parameters Matter?">BullshitBench: Do Active Parameters Matter?</h2>
           <p class="subtle">Activated parameter counts from public sources vs. green rate. Dense models appear when active parameters equal total.</p>
         </div>
         <div class="chart-legend" id="sizeScatterActiveLegend"></div>
@@ -1110,7 +1278,7 @@
 
     <!-- Leaderboard -->
     <section class="panel">
-      <h2 data-bench-heading="Leaderboard">BullshitBench v2: Leaderboard</h2>
+      <h2 data-bench-heading="Leaderboard">BullshitBench: Leaderboard</h2>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;" id="orgColorKey"></div>
       <div class="table-wrap" style="max-height:600px;">
         <table>
@@ -1137,14 +1305,34 @@
 
     <!-- Technique Performance (deep-dive) -->
     <section class="panel" id="techniqueSection">
-      <h2 data-bench-heading="Detection Rate by Technique">BullshitBench v2: Detection Rate by Technique</h2>
+      <h2 data-bench-heading="Detection Rate by Technique">BullshitBench: Detection Rate by Technique</h2>
       <p class="subtle">Average detection rate across all models for each BS technique. Lower = harder for models to detect.</p>
-      <div id="techniqueChart" style="display:grid;gap:6px;"></div>
+      <div id="techniqueChart"></div>
     </section>
 
     <!-- Response Viewer -->
-    <section class="panel">
-      <h2 data-bench-heading="Response Viewer">BullshitBench v2: Response Viewer</h2>
+    <section class="panel" id="response-viewer">
+      <div class="compare-head">
+        <h2 data-bench-heading="Response Viewer">BullshitBench: Response Viewer</h2>
+        <button
+          type="button"
+          id="compareShareBtn"
+          class="compare-share-btn"
+          data-default-label="Share compare link"
+          data-copied-label="Compare link copied"
+          aria-label="Share compare link"
+          title="Share compare link"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="18" cy="5.5" r="2.75"></circle>
+            <circle cx="6" cy="12" r="2.75"></circle>
+            <circle cx="18" cy="18.5" r="2.75"></circle>
+            <path d="M8.5 10.7l6.8-3.9"></path>
+            <path d="M8.5 13.3l6.8 3.9"></path>
+          </svg>
+          <span id="compareShareToast" class="compare-share-toast" aria-live="polite">Link copied</span>
+        </button>
+      </div>
       <div class="compare-controls">
         <label><span>Question</span><select id="compareQuestion"></select></label>
         <label><span>Model A</span><select id="compareModelA"></select></label>
@@ -1177,11 +1365,12 @@ const BENCHMARK_CONFIGS = {
   v2: {
     key: "v2",
     displayLabel: "V2 (New)",
-    heroTitle: "BullshitBench v2",
+    heroTitle: "BullshitBench",
     heroSubtitle:
-      "Measures models' ability to detect nonsense across 100 plausible-sounding nonsense prompts in software, medical, legal, finance, and physics.",
+      "Compare detection rates, failure patterns, and example responses across the v2 benchmark dataset.",
     loadingLabel: "v2",
-    titlePrefix: "BullshitBench v2",
+    headingPrefix: "BullshitBench v2",
+    titlePrefix: "BullshitBench",
     questionsPaths: ["../questions.v2.json"],
     launchFallbackPath: "../data/v2/latest/model_launch_dates.csv",
     paramsFallbackPath: "../data/v2/latest/model_params.csv",
@@ -1203,11 +1392,12 @@ const BENCHMARK_CONFIGS = {
   v1: {
     key: "v1",
     displayLabel: "V1 (Original)",
-    heroTitle: "BullshitBench v1",
+    heroTitle: "BullshitBench",
     heroSubtitle:
-      "Original BullshitBench release using the v1 dataset and question set.",
+      "Explore the original v1 benchmark release, including the first dataset and question set.",
     loadingLabel: "v1",
-    titlePrefix: "BullshitBench v1",
+    headingPrefix: "BullshitBench v1",
+    titlePrefix: "BullshitBench",
     questionsPaths: ["../questions.json"],
     launchFallbackPath: "../data/latest/model_launch_dates.csv",
     paramsFallbackPath: "../data/latest/model_params.csv",
@@ -1228,13 +1418,108 @@ const BENCHMARK_CONFIGS = {
   },
 };
 
+const LOCAL_LAUNCH_OVERRIDES = [
+  {
+    model_id: "openai/gpt-5.4",
+    org: "openai",
+    launch_date: "2026-03-05",
+    evidence_url: "https://developers.openai.com/api/docs/models/gpt-5.4",
+    evidence_title: "GPT-5.4 Model | OpenAI API",
+    evidence_published_date: "2026-03-05",
+    evidence_type: "docs_model_page",
+    judge_status: "local_override",
+    notes: "Local chart override so GPT-5.4 appears in release-date charts while repo launch metadata catches up.",
+    updated_at_utc: "2026-03-08T00:00:00Z",
+  },
+];
+
 function benchmarkVersionFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const raw = String(params.get("benchmark") || params.get("version") || "").trim().toLowerCase();
   return raw === "v1" ? "v1" : "v2";
 }
+function applyCompareStateToUrl(url) {
+  if (!(url instanceof URL)) return url;
+  const qSel = document.getElementById("compareQuestion");
+  const mA = document.getElementById("compareModelA");
+  const mB = document.getElementById("compareModelB");
+  const viewSel = document.getElementById("compareViewMode");
+  if (!qSel || !viewSel) return url;
+
+  const qid = String(qSel.value || "").trim();
+  const modelA = String(mA?.value || "").trim();
+  const modelB = String(mB?.value || "").trim();
+  const viewMode = viewSel.value === "all" ? "all" : "pair";
+
+  if (qid) url.searchParams.set("q", qid);
+  else url.searchParams.delete("q");
+
+  if (viewMode === "pair" && modelA) url.searchParams.set("a", modelA);
+  else url.searchParams.delete("a");
+
+  if (viewMode === "pair" && modelB) url.searchParams.set("b", modelB);
+  else url.searchParams.delete("b");
+
+  if (viewMode === "all") url.searchParams.set("view", "all");
+  else url.searchParams.delete("view");
+
+  return url;
+}
+function compareStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const rawView = String(params.get("view") || "").trim().toLowerCase();
+  return {
+    questionId: String(params.get("q") || "").trim(),
+    modelA: String(params.get("a") || "").trim(),
+    modelB: String(params.get("b") || "").trim(),
+    viewMode: rawView === "all" ? "all" : rawView === "pair" ? "pair" : "",
+  };
+}
 function currentBenchmarkConfig() {
   return BENCHMARK_CONFIGS[S.benchmarkVersion] || BENCHMARK_CONFIGS.v2;
+}
+function mergeLaunchRowsIntoMap(targetMap, rows) {
+  if (!(targetMap instanceof Map) || !Array.isArray(rows) || !rows.length) return;
+  rows.forEach(lr => {
+    const mid = String(lr.model_id || "").trim();
+    if (mid) targetMap.set(mid, lr);
+  });
+}
+function inferLaunchRowsFromResponses(responses, launchMap) {
+  if (!Array.isArray(responses) || !(launchMap instanceof Map)) return [];
+  const inferred = new Map();
+  responses.forEach(resp => {
+    const base = String(resp.model_id || resp.request_model_id || resp.model || "")
+      .trim()
+      .replace(/@reasoning=[^@]+$/i, "");
+    if (!base || launchMap.has(base)) return;
+
+    const rawModel = resp.response_raw && typeof resp.response_raw === "object"
+      ? String(resp.response_raw.model || "").trim()
+      : "";
+    const match = rawModel.match(/-(20\d{2})(\d{2})(\d{2})$/);
+    if (!match) return;
+
+    const launchDate = `${match[1]}-${match[2]}-${match[3]}`;
+    const startedAt = String(resp.started_at_utc || "").trim();
+    const prev = inferred.get(base);
+    if (prev && prev._startedAt && (!startedAt || prev._startedAt <= startedAt)) return;
+
+    inferred.set(base, {
+      model_id: base,
+      org: String(resp.model_org || base.split("/")[0] || "").trim(),
+      launch_date: launchDate,
+      evidence_url: "",
+      evidence_title: "Inferred from dated model snapshot in benchmark responses",
+      evidence_published_date: launchDate,
+      evidence_type: "inferred_snapshot_suffix",
+      judge_status: "local_inferred",
+      notes: `Local fallback inferred from response_raw.model=${rawModel}.`,
+      updated_at_utc: new Date().toISOString(),
+      _startedAt: startedAt,
+    });
+  });
+  return [...inferred.values()].map(({ _startedAt, ...row }) => row);
 }
 function setBenchmarkInUrl(nextVersion) {
   const next = nextVersion === "v1" ? "v1" : "v2";
@@ -1242,6 +1527,43 @@ function setBenchmarkInUrl(nextVersion) {
   if (next === "v2") url.searchParams.delete("benchmark");
   else url.searchParams.set("benchmark", next);
   window.location.href = url.toString();
+}
+function syncCompareStateToUrl() {
+  if (!window.history || typeof window.history.replaceState !== "function") return;
+  const url = new URL(window.location.href);
+  applyCompareStateToUrl(url);
+  window.history.replaceState({}, "", url.toString());
+}
+function buildCompareShareUrl() {
+  const url = new URL(window.location.href);
+  applyCompareStateToUrl(url);
+  url.hash = "response-viewer";
+  return url.toString();
+}
+let compareShareResetTimer = null;
+async function copyCompareShareLink() {
+  const btn = document.getElementById("compareShareBtn");
+  const toast = document.getElementById("compareShareToast");
+  const defaultLabel = btn?.dataset.defaultLabel || "Share Compare";
+  const copiedLabel = btn?.dataset.copiedLabel || "Compare link copied";
+  const shareUrl = buildCompareShareUrl();
+  try {
+    if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") throw new Error("Clipboard unavailable");
+    await navigator.clipboard.writeText(shareUrl);
+  } catch (err) {
+    window.prompt("Copy this compare link:", shareUrl);
+  }
+  if (btn) {
+    btn.setAttribute("aria-label", copiedLabel);
+    btn.setAttribute("title", copiedLabel);
+    if (toast) toast.classList.add("is-visible");
+    window.clearTimeout(compareShareResetTimer);
+    compareShareResetTimer = window.setTimeout(() => {
+      btn.setAttribute("aria-label", defaultLabel);
+      btn.setAttribute("title", defaultLabel);
+      if (toast) toast.classList.remove("is-visible");
+    }, 1400);
+  }
 }
 
 const CATEGORY_META = {
@@ -1316,6 +1638,8 @@ const S = {
   drilldown: null, lbSort: { key: "greenRate", direction: "desc" },
   tokenSort: "total",
   techniqueSeed: Math.floor(Math.random() * 1e9),
+  compareUrlState: compareStateFromUrl(),
+  compareUrlHydrated: false,
   legendExpanded: {},
 };
 
@@ -1467,7 +1791,8 @@ function questionScopeLabel(qm) {
 
 function applyBenchmarkPresentation() {
   const cfg = currentBenchmarkConfig();
-  document.title = `${cfg.heroTitle} Explorer`;
+  const headingPrefix = cfg.headingPrefix || cfg.titlePrefix;
+  document.title = `${cfg.titlePrefix}: ${cfg.displayLabel} Viewer`;
   const heroTitle = document.getElementById("heroTitle");
   const heroSubtitle = document.getElementById("heroSubtitle");
   const versionSelect = document.getElementById("benchmarkVersionSelect");
@@ -1476,7 +1801,7 @@ function applyBenchmarkPresentation() {
   if (versionSelect && versionSelect.value !== cfg.key) versionSelect.value = cfg.key;
   document.querySelectorAll("[data-bench-heading]").forEach(el => {
     const suffix = el.getAttribute("data-bench-heading") || "";
-    el.textContent = suffix ? `${cfg.titlePrefix}: ${suffix}` : cfg.titlePrefix;
+    el.textContent = suffix ? `${headingPrefix}: ${suffix}` : headingPrefix;
   });
   const domainBar = document.getElementById("domainBar");
   const domainSection = document.getElementById("domainHeatmapSection");
@@ -1821,24 +2146,17 @@ async function loadData() {
     // (e.g., manual date fixes) are always reflected in charts.
     S.launchByModel = new Map();
     const embeddedLaunch = cfg.embeddedLaunchKey ? globalThis[cfg.embeddedLaunchKey] : null;
-    if (Array.isArray(embeddedLaunch) && embeddedLaunch.length) {
-      embeddedLaunch.forEach(lr => {
-        const mid = String(lr.model_id || "").trim();
-        if (mid) S.launchByModel.set(mid, lr);
-      });
-    }
+    mergeLaunchRowsIntoMap(S.launchByModel, embeddedLaunch);
 
     let launchText = loaded.launchText || "";
     if (!launchText) {
       launchText = await fetchTextOptional(cfg.launchFallbackPath);
     }
     if (launchText) {
-      const launchRows = parseCsv(launchText);
-      launchRows.forEach(lr => {
-        const mid = String(lr.model_id || "").trim();
-        if (mid) S.launchByModel.set(mid, lr);
-      });
+      mergeLaunchRowsIntoMap(S.launchByModel, parseCsv(launchText));
     }
+    mergeLaunchRowsIntoMap(S.launchByModel, inferLaunchRowsFromResponses(S.responses, S.launchByModel));
+    mergeLaunchRowsIntoMap(S.launchByModel, LOCAL_LAUNCH_OVERRIDES);
 
     S.paramsByModel = new Map();
     let paramsText = loaded.paramsText || "";
@@ -1857,8 +2175,16 @@ async function loadData() {
     refreshJudgeLabels();
     refreshFilters();
     renderAll();
-    // Auto-trigger random green vs red comparison on first load
-    randomGreenRed();
+    const hasCompareUrlState = Boolean(
+      S.compareUrlState?.questionId ||
+      S.compareUrlState?.modelA ||
+      S.compareUrlState?.modelB ||
+      S.compareUrlState?.viewMode
+    );
+    if (!hasCompareUrlState) {
+      // Preserve the existing random compare default for plain page loads.
+      randomGreenRed();
+    }
   } catch(e) {
     el.textContent = `Error loading data: ${e.message}`;
     console.error(e);
@@ -2371,8 +2697,8 @@ function renderTechniqueChart(filtered) {
     }).join("");
 
     return `<div>
-      <div class="tech-bar-row" data-tech="${esc(e.tech)}" role="button" tabindex="0" aria-expanded="false" aria-controls="techEx_${esc(e.tech)}" title="Click to show/hide example responses" style="display:grid;grid-template-columns:190px 1fr 64px 128px;gap:8px;align-items:center;">
-        <div style="font-size:0.82rem;color:#22312c;text-align:right;">${esc(e.label)}</div>
+      <div class="tech-bar-row" data-tech="${esc(e.tech)}" role="button" tabindex="0" aria-expanded="false" aria-controls="techEx_${esc(e.tech)}" title="Click to show/hide example responses">
+        <div class="tech-bar-label">${esc(e.label)}</div>
         <div class="diff-bar"><span style="width:${e.greenRate.toFixed(1)}%;background:${barColor};"></span></div>
         <div class="diff-bar-val">${fmtPct(e.greenRate)}</div>
         <div class="tech-expand-hint"><span class="tech-expand-chevron">▸</span><span class="tech-expand-text">Show examples</span></div>
@@ -2801,7 +3127,7 @@ function renderLaunchAllOrgs(filtered) {
   const metaEl = document.getElementById("launchAllMeta");
   if (!svg) return;
 
-  const RELEASE_WINDOW_DAYS = 3;
+  const RELEASE_WINDOW_DAYS = 0;
   const RELEASE_WINDOW_MS = RELEASE_WINDOW_DAYS * 86400000;
   const byModel2 = groupBy(filtered, modelKey);
   const rawPoints = [...byModel2.entries()].map(([, modelRows]) => {
@@ -3038,7 +3364,8 @@ function renderReasoningScatter(filtered) {
   const titleEl = document.getElementById("reasoningScatterTitle");
   const subtitleEl = document.getElementById("reasoningScatterSubtitle");
   const cfg = currentBenchmarkConfig();
-  if (titleEl) titleEl.textContent = `${cfg.titlePrefix}: ${modeCfg.headingSuffix}`;
+  const headingPrefix = cfg.headingPrefix || cfg.titlePrefix;
+  if (titleEl) titleEl.textContent = `${headingPrefix}: ${modeCfg.headingSuffix}`;
   if (subtitleEl) subtitleEl.textContent = modeCfg.subtitle;
   document.querySelectorAll("[data-reasoning-mode]").forEach(btn => {
     btn.classList.toggle("is-active", btn.getAttribute("data-reasoning-mode") === mode);
@@ -3274,28 +3601,24 @@ function paramsMetaForRow(row) {
   return S.paramsByModel.get(base) || null;
 }
 function formatModelSizeSummary(meta) {
-  if (!meta) return { display: "", title: "No public model-size metadata.", totalParamsB: null, activeParamsB: null };
+  if (!meta) return { display: "-", title: "No public model-size metadata.", totalParamsB: null, activeParamsB: null, detail: "" };
   const totalParamsB = parseMetricNumber(meta.total_params_b);
   const activeParamsB = parseMetricNumber(meta.active_params_b);
   const totalLabel = fmtParamBillions(totalParamsB);
   const activeLabel = fmtParamBillions(activeParamsB);
-  let display = totalLabel || "Unknown";
+  let display = totalLabel || "-";
   if (activeLabel && totalLabel && activeLabel !== totalLabel) display = `${activeLabel} active · ${totalLabel} total`;
   else if (activeLabel && !totalLabel) display = `${activeLabel} active`;
-  const detailBits = [];
-  if (meta.open_model_status) detailBits.push(String(meta.open_model_status).replace(/_/g, " "));
-  if (meta.license) detailBits.push(`license ${meta.license}`);
   const titleBits = [];
   if (activeLabel && totalLabel && activeLabel !== totalLabel) titleBits.push(`Active parameters: ${activeLabel}`, `Total parameters: ${totalLabel}`);
   else if (totalLabel) titleBits.push(`Model size: ${totalLabel}`);
   else if (activeLabel) titleBits.push(`Active parameters: ${activeLabel}`);
-  if (detailBits.length) titleBits.push(detailBits.join(" · "));
   return {
     display,
     title: titleBits.join(" | ") || "No public model-size metadata.",
     totalParamsB,
     activeParamsB,
-    detail: detailBits.join(" · "),
+    detail: "",
   };
 }
 function parseIsoDate(v) {
@@ -3346,7 +3669,7 @@ function renderLeaderboard(filtered) {
       model:prettyModel(sample),
       org:modelOrg(sample),
       reasoning:normReasoning(sample.model_reasoning_level),
-      sizeDisplay:sizeMeta.display || "Unknown",
+      sizeDisplay:sizeMeta.display || "-",
       sizeTitle:sizeMeta.title,
       sizeDetail:sizeMeta.detail,
       sizeTotalB:sizeMeta.totalParamsB ?? 0,
@@ -3409,6 +3732,10 @@ function renderLeaderboard(filtered) {
 
 // ====== RENDER: Response Viewer ======
 function renderCompare(filtered) {
+  const compareUrlState = S.compareUrlHydrated ? null : S.compareUrlState;
+  const viewSel = document.getElementById("compareViewMode");
+  if(compareUrlState?.viewMode) viewSel.value=compareUrlState.viewMode;
+
   // Build question options
   const qGroups = groupBy(filtered, r=>r.question_id||"");
   const qEntries = [...qGroups.entries()].map(([qid,rows])=>{
@@ -3428,7 +3755,8 @@ function renderCompare(filtered) {
     const label = parts.join(" \u00b7 ");
     return `<option value="${esc(e.qid)}">${label}</option>`;
   }).join("");
-  if(prev&&qEntries.some(e=>e.qid===prev)) qSel.value=prev;
+  if(compareUrlState?.questionId&&qEntries.some(e=>e.qid===compareUrlState.questionId)) qSel.value=compareUrlState.questionId;
+  else if(prev&&qEntries.some(e=>e.qid===prev)) qSel.value=prev;
   else if(qEntries[0]) qSel.value=qEntries[0].qid;
 
   const qid=qSel.value;
@@ -3453,9 +3781,11 @@ function renderCompare(filtered) {
   const mA=document.getElementById("compareModelA"), mB=document.getElementById("compareModelB");
   const prevA=mA.value, prevB=mB.value;
   mA.innerHTML=opts; mB.innerHTML=opts;
-  if(models.some(m=>m.key===prevA)) mA.value=prevA;
+  if(compareUrlState?.modelA&&models.some(m=>m.key===compareUrlState.modelA)) mA.value=compareUrlState.modelA;
+  else if(models.some(m=>m.key===prevA)) mA.value=prevA;
   else if(models.length>0) mA.value=models[0].key;
-  if(models.some(m=>m.key===prevB)) mB.value=prevB;
+  if(compareUrlState?.modelB&&models.some(m=>m.key===compareUrlState.modelB)) mB.value=compareUrlState.modelB;
+  else if(models.some(m=>m.key===prevB)) mB.value=prevB;
   else if(models.length>1) mB.value=models[1].key;
   else if(models.length>0) mB.value=models[0].key;
 
@@ -3465,7 +3795,7 @@ function renderCompare(filtered) {
     if(alt) mB.value=alt.key;
   }
 
-  const viewMode=document.getElementById("compareViewMode").value;
+  const viewMode=viewSel.value;
   const byKey=new Map(qRows.map(r=>[modelKey(r),r]));
   const showAll=viewMode==="all";
 
@@ -3501,6 +3831,8 @@ function renderCompare(filtered) {
     document.getElementById("cardA").innerHTML=renderCard(byKey.get(mA.value),"A \u00b7 ");
     document.getElementById("cardB").innerHTML=renderCard(byKey.get(mB.value),"B \u00b7 ");
   }
+  S.compareUrlHydrated = true;
+  syncCompareStateToUrl();
 }
 function catRank(c) { return c==="green"?3:c==="amber"?2:c==="red"?1:0; }
 
@@ -3752,6 +4084,7 @@ function bindEvents() {
   document.getElementById("randomBtn").addEventListener("click", randomGreenRed);
   document.getElementById("randomBestBtn").addEventListener("click",()=>randomRanked("best"));
   document.getElementById("randomWorstBtn").addEventListener("click",()=>randomRanked("worst"));
+  document.getElementById("compareShareBtn").addEventListener("click", copyCompareShareLink);
 }
 
 // ====== BOOTSTRAP ======
