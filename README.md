@@ -88,13 +88,14 @@ Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
 ```bash
 export OPENROUTER_API_KEY=your_key_here
 export OPENAI_API_KEY=your_openai_key_here  # required only for models routed to OpenAI
+export MINIMAX_API_KEY=your_minimax_key_here # required only for models routed to MiniMax
 export OPENAI_PROJECT=proj_xxx              # optional: force OpenAI requests to a specific project
 export OPENAI_ORGANIZATION=org_xxx          # optional: force organization context
 ```
 
 Provider routing is configured per model via `collect.model_providers` and
 `grade.model_providers` in config (default is OpenRouter), for example:
-`{"*":"openrouter","gpt-5.3":"openai"}`.
+`{"*":"openrouter","gpt-5.3":"openai","minimax/*":"minimax"}`.
 
 2. Run collection + primary judge (Claude by default):
 

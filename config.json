@@ -50,13 +50,15 @@
       "google/gemma-3-27b-it",
       "qwen/qwen3.5-397b-a17b",
       "moonshotai/kimi-k2.5",
-      "minimax/minimax-m2.5"
+      "minimax/minimax-m2.7",
+      "minimax/minimax-m2.7-highspeed"
     ],
     "models_file": "",
     "model_providers": {
       "*": "openrouter",
       "openai/gpt-5.4-mini": "openai",
-      "openai/gpt-5.4-nano": "openai"
+      "openai/gpt-5.4-nano": "openai",
+      "minimax/*": "minimax"
     },
     "num_runs": 1,
     "parallelism": 12,
@@ -93,7 +95,8 @@
       "z-ai/glm-5": ["none", "high"],
       "qwen/qwen3.5-397b-a17b": ["none", "high"],
       "moonshotai/kimi-k2.5": ["none", "high"],
-      "minimax/minimax-m2.5": ["low", "high"]
+      "minimax/minimax-m2.7": ["none", "high"],
+      "minimax/minimax-m2.7-highspeed": ["none", "high"]
     },
     "shuffle_tasks": true
   },
