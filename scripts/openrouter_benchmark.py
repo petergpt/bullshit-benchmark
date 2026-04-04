@@ -65,11 +65,13 @@ MODEL_PROVIDER_ALIASES: dict[str, str] = {
     "openrouter": "openrouter",
     "or": "openrouter",
     "openai": "openai",
+    "minimax": "minimax",
 }
 
 MODEL_PROVIDER_VALUES: tuple[str, ...] = (
     "openrouter",
     "openai",
+    "minimax",
 )
 
 DEFAULT_MODEL_PROVIDER = "openrouter"
@@ -2195,6 +2197,10 @@ class OpenAIAPIError(ProviderAPIError):
     """Errors from OpenAI Responses API calls."""
 
 
+class MiniMaxAPIError(ProviderAPIError):
+    """Errors from MiniMax chat/completions calls."""
+
+
 class OpenRouterClient:
     def __init__(self, api_key: str, timeout_seconds: int) -> None:
         if timeout_seconds < 1:
@@ -2434,6 +2440,134 @@ class OpenAIResponsesClient:
             except Exception as exc:  # pylint: disable=broad-except
                 last_error = RuntimeError(
                     f"OpenAI Responses call failed (attempt {attempt}/{retries}): {exc}"
+                )
+
+            if attempt < retries:
+                time.sleep(compute_retry_delay_seconds(attempt, retry_after_header))
+
+        assert last_error is not None
+        raise last_error
+
+
+def _minimax_model_id(model: str) -> str:
+    """Strip the ``minimax/`` namespace prefix if present."""
+    cleaned = str(model).strip()
+    if cleaned.startswith("minimax/"):
+        _, remainder = cleaned.split("/", 1)
+        if remainder:
+            return remainder
+    return cleaned
+
+
+def _minimax_clamp_temperature(temperature: float | None) -> float | None:
+    """MiniMax requires temperature in the open interval (0.0, 1.0]."""
+    if temperature is None:
+        return None
+    return max(0.01, min(float(temperature), 1.0))
+
+
+def _strip_think_tags(text: str) -> str:
+    """Remove ``<think>…</think>`` blocks that MiniMax M2.5+ may emit."""
+    return re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
+
+
+class MiniMaxClient:
+    """Client for the MiniMax OpenAI-compatible chat/completions API."""
+
+    def __init__(self, api_key: str, timeout_seconds: int) -> None:
+        if timeout_seconds < 1:
+            raise ValueError("timeout_seconds must be >= 1")
+        self.api_key = api_key
+        self.timeout_seconds = timeout_seconds
+        self.base_url = "https://api.minimax.io/v1/chat/completions"
+
+    def chat(
+        self,
+        *,
+        model: str,
+        messages: list[dict[str, str]],
+        temperature: float | None,
+        max_tokens: int,
+        retries: int,
+        extra_payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "model": _minimax_model_id(model),
+            "messages": messages,
+        }
+        clamped_temp = _minimax_clamp_temperature(temperature)
+        if clamped_temp is not None:
+            payload["temperature"] = clamped_temp
+        if max_tokens > 0:
+            payload["max_tokens"] = max_tokens
+        if extra_payload:
+            # MiniMax supports reasoning via the ``reasoning`` key (same
+            # schema as OpenRouter).  Provider-specific keys like
+            # ``provider`` are silently dropped.
+            for key, value in extra_payload.items():
+                if key in {"provider"}:
+                    continue
+                payload[key] = value
+        encoded = json.dumps(payload).encode("utf-8")
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        if retries < 1:
+            raise ValueError("retries must be >= 1")
+
+        last_error: Exception | None = None
+        for attempt in range(1, retries + 1):
+            retry_after_header: str | None = None
+            retry_after_seconds: float | None = None
+            request = urllib.request.Request(
+                self.base_url,
+                data=encoded,
+                headers=headers,
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout_seconds) as resp:
+                    raw = resp.read().decode("utf-8")
+                parsed = json.loads(raw)
+                if not isinstance(parsed, dict):
+                    raise RuntimeError("MiniMax returned non-object JSON.")
+                # Strip <think>…</think> blocks from the response text so
+                # that internal reasoning traces do not pollute benchmark
+                # answers or judge inputs.
+                choices = parsed.get("choices")
+                if isinstance(choices, list):
+                    for choice in choices:
+                        if not isinstance(choice, dict):
+                            continue
+                        msg = choice.get("message")
+                        if isinstance(msg, dict) and isinstance(msg.get("content"), str):
+                            msg["content"] = _strip_think_tags(msg["content"])
+                return parsed
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="ignore")
+                retry_after_header = exc.headers.get("Retry-After") if exc.headers else None
+                retry_after_seconds = parse_retry_after_seconds(retry_after_header)
+                retryable = is_retryable_http_status(exc.code)
+                last_error = MiniMaxAPIError(
+                    f"HTTP {exc.code} from MiniMax (attempt {attempt}/{retries})"
+                    f"{' [retryable]' if retryable else ' [non-retryable]'}: {detail}"
+                    + (
+                        f" (retry_after_seconds={retry_after_seconds})"
+                        if retry_after_seconds is not None
+                        else ""
+                    ),
+                    status_code=exc.code,
+                    retryable=retryable,
+                    retry_after_seconds=retry_after_seconds,
+                )
+                if not retryable:
+                    raise last_error from exc
+            except Exception as exc:  # pylint: disable=broad-except
+                last_error = RuntimeError(
+                    f"MiniMax call failed (attempt {attempt}/{retries}): {exc}"
                 )
 
             if attempt < retries:
@@ -3015,6 +3149,17 @@ def run_collect(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        if "minimax" in providers_in_use:
+            minimax_key = os.getenv("MINIMAX_API_KEY", "").strip()
+            if not minimax_key:
+                raise RuntimeError(
+                    "MINIMAX_API_KEY is required for models routed to minimax "
+                    "unless --dry-run is set."
+                )
+            clients["minimax"] = MiniMaxClient(
+                api_key=minimax_key,
+                timeout_seconds=args.timeout_seconds,
             )
 
     started = time.perf_counter()
@@ -4114,6 +4259,17 @@ def run_grade(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        elif judge_provider == "minimax":
+            minimax_key = os.getenv("MINIMAX_API_KEY", "").strip()
+            if not minimax_key:
+                raise RuntimeError(
+                    "MINIMAX_API_KEY is required for judge models routed to minimax "
+                    "unless --dry-run is set."
+                )
+            clients["minimax"] = MiniMaxClient(
+                api_key=minimax_key,
+                timeout_seconds=args.timeout_seconds,
             )
 
     started = time.perf_counter()
