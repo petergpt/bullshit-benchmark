@@ -173,6 +173,7 @@ aggregate_out = output_dir / "aggregate.jsonl"
 collection_stats_out = output_dir / "collection_stats.json"
 panel_summary_out = output_dir / "panel_summary.json"
 aggregate_summary_out = output_dir / "aggregate_summary.json"
+recent_additions_out = output_dir / "recent_additions.json"
 model_launch_out = output_dir / "model_launch_dates.csv"
 model_params_out = output_dir / "model_params.csv"
 
@@ -302,6 +303,20 @@ def write_jsonl(path: pathlib.Path, rows):
         encoding="utf-8",
     )
 
+def slim_published_response_rows(rows):
+    slimmed = []
+    for row in rows:
+        slim = dict(row)
+        raw = slim.get("response_raw")
+        if isinstance(raw, dict):
+            raw_model = str(raw.get("model", "")).strip()
+            if raw_model and not str(slim.get("response_model_snapshot", "")).strip():
+                slim["response_model_snapshot"] = raw_model
+        slim.pop("response_raw", None)
+        slim.pop("request_messages", None)
+        slimmed.append(slim)
+    return slimmed
+
 def merge_by_sample_id(existing_rows, incoming_rows):
     merged = []
     index = {}
@@ -327,6 +342,17 @@ def merge_by_sample_id(existing_rows, incoming_rows):
         merged.append(row)
         added += 1
     return merged, added, replaced
+
+def collect_model_sets(rows):
+    models = set()
+    model_bases = set()
+    for row in rows:
+        model = str(row.get("model", "")).strip()
+        if not model:
+            continue
+        models.add(model)
+        model_bases.add(re.sub(r"@reasoning=[^@]+$", "", model))
+    return models, model_bases
 
 def disagreement_count(rows):
     count = 0
@@ -368,6 +394,7 @@ if mode == "supplemental":
 else:
     merged_responses = incoming_responses
     merged_aggregate_rows = incoming_aggregate_rows
+    existing_aggregate_rows = []
     responses_added = len(incoming_responses)
     responses_replaced = 0
     aggregate_added = len(incoming_aggregate_rows)
@@ -382,6 +409,38 @@ spec.loader.exec_module(module)
 
 for row in merged_responses:
     module.enrich_collect_record_metrics(row)
+
+merged_responses = slim_published_response_rows(merged_responses)
+
+incoming_model_keys, incoming_model_bases = collect_model_sets(incoming_aggregate_rows)
+existing_model_keys, existing_model_bases = collect_model_sets(existing_aggregate_rows)
+recent_additions_note = "Exact model variants newly added in the most recent publish."
+if mode == "replace":
+    recent_model_keys = sorted(incoming_model_keys)
+    recent_model_bases = sorted(incoming_model_bases)
+else:
+    recent_model_keys = sorted(model for model in incoming_model_keys if model not in existing_model_keys)
+    recent_model_bases = sorted(model for model in incoming_model_bases if model not in existing_model_bases)
+    if not recent_model_keys and not recent_model_bases:
+        existing_recent = load_stats_if_exists(recent_additions_out)
+        preserved_model_keys = (
+            sorted({str(v).strip() for v in existing_recent.get("models", []) if str(v).strip()})
+            if isinstance(existing_recent.get("models"), list)
+            else []
+        )
+        preserved_model_bases = (
+            sorted({str(v).strip() for v in existing_recent.get("model_bases", []) if str(v).strip()})
+            if isinstance(existing_recent.get("model_bases"), list)
+            else []
+        )
+        if preserved_model_keys or preserved_model_bases:
+            recent_model_keys = preserved_model_keys
+            recent_model_bases = preserved_model_bases
+            recent_additions_note = "Exact model variants preserved from the prior publish because this refresh replaced rows without introducing new models."
+        elif aggregate_added == 0 and aggregate_replaced > 0 and incoming_aggregate_rows:
+            recent_model_keys = sorted(incoming_model_keys)
+            recent_model_bases = sorted(incoming_model_bases)
+            recent_additions_note = "Exact model variants included in the incoming run payload. This publish refreshed metadata without adding new rows to the dataset."
 
 incoming_collection_stats = load_json(collection_stats_in)
 existing_collection_stats = (
@@ -508,6 +567,18 @@ write_json(collection_stats_out, collection_stats)
 write_json(panel_summary_out, panel_summary)
 write_json(aggregate_summary_out, aggregate_summary)
 write_jsonl(aggregate_out, merged_aggregate_rows)
+write_json(
+    recent_additions_out,
+    {
+        "generated_at_utc": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "publish_mode": mode,
+        "models": recent_model_keys,
+        "model_bases": recent_model_bases,
+        "model_count": len(recent_model_keys),
+        "model_base_count": len(recent_model_bases),
+        "notes": recent_additions_note,
+    },
+)
 
 if model_launch_canonical.exists():
     model_launch_out.write_text(model_launch_canonical.read_text(encoding="utf-8"), encoding="utf-8")
@@ -738,7 +809,8 @@ cat > "${OUTPUT_DIR}/manifest.json" <<EOF
     "collection_stats_file": "${OUTPUT_DIR}/collection_stats.json",
     "panel_summary_file": "${OUTPUT_DIR}/panel_summary.json",
     "aggregate_summary_file": "${OUTPUT_DIR}/aggregate_summary.json",
-    "aggregate_rows_file": "${OUTPUT_DIR}/aggregate.jsonl"
+    "aggregate_rows_file": "${OUTPUT_DIR}/aggregate.jsonl",
+    "recent_additions_file": "${OUTPUT_DIR}/recent_additions.json"
   },
   "counts": {
     "responses_rows": ${responses_count},

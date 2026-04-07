@@ -91,6 +91,30 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 20px;
+    }
+    .hero-badges:empty { display: none; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .hero-badge-new {
+      color: #e6f5ee;
+      background: rgba(64, 145, 104, 0.22);
+      border: 1px solid rgba(164, 219, 189, 0.28);
+    }
     .hero-version-inline {
       display: inline-flex;
       align-items: center;
@@ -258,6 +282,44 @@
     .hero-link:focus-visible {
       outline: 2px solid rgba(255, 255, 255, 0.36);
       outline-offset: 2px;
+    }
+    .model-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-transform: uppercase;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .model-badge-new {
+      color: #1b6242;
+      background: #e6f4ed;
+      border: 1px solid #b9dcca;
+    }
+    .model-badge-new.model-badge-dot {
+      width: 9px;
+      height: 9px;
+      min-width: 9px;
+      padding: 0;
+      border-radius: 999px;
+      background: #42a26f;
+      border-color: #246847;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92);
+      vertical-align: middle;
+      flex: 0 0 auto;
+    }
+    .model-badge-new.is-compact {
+      margin-left: 6px;
+    }
+    .model-badge-new.model-badge-dot.is-compact {
+      width: 8px;
+      height: 8px;
+      min-width: 8px;
     }
 
     .panel {
@@ -513,7 +575,7 @@
     /* Stacked bar chart */
     .stack-row {
       display: grid;
-      grid-template-columns: 34px minmax(170px, 260px) 1fr;
+      grid-template-columns: 34px minmax(240px, 360px) minmax(0, 1fr);
       grid-template-areas: "rank name bar";
       gap: 8px; align-items: center;
       border-radius: 8px;
@@ -556,12 +618,18 @@
     .stack-row.is-unfocused-org .stack-track { opacity: 0.9; }
     .stack-rank { grid-area: rank; text-align: right; font-size: 0.8rem; font-weight: 700; color: #5b6c66; line-height: 1; position: relative; z-index: 1; }
     .stack-row .name { grid-area: name; }
-    .stack-row .name.main-chart-name { display: inline-flex; align-items: center; gap: 7px; line-height: 1.1; position: relative; z-index: 1; }
+    .stack-row .name.main-chart-name { display: inline-flex; align-items: center; gap: 7px; line-height: 1.1; position: relative; z-index: 1; min-width: 0; }
     .stack-row .name.main-chart-name.main-chart-name-toggle {
       cursor: pointer;
       user-select: none;
       border-radius: 6px;
       padding: 1px 2px;
+    }
+    .stack-row .name.main-chart-name .chart-model-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .stack-row.row-selected .stack-rank {
       color: rgba(255,255,255,0.96);
@@ -930,6 +998,7 @@
     /* Table */
     .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
     table { width: 100%; border-collapse: collapse; min-width: 1020px; }
+    .leaderboard-table { min-width: 1280px; }
     th, td { border-bottom: 1px solid #e2e8e4; padding: 8px 9px; text-align: left; vertical-align: top; font-size: 0.82rem; }
     th {
       position: sticky; top: 0; z-index: 2; background: #f2eee6;
@@ -939,7 +1008,17 @@
     th.sortable:hover { background: #ebe7de; }
     .sort-ind { display: inline-block; min-width: 10px; margin-left: 4px; color: #5e736b; font-size: 0.7rem; }
     tr:hover td { background: #f7faf9; }
-    .model-name { font-weight: 600; color: #1d2d28; }
+    .leaderboard-table th:nth-child(2),
+    .leaderboard-table td:nth-child(2) { min-width: 340px; }
+    .model-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      font-weight: 600;
+      color: #1d2d28;
+    }
     .size-meta {
       display: inline-flex;
       align-items: center;
@@ -1236,6 +1315,7 @@
             </label>
           </div>
           <p class="hero-subtitle" id="heroSubtitle">Compare benchmark results, failure patterns, and example responses across benchmark versions.</p>
+          <div id="heroBadges" class="hero-badges" aria-live="polite"></div>
         </div>
       </div>
       <div class="hero-meta">
@@ -1426,7 +1506,7 @@
       <h2 data-bench-heading="Leaderboard">BullshitBench: Leaderboard</h2>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;" id="orgColorKey"></div>
       <div class="table-wrap" style="max-height:600px;">
-        <table>
+        <table class="leaderboard-table">
           <thead id="lbHead">
             <tr>
               <th class="sortable" data-key="rank">Rank <span class="sort-ind" data-ind="rank"></span></th>
@@ -1639,9 +1719,12 @@ function inferLaunchRowsFromResponses(responses, launchMap) {
       .replace(/@reasoning=[^@]+$/i, "");
     if (!base || launchMap.has(base)) return;
 
-    const rawModel = resp.response_raw && typeof resp.response_raw === "object"
-      ? String(resp.response_raw.model || "").trim()
-      : "";
+    const rawModel = String(resp.response_model_snapshot || "").trim()
+      || (
+        resp.response_raw && typeof resp.response_raw === "object"
+          ? String(resp.response_raw.model || "").trim()
+          : ""
+      );
     const match = rawModel.match(/-(20\d{2})(\d{2})(\d{2})$/);
     if (!match) return;
 
@@ -1776,6 +1859,7 @@ const S = {
   benchmarkMeta: null,
   rows: [], filteredRows: [], responses: [], aggregateRows: [],
   questionMap: new Map(), usageByModel: new Map(), paramsByModel: new Map(),
+  recentAdditionModels: new Set(), recentAdditionBases: new Set(), recentAdditionMeta: null,
   hiddenModels: new Set(), selectedMainChartModels: new Set(), selectedJudges: new Set([1,2,3]),
   selectedScatterPoints: {},
   modelChartFocusOrg: "all",
@@ -1874,10 +1958,16 @@ function normReasoning(v) { const r=String(v||"none").toLowerCase(); return r===
 
 const WORD_ALIAS = { gpt:"GPT", oss:"OSS", ai:"AI", it:"IT", glm:"GLM" };
 function titleWord(t) { if(!t) return ""; const l=t.toLowerCase(); return WORD_ALIAS[l]||t.charAt(0).toUpperCase()+t.slice(1); }
+function stripDisplayModelSuffix(value) {
+  return String(value || "").replace(/:free(?=@|$)/gi, "");
+}
+function stripReasoningSuffix(value) {
+  return String(value || "").replace(/@reasoning=[^@]+$/i, "");
+}
 function rawModelName(r) {
-  if (r?.model_name) return r.model_name;
+  if (r?.model_name) return stripDisplayModelSuffix(r.model_name);
   const m=String(r?.model||""), s=m.indexOf("/"), tail=s>=0?m.slice(s+1):m, a=tail.indexOf("@");
-  return a>=0?tail.slice(0,a):tail;
+  return stripDisplayModelSuffix(a>=0?tail.slice(0,a):tail);
 }
 function prettyModel(r) {
   const raw=rawModelName(r).replace(/_/g,"-"), tok=raw.split("-").filter(Boolean);
@@ -1892,6 +1982,14 @@ function prettyModel(r) {
   const mapped=tok.map(titleWord);
   if(mapped[0]==="GPT"&&tok[1]&&/^\d/.test(tok[1])) mapped.splice(0,2,`GPT-${tok[1]}`);
   return mapped.join(" ")+suf;
+}
+function isRecentAdditionModelKey(modelKeyValue) {
+  return S.recentAdditionModels instanceof Set && S.recentAdditionModels.has(String(modelKeyValue || "").trim());
+}
+function renderRecentBadgeHtml(modelKeyValue, compact = false) {
+  if (!isRecentAdditionModelKey(modelKeyValue)) return "";
+  const compactClass = compact ? " is-compact" : "";
+  return `<span class="model-badge model-badge-new model-badge-dot${compactClass}" title="Added in the most recent publish" aria-label="Added in the most recent publish" role="img"></span>`;
 }
 const OPENAI_RESPONSE_PRICING_USD_PER_MILLION = Object.freeze({
   "openai/gpt-5.4-mini": Object.freeze({ input: 0.75, cachedInput: 0.075, output: 4.5 }),
@@ -2297,6 +2395,7 @@ async function loadDatasetCandidate(source) {
   const aggText = source.supportsAggregate === false ? "" : await fetchTextOptional(`${source.basePath}/aggregate.jsonl`);
   const panel = source.supportsPanelSummary === false ? null : await fetchJsonOptional(`${source.basePath}/panel_summary.json`);
   const summary = source.supportsAggregate === false ? null : await fetchJsonOptional(`${source.basePath}/aggregate_summary.json`);
+  const recentAdditions = await fetchJsonOptional(`${source.basePath}/recent_additions.json`);
   const launchText = source.supportsLaunchMetadata === false ? "" : await fetchTextOptional(`${source.basePath}/model_launch_dates.csv`);
   const paramsText = source.supportsModelParams === false ? "" : await fetchTextOptional(`${source.basePath}/model_params.csv`);
   const gradeText = source.gradePath ? await fetchTextOptional(source.gradePath) : "";
@@ -2314,7 +2413,7 @@ async function loadDatasetCandidate(source) {
     mode = "responses_only";
   }
 
-  return { source, responses, stats, panel, summary, launchText, paramsText, aggregateRows, mode };
+  return { source, responses, stats, panel, summary, recentAdditions, launchText, paramsText, aggregateRows, mode };
 }
 
 // ====== DATA LOADING ======
@@ -2353,6 +2452,17 @@ async function loadData() {
     S.collectionStats = loaded.stats;
     S.panelSummary = loaded.panel || {};
     S.aggregateSummary = loaded.summary || {};
+    S.recentAdditionMeta = loaded.recentAdditions || {};
+    S.recentAdditionModels = new Set(
+      Array.isArray(S.recentAdditionMeta.models)
+        ? S.recentAdditionMeta.models.map(v => String(v || "").trim()).filter(Boolean)
+        : []
+    );
+    S.recentAdditionBases = new Set(
+      Array.isArray(S.recentAdditionMeta.model_bases)
+        ? S.recentAdditionMeta.model_bases.map(v => String(v || "").trim()).filter(Boolean)
+        : []
+    );
     S.datasetMeta = { sourceName: loaded.source.name, basePath: loaded.source.basePath, mode: loaded.mode };
 
     // Build question metadata map (id -> {domain_group, difficulty, difficulty_label, technique})
@@ -2622,7 +2732,7 @@ function renderModelToggles() {
   const visible=infos.filter(i=>!q||i.label.toLowerCase().includes(q));
   document.getElementById("modelToggleGrid").innerHTML=visible.map(i=>{
     const hidden=S.hiddenModels.has(i.key);
-    return `<label class="model-toggle-item ${hidden?"hidden":""}"><input type="checkbox" data-mk="${esc(i.key)}" ${hidden?"":"checked"}><span>${esc(i.label)}</span></label>`;
+    return `<label class="model-toggle-item ${hidden?"hidden":""}"><input type="checkbox" data-mk="${esc(i.key)}" ${hidden?"":"checked"}><span>${esc(i.label)}${renderRecentBadgeHtml(i.key, true)}</span></label>`;
   }).join("");
 }
 function collectModelInfos(rows) {
@@ -2642,7 +2752,21 @@ function groupBy(rows,fn) { const m=new Map(); rows.forEach(r=>{const k=fn(r);if
 // ====== RENDER: KPIs ======
 function renderKpis(_filtered) {}
 
-function renderHeroBadges() {}
+function renderHeroBadges() {
+  const el = document.getElementById("heroBadges");
+  if (!el) return;
+  const modelCount = S.recentAdditionBases instanceof Set ? S.recentAdditionBases.size : 0;
+  const variantCount = S.recentAdditionModels instanceof Set ? S.recentAdditionModels.size : 0;
+  if (!modelCount && !variantCount) {
+    el.innerHTML = "";
+    return;
+  }
+  const label = modelCount === 1 ? "1 new model" : `${modelCount} new models`;
+  const title = variantCount && variantCount !== modelCount
+    ? `${modelCount} base models / ${variantCount} benchmark entries added in the most recent publish`
+    : `${label} added in the most recent publish`;
+  el.innerHTML = `<span class="hero-badge hero-badge-new" title="${esc(title)}" aria-label="${esc(title)}">${esc(label)}</span>`;
+}
 
 // ====== RENDER: Org guide ======
 function renderOrgGuide(rows) {
@@ -2707,7 +2831,7 @@ function renderModelBars(modelChartRows) {
     const focusClass = focusOrg==="all" ? "" : (r.org===focusOrg ? " is-focused-org" : " is-unfocused-org");
     return `<div class="stack-row${focusClass}${rowSelectedClass}">
       <div class="stack-rank">${i+1}</div>
-      <div class="name main-chart-name main-chart-name-toggle" role="button" tabindex="0" aria-pressed="${isRowSelected ? "true" : "false"}" data-mk="${esc(r.key)}"><span class="org-dot" style="background:${orgColor(r.org)};"></span><span>${esc(r.label)}</span></div>
+      <div class="name main-chart-name main-chart-name-toggle" role="button" tabindex="0" aria-pressed="${isRowSelected ? "true" : "false"}" data-mk="${esc(r.key)}" title="${esc(r.label)}"><span class="org-dot" style="background:${orgColor(r.org)};"></span><span class="chart-model-label">${esc(r.label)}</span>${renderRecentBadgeHtml(r.key)}</div>
       <div class="stack-track">
         <span class="stack-seg green${gs}" data-mk="${esc(r.key)}" data-cat="green" style="width:${r.greenRate.toFixed(3)}%;" title="Green ${r.greenRate.toFixed(1)}%"><span class="seg-label">${esc(segLabel(r.greenRate))}</span></span>
         <span class="stack-seg amber${as}" data-mk="${esc(r.key)}" data-cat="amber" style="width:${r.amberRate.toFixed(3)}%;" title="Amber ${r.amberRate.toFixed(1)}%"><span class="seg-label">${esc(segLabel(r.amberRate))}</span></span>
@@ -4122,7 +4246,7 @@ function renderLeaderboard(filtered) {
     const rl=r.reasoning&&r.reasoning!=="none"?r.reasoning.charAt(0).toUpperCase()+r.reasoning.slice(1):"None";
     return `<tr>
       <td>${r.rank}</td>
-      <td><span class="model-name" style="display:inline-flex;align-items:center;gap:6px;"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(r.model)}</span></td>
+      <td><span class="model-name" title="${esc(r.model)}"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(r.model)}${renderRecentBadgeHtml(r.mk)}</span></td>
       <td><span class="org-chip"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(orgName(r.org))}</span></td>
       <td>${esc(rl)}</td>
       <td title="${esc(r.sizeTitle)}"><span class="size-meta"><span class="size-main">${esc(r.sizeDisplay)}</span>${r.sizeDetail?`<span class="size-subtle">${esc(r.sizeDetail)}</span>`:""}</span></td>

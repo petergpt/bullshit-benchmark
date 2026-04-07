@@ -33,7 +33,7 @@ import urllib.error
 import urllib.request
 from collections import defaultdict, deque
 from email.utils import parsedate_to_datetime
-from typing import Any
+from typing import Any, cast
 
 
 DEFAULT_RESPONSE_SYSTEM_PROMPT = "You are a helpful assistant."
@@ -267,6 +267,7 @@ COLLECT_DEFAULTS: dict[str, Any] = {
     "models": "",
     "models_file": "",
     "model_providers": "",
+    "model_request_overrides": "",
     "output_dir": "runs",
     "run_id": "",
     "num_runs": 1,
@@ -442,6 +443,15 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Optional JSON object mapping model IDs (or wildcard patterns like "
             "'*' and 'openai/*') to provider names (openrouter/openai)."
+        ),
+    )
+    collect.add_argument(
+        "--model-request-overrides",
+        default="",
+        help=(
+            "Optional JSON object mapping model IDs (or wildcard patterns like "
+            "'*' and 'google/*') to request override objects merged into the "
+            "provider payload for matching collect requests."
         ),
     )
     collect.add_argument("--config", default="config.json")
@@ -1030,6 +1040,54 @@ def parse_model_providers(raw_value: Any, *, field_name: str) -> dict[str, str]:
     return providers
 
 
+def parse_model_request_overrides(
+    raw_value: Any, *, field_name: str
+) -> dict[str, dict[str, Any]]:
+    if raw_value in ("", None):
+        return {}
+
+    parsed: Any
+    if isinstance(raw_value, str):
+        try:
+            parsed = json.loads(raw_value)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"{field_name} must be a JSON object string.") from exc
+    elif isinstance(raw_value, dict):
+        parsed = raw_value
+    else:
+        raise ValueError(
+            f"{field_name} must be empty, a JSON object string, or a JSON object."
+        )
+
+    if not isinstance(parsed, dict):
+        raise ValueError(f"{field_name} must decode to a JSON object.")
+
+    overrides: dict[str, dict[str, Any]] = {}
+    for raw_model, raw_override in parsed.items():
+        model_key = str(raw_model).strip()
+        if not model_key:
+            raise ValueError(f"{field_name} contains an empty model key.")
+        if not isinstance(raw_override, dict):
+            raise ValueError(
+                f"{field_name} override for model '{model_key}' must be a JSON object."
+            )
+        overrides[model_key] = copy.deepcopy(raw_override)
+    return overrides
+
+
+def merge_nested_dicts(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
+    merged = copy.deepcopy(base)
+    for key, value in overlay.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = merge_nested_dicts(
+                cast(dict[str, Any], merged[key]),
+                cast(dict[str, Any], value),
+            )
+        else:
+            merged[key] = copy.deepcopy(value)
+    return merged
+
+
 def resolve_model_provider(model_id: str, provider_overrides: dict[str, str]) -> str:
     if model_id in provider_overrides:
         return provider_overrides[model_id]
@@ -1051,6 +1109,34 @@ def resolve_model_provider(model_id: str, provider_overrides: dict[str, str]) ->
         return provider_overrides["*"]
 
     return DEFAULT_MODEL_PROVIDER
+
+
+def resolve_model_request_overrides(
+    model_id: str,
+    request_overrides_by_model: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    merged: dict[str, Any] = {}
+
+    wildcard_override = request_overrides_by_model.get("*")
+    if isinstance(wildcard_override, dict):
+        merged = merge_nested_dicts(merged, wildcard_override)
+
+    prefix_matches: list[tuple[int, dict[str, Any]]] = []
+    for key, override in request_overrides_by_model.items():
+        if not key.endswith("/*"):
+            continue
+        prefix = key[:-1]  # keep trailing slash for strict namespace matching
+        if model_id.startswith(prefix):
+            prefix_matches.append((len(prefix), override))
+
+    for _, override in sorted(prefix_matches, key=lambda item: item[0]):
+        merged = merge_nested_dicts(merged, override)
+
+    exact_override = request_overrides_by_model.get(model_id)
+    if isinstance(exact_override, dict):
+        merged = merge_nested_dicts(merged, exact_override)
+
+    return merged
 
 
 def lookup_openai_benchmark_profile(model_id: str) -> dict[str, Any] | None:
@@ -1082,10 +1168,14 @@ def build_model_variants(
     default_effort: str | None,
     per_model_efforts: dict[str, list[str]],
     model_providers: dict[str, str],
+    model_request_overrides: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     variants: list[dict[str, Any]] = []
     for model in models:
         provider = resolve_model_provider(model, model_providers)
+        configured_request_overrides = resolve_model_request_overrides(
+            model, model_request_overrides
+        )
         openai_profile = (
             lookup_openai_benchmark_profile(model) if provider == "openai" else None
         )
@@ -1140,6 +1230,10 @@ def build_model_variants(
                 raw_overrides = openai_profile.get("request_overrides")
                 if isinstance(raw_overrides, dict):
                     request_overrides = copy.deepcopy(raw_overrides)
+            if configured_request_overrides:
+                request_overrides = merge_nested_dicts(
+                    request_overrides, configured_request_overrides
+                )
 
             if effort is not None:
                 reasoning_override = request_overrides.get("reasoning")
@@ -2854,6 +2948,9 @@ def run_collect(args: argparse.Namespace) -> int:
     model_providers = parse_model_providers(
         args.model_providers, field_name="--model-providers"
     )
+    model_request_overrides = parse_model_request_overrides(
+        args.model_request_overrides, field_name="--model-request-overrides"
+    )
     unknown_reasoning_models = set(per_model_reasoning_efforts.keys()) - set(models)
     if unknown_reasoning_models:
         if cli_option_was_provided(args, "model_reasoning_efforts"):
@@ -2869,8 +2966,32 @@ def run_collect(args: argparse.Namespace) -> int:
             f"selection: {', '.join(sorted(unknown_reasoning_models))}",
             flush=True,
         )
+    unknown_override_models = set(model_request_overrides.keys()) - set(models) - {"*"}
+    for model_key in list(unknown_override_models):
+        if model_key.endswith("/*"):
+            prefix = model_key[:-1]
+            if any(model.startswith(prefix) for model in models):
+                unknown_override_models.discard(model_key)
+    if unknown_override_models:
+        if cli_option_was_provided(args, "model_request_overrides"):
+            unknown_sorted = ", ".join(sorted(unknown_override_models))
+            raise ValueError(
+                "model_request_overrides contains model(s) not in selected models: "
+                f"{unknown_sorted}"
+            )
+        for unknown_model in unknown_override_models:
+            model_request_overrides.pop(unknown_model, None)
+        print(
+            "Ignoring config model_request_overrides for models not in current "
+            f"--models selection: {', '.join(sorted(unknown_override_models))}",
+            flush=True,
+        )
     model_variants = build_model_variants(
-        models, base_reasoning_effort, per_model_reasoning_efforts, model_providers
+        models,
+        base_reasoning_effort,
+        per_model_reasoning_efforts,
+        model_providers,
+        model_request_overrides,
     )
     omit_system_prompt = bool(args.omit_response_system_prompt) or not str(
         args.response_system_prompt

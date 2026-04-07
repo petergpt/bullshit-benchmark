@@ -2,6 +2,34 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.6] - 2026-04-07
+
+### Added
+- Added published `v1` benchmark results for:
+  - `google/gemma-4-26b-a4b-it@reasoning=none`
+  - `google/gemma-4-26b-a4b-it@reasoning=xhigh`
+  - `google/gemma-4-31b-it@reasoning=none`
+  - `google/gemma-4-31b-it@reasoning=high`
+  - `arcee-ai/trinity-large-thinking@reasoning=minimal`
+  - `arcee-ai/trinity-large-thinking@reasoning=xhigh`
+- Added published `v2` benchmark results for:
+  - `google/gemma-4-26b-a4b-it@reasoning=none`
+  - `google/gemma-4-26b-a4b-it@reasoning=xhigh`
+  - `google/gemma-4-31b-it@reasoning=none`
+  - `google/gemma-4-31b-it@reasoning=high`
+  - `arcee-ai/trinity-large-thinking@reasoning=minimal`
+  - `arcee-ai/trinity-large-thinking@reasoning=xhigh`
+- Added canonical launch-date metadata for `google/gemma-4-26b-a4b-it`, `google/gemma-4-31b-it`, and `arcee-ai/trinity-large-thinking`.
+- Added canonical model-size metadata for the Gemma 4 and Trinity rows above.
+- Added collect-time `model_request_overrides` support so benchmark runs can pin provider-specific OpenRouter request settings per model.
+
+### Changed
+- Refreshed the published viewer datasets in `data/latest/*` and `data/v2/latest/*` so the Gemma 4 and Trinity rows are live in the shipped leaderboards.
+- Re-ran `google/gemma-4-31b-it` in `v2` on `Parasail` with matched-provider `none` and `high` settings, repaired the single failed collect row, and published the clean `100/100` result set.
+- Updated the benchmark config intake files so the tracked `Gemma 4` and `Trinity` reasoning sweeps match the runs we actually published, and removed the unsupported `qwen/qwen3.6-plus:free` path from the `v2` intake configs.
+- The publish pipeline now writes `recent_additions.json`, and the viewer surfaces those rows with “recently added” badges in the main UI.
+- Published viewer `responses.jsonl` files are now slimmed to omit raw provider payloads and request-message copies, keeping the GitHub-hosted datasets under the repository file-size limit while preserving launch-date fallback via `response_model_snapshot`.
+
 ## [2.0.5] - 2026-03-12
 
 ### Added

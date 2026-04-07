@@ -1,0 +1,14 @@
+{
+  "generated_at_utc": "2026-04-07T14:14:24Z",
+  "publish_mode": "supplemental",
+  "models": [
+    "google/gemma-4-31b-it@reasoning=high",
+    "google/gemma-4-31b-it@reasoning=none"
+  ],
+  "model_bases": [
+    "google/gemma-4-31b-it"
+  ],
+  "model_count": 2,
+  "model_base_count": 1,
+  "notes": "Exact model variants preserved from the prior publish because this refresh replaced rows without introducing new models."
+}

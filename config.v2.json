@@ -48,7 +48,10 @@
       "z-ai/glm-5",
       "baidu/ernie-4.5-300b-a47b",
       "google/gemma-3-27b-it",
+      "google/gemma-4-26b-a4b-it",
+      "google/gemma-4-31b-it",
       "qwen/qwen3.5-397b-a17b",
+      "arcee-ai/trinity-large-thinking",
       "moonshotai/kimi-k2.5",
       "minimax/minimax-m2.5"
     ],
@@ -167,9 +170,21 @@
         "none",
         "high"
       ],
+      "google/gemma-4-26b-a4b-it": [
+        "none",
+        "xhigh"
+      ],
+      "google/gemma-4-31b-it": [
+        "none",
+        "high"
+      ],
       "qwen/qwen3.5-397b-a17b": [
         "none",
         "high"
+      ],
+      "arcee-ai/trinity-large-thinking": [
+        "minimal",
+        "xhigh"
       ],
       "moonshotai/kimi-k2.5": [
         "none",
