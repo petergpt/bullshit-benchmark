@@ -2,6 +2,26 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.7] - 2026-04-07
+
+### Added
+- Added published `v2` benchmark results for:
+  - `minimax/minimax-m2.7@reasoning=low`
+  - `minimax/minimax-m2.7@reasoning=high`
+  - `mistralai/mistral-small-2603@reasoning=none`
+  - `mistralai/mistral-small-2603@reasoning=high`
+  - `z-ai/glm-5-turbo@reasoning=none`
+  - `z-ai/glm-5-turbo@reasoning=high`
+  - `nvidia/nemotron-3-super-120b-a12b@reasoning=none`
+  - `nvidia/nemotron-3-super-120b-a12b@reasoning=high`
+  - `qwen/qwen3-max-thinking@reasoning=none`
+  - `qwen/qwen3-max-thinking@reasoning=high`
+
+### Changed
+- Updated the viewer "new" badge logic so models are marked as new when they were first added within the last `7` days, rather than only in the most recent publish.
+- Refreshed `data/v2/latest/*` so the new MiniMax, Mistral, GLM, Nemotron, and Qwen rows are live in the published leaderboard and viewer dataset.
+- Updated viewer display aliases for newer OpenRouter slugs including `Mistral Large 3`, `Mistral Small 4`, `MiniMax M2.7`, `GLM 5 Turbo`, `Nemotron 3 Super 120B A12B`, and the current Grok 4.20 labels.
+
 ## [2.0.6] - 2026-04-07
 
 ### Added
