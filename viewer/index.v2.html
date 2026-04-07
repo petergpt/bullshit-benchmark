@@ -1039,6 +1039,22 @@
     .mix-seg.score1 { background: var(--amber); }
     .mix-seg.score2 { background: var(--green); }
     .mix-seg.error { background: var(--error); }
+    .leaderboard-window-label {
+      display: grid;
+      grid-template-columns: auto minmax(170px, 220px);
+      align-items: center;
+      gap: 8px;
+      width: min(100%, 320px);
+    }
+    .leaderboard-window-label > span {
+      font-weight: 600;
+      color: #31443d;
+    }
+    .leaderboard-empty {
+      padding: 14px 9px;
+      color: var(--muted);
+      font-style: italic;
+    }
 
     .pill {
       display: inline-flex; align-items: center; border-radius: 8px;
@@ -1505,6 +1521,18 @@
     <section class="panel">
       <h2 data-bench-heading="Leaderboard">BullshitBench: Leaderboard</h2>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;" id="orgColorKey"></div>
+      <div class="button-row" style="margin-top:0;margin-bottom:10px;">
+        <label class="leaderboard-window-label">
+          <span>Leaderboard Scope</span>
+          <select id="leaderboardRecentSelect" aria-label="Leaderboard recent-addition window">
+            <option value="all">All models</option>
+            <option value="7">New in last 7 days</option>
+            <option value="30">New in last 30 days</option>
+            <option value="90">New in last 90 days</option>
+          </select>
+        </label>
+        <p class="small-note" id="leaderboardRecentNote" style="margin:0;"></p>
+      </div>
       <div class="table-wrap" style="max-height:600px;">
         <table class="leaderboard-table">
           <thead id="lbHead">
@@ -1853,17 +1881,20 @@ const TECHNIQUE_LABELS = {
   confident_extrapolation: "Confident Extrapolation",
   nested_nonsense: "Nested Nonsense",
 };
+const LEADERBOARD_WINDOW_DEFAULT = "all";
 // ====== STATE ======
 const S = {
   benchmarkVersion: benchmarkVersionFromUrl(),
   benchmarkMeta: null,
   rows: [], filteredRows: [], responses: [], aggregateRows: [],
+  datasetGeneratedAtUtc: "",
   questionMap: new Map(), usageByModel: new Map(), paramsByModel: new Map(),
   recentAdditionModels: new Set(), recentAdditionBases: new Set(), recentAdditionMeta: null,
   hiddenModels: new Set(), selectedMainChartModels: new Set(), selectedJudges: new Set([1,2,3]),
   selectedScatterPoints: {},
   modelChartFocusOrg: "all",
   reasoningScatterMode: "tokens",
+  leaderboardRecentWindow: LEADERBOARD_WINDOW_DEFAULT,
   topVariantsOnly: false,
   heroPinned: false,
   domainPinned: false,
@@ -2393,6 +2424,7 @@ function loadEmbeddedDataset(cfg) {
     stats: payload.collectionStats && typeof payload.collectionStats === "object" ? payload.collectionStats : {},
     panel: payload.panelSummary && typeof payload.panelSummary === "object" ? payload.panelSummary : {},
     summary: payload.aggregateSummary && typeof payload.aggregateSummary === "object" ? payload.aggregateSummary : {},
+    manifest: payload.manifest && typeof payload.manifest === "object" ? payload.manifest : null,
     launchText: "",
     aggregateRows,
     mode: String(payload.mode || "embedded"),
@@ -2403,6 +2435,7 @@ function loadEmbeddedDataset(cfg) {
 async function loadDatasetCandidate(source) {
   const respText = await fetchTextRequired(`${source.basePath}/responses.jsonl`);
   const stats = await fetchJsonRequired(`${source.basePath}/collection_stats.json`);
+  const manifest = source.supportsManifest === false ? null : await fetchJsonOptional(`${source.basePath}/manifest.json`);
   const aggText = source.supportsAggregate === false ? "" : await fetchTextOptional(`${source.basePath}/aggregate.jsonl`);
   const panel = source.supportsPanelSummary === false ? null : await fetchJsonOptional(`${source.basePath}/panel_summary.json`);
   const summary = source.supportsAggregate === false ? null : await fetchJsonOptional(`${source.basePath}/aggregate_summary.json`);
@@ -2424,7 +2457,7 @@ async function loadDatasetCandidate(source) {
     mode = "responses_only";
   }
 
-  return { source, responses, stats, panel, summary, recentAdditions, launchText, paramsText, aggregateRows, mode };
+  return { source, responses, stats, panel, summary, recentAdditions, manifest, launchText, paramsText, aggregateRows, mode };
 }
 
 // ====== DATA LOADING ======
@@ -2474,6 +2507,7 @@ async function loadData() {
         ? S.recentAdditionMeta.model_bases.map(v => String(v || "").trim()).filter(Boolean)
         : []
     );
+    S.datasetGeneratedAtUtc = String(loaded.recentAdditions?.generated_at_utc || loaded.manifest?.generated_at_utc || "").trim();
     S.datasetMeta = { sourceName: loaded.source.name, basePath: loaded.source.basePath, mode: loaded.mode };
 
     // Build question metadata map (id -> {domain_group, difficulty, difficulty_label, technique})
@@ -4175,10 +4209,68 @@ function parseIsoDate(v) {
   const d = new Date(t+"T00:00:00Z");
   return Number.isNaN(d.getTime()) ? null : d;
 }
+function parseIsoDateTime(v) {
+  const t = String(v || "").trim();
+  if (!t) return null;
+  const d = new Date(t);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+function utcDayNumber(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86400000;
+}
+function datasetSnapshotDate() {
+  const recentMetaDate = parseIsoDateTime(S.recentAdditionMeta?.generated_at_utc);
+  if (recentMetaDate) return recentMetaDate;
+  const manifestDate = parseIsoDateTime(S.datasetGeneratedAtUtc);
+  if (manifestDate) return manifestDate;
+  let latest = null;
+  (S.responses || []).forEach(resp => {
+    const candidate = parseIsoDateTime(resp?.finished_at_utc || resp?.started_at_utc || "");
+    if (candidate && (!latest || candidate > latest)) latest = candidate;
+  });
+  return latest || new Date();
+}
+function leaderboardRecentWindowDays() {
+  const days = Number(S.leaderboardRecentWindow);
+  return Number.isFinite(days) && days > 0 ? days : null;
+}
+function recentAdditionFirstSeenDateForRow(row) {
+  const modelKeyValue = String(modelKey(row) || "").trim();
+  const baseModelValue = String(baseModelId(row) || "").trim();
+  const byModel = S.recentAdditionMeta?.model_first_seen_utc;
+  const byBase = S.recentAdditionMeta?.model_base_first_seen_utc;
+  const modelSeen = byModel && Object.prototype.hasOwnProperty.call(byModel, modelKeyValue)
+    ? parseIsoDateTime(byModel[modelKeyValue])
+    : null;
+  if (modelSeen) return modelSeen;
+  const baseSeen = byBase && Object.prototype.hasOwnProperty.call(byBase, baseModelValue)
+    ? parseIsoDateTime(byBase[baseModelValue])
+    : null;
+  return baseSeen || null;
+}
 function launchMetaForRow(row) {
   const base = baseModelId(row);
   if (!base || !S.launchByModel) return null;
   return S.launchByModel.get(base) || null;
+}
+function modelAgeDaysForRow(row, referenceDate = datasetSnapshotDate()) {
+  const refDay = utcDayNumber(referenceDate);
+  const firstSeenDate = recentAdditionFirstSeenDateForRow(row);
+  const firstSeenDay = utcDayNumber(firstSeenDate);
+  if (refDay !== null && firstSeenDay !== null) {
+    const firstSeenAge = refDay - firstSeenDay;
+    if (Number.isFinite(firstSeenAge) && firstSeenAge >= 0) return firstSeenAge;
+  }
+  const launchDate = parseIsoDate(launchMetaForRow(row)?.launch_date);
+  const launchDay = utcDayNumber(launchDate);
+  if (refDay === null || launchDay === null) return null;
+  const launchAge = refDay - launchDay;
+  return Number.isFinite(launchAge) && launchAge >= 0 ? launchAge : null;
+}
+function isLeaderboardRecentRow(row, maxAgeDays = leaderboardRecentWindowDays()) {
+  const ageDays = modelAgeDaysForRow(row);
+  return maxAgeDays !== null && ageDays !== null && ageDays <= maxAgeDays;
 }
 function summarizeRows(rows) {
   const c = aggCounts(rows), scored = c.green+c.amber+c.red;
@@ -4203,7 +4295,27 @@ function launchChartModelLabel(label) {
 
 // ====== RENDER: Leaderboard ======
 function renderLeaderboard(filtered) {
-  const byModel = groupBy(filtered, modelKey);
+  const windowDays = leaderboardRecentWindowDays();
+  const leaderboardRows = windowDays === null ? filtered : filtered.filter(r => isLeaderboardRecentRow(r, windowDays));
+  const recentSelect = document.getElementById("leaderboardRecentSelect");
+  const recentNote = document.getElementById("leaderboardRecentNote");
+  if (recentSelect) {
+    const nextValue = String(S.leaderboardRecentWindow || LEADERBOARD_WINDOW_DEFAULT);
+    if (recentSelect.value !== nextValue) recentSelect.value = nextValue;
+  }
+  if (recentNote) {
+    if (windowDays === null) {
+      recentNote.textContent = "";
+    } else {
+      const modelCount = new Set(leaderboardRows.map(modelKey)).size;
+      const snapshotLabel = datasetSnapshotDate().toISOString().slice(0, 10);
+      recentNote.textContent = modelCount
+        ? `Showing ${modelCount} ${modelCount === 1 ? "model" : "models"} added within ${windowDays} days of ${snapshotLabel}.`
+        : `No models added within ${windowDays} days of ${snapshotLabel} match the current filters.`;
+    }
+  }
+
+  const byModel = groupBy(leaderboardRows, modelKey);
   const rows = [...byModel.entries()].map(([mk,mRows])=>{
     const sample=mRows[0]||{};
     const s=summarize(mRows);
@@ -4252,24 +4364,29 @@ function renderLeaderboard(filtered) {
       );
   });
 
-  document.getElementById("lbBody").innerHTML=baseline.map(r=>{
-    const mix=CATEGORY_ORDER.map(k=>`<span class="mix-seg ${CATEGORY_META[k].colorClass}" style="width:${pct(r.counts[k],r.rows||1).toFixed(2)}%;"></span>`).join("");
-    const rl=r.reasoning&&r.reasoning!=="none"?r.reasoning.charAt(0).toUpperCase()+r.reasoning.slice(1):"None";
-    return `<tr>
-      <td>${r.rank}</td>
-      <td><span class="model-name" title="${esc(r.model)}"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(r.model)}${renderRecentBadgeHtml(r.mk)}</span></td>
-      <td><span class="org-chip"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(orgName(r.org))}</span></td>
-      <td>${esc(rl)}</td>
-      <td title="${esc(r.sizeTitle)}"><span class="size-meta"><span class="size-main">${esc(r.sizeDisplay)}</span>${r.sizeDetail?`<span class="size-subtle">${esc(r.sizeDetail)}</span>`:""}</span></td>
-      <td>${fmtPct(r.greenRate)}</td>
-      <td>${fmtPct(r.amberRate)}</td>
-      <td>${fmtPct(r.redRate)}</td>
-      <td><div class="mini-mix">${mix}</div></td>
-      <td>${fmtNum(Math.round(r.avgTokens))}</td>
-      <td>$${r.avgCost.toFixed(4)}</td>
-      <td>${r.rows}</td>
-    </tr>`;
-  }).join("");
+  const lbBody = document.getElementById("lbBody");
+  if (!baseline.length) {
+    lbBody.innerHTML = `<tr><td colspan="12" class="leaderboard-empty">${esc(windowDays === null ? "No models match the current filters." : `No models added within ${windowDays} days match the current filters.`)}</td></tr>`;
+  } else {
+    lbBody.innerHTML=baseline.map(r=>{
+      const mix=CATEGORY_ORDER.map(k=>`<span class="mix-seg ${CATEGORY_META[k].colorClass}" style="width:${pct(r.counts[k],r.rows||1).toFixed(2)}%;"></span>`).join("");
+      const rl=r.reasoning&&r.reasoning!=="none"?r.reasoning.charAt(0).toUpperCase()+r.reasoning.slice(1):"None";
+      return `<tr>
+        <td>${r.rank}</td>
+        <td><span class="model-name" title="${esc(r.model)}" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(r.model)}${renderRecentBadgeHtml(r.mk)}</span></td>
+        <td><span class="org-chip"><span class="org-dot" style="background:${orgColor(r.org)};"></span>${esc(orgName(r.org))}</span></td>
+        <td>${esc(rl)}</td>
+        <td title="${esc(r.sizeTitle)}"><span class="size-meta"><span class="size-main">${esc(r.sizeDisplay)}</span>${r.sizeDetail?`<span class="size-subtle">${esc(r.sizeDetail)}</span>`:""}</span></td>
+        <td>${fmtPct(r.greenRate)}</td>
+        <td>${fmtPct(r.amberRate)}</td>
+        <td>${fmtPct(r.redRate)}</td>
+        <td><div class="mini-mix">${mix}</div></td>
+        <td>${fmtNum(Math.round(r.avgTokens))}</td>
+        <td>$${r.avgCost.toFixed(4)}</td>
+        <td>${r.rows}</td>
+      </tr>`;
+    }).join("");
+  }
 
   // Update sort indicators
   document.querySelectorAll("[data-ind]").forEach(n=>{
@@ -4604,6 +4721,11 @@ function bindEvents() {
     refreshTopVariantToggle();
     renderAll();
   });
+  document.getElementById("leaderboardRecentSelect").addEventListener("change", e=>{
+    const value = String(e.target?.value || LEADERBOARD_WINDOW_DEFAULT);
+    S.leaderboardRecentWindow = value === "7" || value === "30" || value === "90" ? value : LEADERBOARD_WINDOW_DEFAULT;
+    renderAll();
+  });
   document.getElementById("clearFiltersBtn").addEventListener("click",()=>{
     document.getElementById("filterOrg").value="all";
     document.getElementById("filterReasoning").value="all";
@@ -4611,8 +4733,9 @@ function bindEvents() {
     document.getElementById("filterDomainGroup").value="all";
     document.getElementById("filterDifficulty").value="all";
     document.getElementById("filterQuery").value="";
+    document.getElementById("leaderboardRecentSelect").value=LEADERBOARD_WINDOW_DEFAULT;
     [1,2,3].forEach(i=>{if(!document.getElementById(`judge${i}Toggle`).disabled) document.getElementById(`judge${i}Toggle`).checked=true;});
-    syncJudges(); S.hiddenModels.clear(); S.topVariantsOnly = false; S.modelChartFocusOrg = "all";
+    syncJudges(); S.hiddenModels.clear(); S.topVariantsOnly = false; S.leaderboardRecentWindow = LEADERBOARD_WINDOW_DEFAULT; S.modelChartFocusOrg = "all";
     [...document.querySelectorAll('input[name="scoreFilter"]')].forEach(n=>n.checked=true);
     refreshTopVariantToggle();
     renderModelToggles(); renderAll();
