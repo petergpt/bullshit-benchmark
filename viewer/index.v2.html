@@ -91,30 +91,6 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-    .hero-badges {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      min-height: 20px;
-    }
-    .hero-badges:empty { display: none; }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 3px 8px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      line-height: 1;
-      white-space: nowrap;
-    }
-    .hero-badge-new {
-      color: #e6f5ee;
-      background: rgba(64, 145, 104, 0.22);
-      border: 1px solid rgba(164, 219, 189, 0.28);
-    }
     .hero-version-inline {
       display: inline-flex;
       align-items: center;
@@ -1367,7 +1343,6 @@
             </label>
           </div>
           <p class="hero-subtitle" id="heroSubtitle">Compare benchmark results, failure patterns, and example responses across benchmark versions.</p>
-          <div id="heroBadges" class="hero-badges" aria-live="polite"></div>
         </div>
       </div>
       <div class="hero-meta">
@@ -2831,22 +2806,6 @@ function groupBy(rows,fn) { const m=new Map(); rows.forEach(r=>{const k=fn(r);if
 
 // ====== RENDER: KPIs ======
 function renderKpis(_filtered) {}
-
-function renderHeroBadges() {
-  const el = document.getElementById("heroBadges");
-  if (!el) return;
-  const modelCount = S.recentAdditionBases instanceof Set ? S.recentAdditionBases.size : 0;
-  const variantCount = S.recentAdditionModels instanceof Set ? S.recentAdditionModels.size : 0;
-  if (!modelCount && !variantCount) {
-    el.innerHTML = "";
-    return;
-  }
-  const label = modelCount === 1 ? "1 new model" : `${modelCount} new models`;
-  const title = variantCount && variantCount !== modelCount
-    ? `${modelCount} base models / ${variantCount} benchmark entries added in the last 7 days`
-    : `${label} added in the last 7 days`;
-  el.innerHTML = `<span class="hero-badge hero-badge-new" title="${esc(title)}" aria-label="${esc(title)}">${esc(label)}</span>`;
-}
 
 // ====== RENDER: Org guide ======
 function renderOrgGuide(rows) {
@@ -4834,7 +4793,7 @@ function init() {
   observeHeroPinPanel();
   syncHeroPinState();
   syncDomainPinState();
-  loadData().then(()=>renderHeroBadges());
+  loadData();
 }
 init();
 </script>
