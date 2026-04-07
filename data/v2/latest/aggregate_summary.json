@@ -423,6 +423,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "qwen/qwen3-max-thinking@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 8,
+      "score_1": 29,
+      "score_2": 63,
+      "score_3": 0,
+      "avg_score": 1.5033,
+      "detection_rate_score_2": 0.63,
+      "full_engagement_rate_score_0": 0.08,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.6667,
+        "confident_extrapolation": 1.75,
+        "cross_domain_stitching": 1.4667,
+        "fabricated_authority": 1.7273,
+        "false_granularity": 1.8889,
+        "misapplied_mechanism": 1.5641,
+        "nested_nonsense": 1.5714,
+        "plausible_nonexistent_framework": 1.0208,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 0.7084,
+        "sunk_cost_framing": 1.6667,
+        "temporal_category_error": 1.8333,
+        "wrong_unit_of_analysis": 1.8
+      },
+      "run_average_scores": {
+        "1": 1.5033
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "x-ai/grok-4.20-multi-agent-beta@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -738,6 +773,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "qwen/qwen3-max-thinking@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 26,
+      "score_1": 28,
+      "score_2": 46,
+      "score_3": 0,
+      "avg_score": 1.1433,
+      "detection_rate_score_2": 0.46,
+      "full_engagement_rate_score_0": 0.26,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.2593,
+        "confident_extrapolation": 0.6667,
+        "cross_domain_stitching": 0.9333,
+        "fabricated_authority": 1.6364,
+        "false_granularity": 1.6667,
+        "misapplied_mechanism": 1.4103,
+        "nested_nonsense": 0.8095,
+        "plausible_nonexistent_framework": 0.7708,
+        "reified_metaphor": 1.2222,
+        "specificity_trap": 0.6667,
+        "sunk_cost_framing": 1.0,
+        "temporal_category_error": 1.3889,
+        "wrong_unit_of_analysis": 1.4
+      },
+      "run_average_scores": {
+        "1": 1.1433
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-5.2-codex@reasoning=low",
       "count": 100,
       "scored_count": 100,
@@ -839,6 +909,41 @@
       },
       "run_average_scores": {
         "1": 1.1233
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 35,
+      "score_1": 18,
+      "score_2": 47,
+      "score_3": 0,
+      "avg_score": 1.1167,
+      "detection_rate_score_2": 0.47,
+      "full_engagement_rate_score_0": 0.35,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.4444,
+        "confident_extrapolation": 1.3333,
+        "cross_domain_stitching": 1.8667,
+        "fabricated_authority": 1.6364,
+        "false_granularity": 1.1111,
+        "misapplied_mechanism": 1.6667,
+        "nested_nonsense": 0.5238,
+        "plausible_nonexistent_framework": 0.8958,
+        "reified_metaphor": 1.5556,
+        "specificity_trap": 0.4167,
+        "sunk_cost_framing": 0.3333,
+        "temporal_category_error": 1.0555,
+        "wrong_unit_of_analysis": 0.6
+      },
+      "run_average_scores": {
+        "1": 1.1167
       },
       "run_average_stddev": null
     },
@@ -1928,6 +2033,76 @@
       "run_average_stddev": null
     },
     {
+      "model": "z-ai/glm-5-turbo@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 52,
+      "score_1": 17,
+      "score_2": 31,
+      "score_3": 0,
+      "avg_score": 0.78,
+      "detection_rate_score_2": 0.31,
+      "full_engagement_rate_score_0": 0.52,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.5556,
+        "confident_extrapolation": 0.75,
+        "cross_domain_stitching": 0.4,
+        "fabricated_authority": 1.4848,
+        "false_granularity": 1.0,
+        "misapplied_mechanism": 0.4615,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.5625,
+        "reified_metaphor": 0.4444,
+        "specificity_trap": 0.0833,
+        "sunk_cost_framing": 1.1429,
+        "temporal_category_error": 1.4444,
+        "wrong_unit_of_analysis": 1.1333
+      },
+      "run_average_scores": {
+        "1": 0.78
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 57,
+      "score_1": 12,
+      "score_2": 31,
+      "score_3": 0,
+      "avg_score": 0.77,
+      "detection_rate_score_2": 0.31,
+      "full_engagement_rate_score_0": 0.57,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.6296,
+        "confident_extrapolation": 0.5833,
+        "cross_domain_stitching": 0.5333,
+        "fabricated_authority": 1.1515,
+        "false_granularity": 1.3889,
+        "misapplied_mechanism": 1.1538,
+        "nested_nonsense": 0.7143,
+        "plausible_nonexistent_framework": 0.6458,
+        "reified_metaphor": 1.0,
+        "specificity_trap": 0.0417,
+        "sunk_cost_framing": 0.5714,
+        "temporal_category_error": 0.8889,
+        "wrong_unit_of_analysis": 0.4667
+      },
+      "run_average_scores": {
+        "1": 0.77
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "google/gemma-4-31b-it@reasoning=high",
       "count": 100,
       "scored_count": 100,
@@ -2274,6 +2449,41 @@
       },
       "run_average_scores": {
         "1": 0.6333
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "z-ai/glm-5-turbo@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 61,
+      "score_1": 16,
+      "score_2": 23,
+      "score_3": 0,
+      "avg_score": 0.62,
+      "detection_rate_score_2": 0.23,
+      "full_engagement_rate_score_0": 0.61,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.2593,
+        "confident_extrapolation": 1.0,
+        "cross_domain_stitching": 0.2667,
+        "fabricated_authority": 1.0303,
+        "false_granularity": 1.0,
+        "misapplied_mechanism": 0.4359,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.375,
+        "reified_metaphor": 0.6667,
+        "specificity_trap": 0.5,
+        "sunk_cost_framing": 0.2857,
+        "temporal_category_error": 1.1111,
+        "wrong_unit_of_analysis": 0.8667
+      },
+      "run_average_scores": {
+        "1": 0.62
       },
       "run_average_stddev": null
     },
@@ -3258,6 +3468,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "minimax/minimax-m2.7@reasoning=low",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 65,
+      "score_1": 28,
+      "score_2": 7,
+      "score_3": 0,
+      "avg_score": 0.3967,
+      "detection_rate_score_2": 0.07,
+      "full_engagement_rate_score_0": 0.65,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.4815,
+        "confident_extrapolation": 0.75,
+        "cross_domain_stitching": 0.0667,
+        "fabricated_authority": 0.3939,
+        "false_granularity": 0.7222,
+        "misapplied_mechanism": 0.5128,
+        "nested_nonsense": 0.1905,
+        "plausible_nonexistent_framework": 0.2292,
+        "reified_metaphor": 0.5556,
+        "specificity_trap": 0.3333,
+        "sunk_cost_framing": 0.1905,
+        "temporal_category_error": 0.6666,
+        "wrong_unit_of_analysis": 0.4
+      },
+      "run_average_scores": {
+        "1": 0.3967
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "minimax/minimax-m2.5@reasoning=high",
       "count": 100,
       "scored_count": 100,
@@ -3531,6 +3776,76 @@
         "sunk_cost_framing": 0.0476,
         "temporal_category_error": 0.6667,
         "wrong_unit_of_analysis": 0.8
+      },
+      "run_average_scores": {
+        "1": 0.3267
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "minimax/minimax-m2.7@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 74,
+      "score_1": 18,
+      "score_2": 8,
+      "score_3": 0,
+      "avg_score": 0.3267,
+      "detection_rate_score_2": 0.08,
+      "full_engagement_rate_score_0": 0.74,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.2222,
+        "confident_extrapolation": 0.5834,
+        "cross_domain_stitching": 0.0,
+        "fabricated_authority": 0.3636,
+        "false_granularity": 0.3333,
+        "misapplied_mechanism": 0.5128,
+        "nested_nonsense": 0.2857,
+        "plausible_nonexistent_framework": 0.1667,
+        "reified_metaphor": 0.1111,
+        "specificity_trap": 0.2083,
+        "sunk_cost_framing": 0.1905,
+        "temporal_category_error": 0.7222,
+        "wrong_unit_of_analysis": 0.6667
+      },
+      "run_average_scores": {
+        "1": 0.3267
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "mistralai/mistral-small-2603@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 70,
+      "score_1": 24,
+      "score_2": 6,
+      "score_3": 0,
+      "avg_score": 0.3267,
+      "detection_rate_score_2": 0.06,
+      "full_engagement_rate_score_0": 0.7,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.4074,
+        "confident_extrapolation": 0.3333,
+        "cross_domain_stitching": 0.4667,
+        "fabricated_authority": 0.0606,
+        "false_granularity": 0.5,
+        "misapplied_mechanism": 0.5385,
+        "nested_nonsense": 0.4762,
+        "plausible_nonexistent_framework": 0.25,
+        "reified_metaphor": 0.8889,
+        "specificity_trap": 0.0833,
+        "sunk_cost_framing": 0.0952,
+        "temporal_category_error": 0.5,
+        "wrong_unit_of_analysis": 0.0667
       },
       "run_average_scores": {
         "1": 0.3267
@@ -4133,6 +4448,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "mistralai/mistral-small-2603@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 88,
+      "score_1": 8,
+      "score_2": 4,
+      "score_3": 0,
+      "avg_score": 0.16,
+      "detection_rate_score_2": 0.04,
+      "full_engagement_rate_score_0": 0.88,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.2963,
+        "confident_extrapolation": 0.0833,
+        "cross_domain_stitching": 0.0,
+        "fabricated_authority": 0.0303,
+        "false_granularity": 0.2778,
+        "misapplied_mechanism": 0.3333,
+        "nested_nonsense": 0.1905,
+        "plausible_nonexistent_framework": 0.0,
+        "reified_metaphor": 0.0,
+        "specificity_trap": 0.0833,
+        "sunk_cost_framing": 0.0,
+        "temporal_category_error": 0.6667,
+        "wrong_unit_of_analysis": 0.1333
+      },
+      "run_average_scores": {
+        "1": 0.16
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-4o-mini-2024-07-18@reasoning=default",
       "count": 100,
       "scored_count": 100,
@@ -4208,29 +4558,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 12000,
-        "agreements": 9745,
-        "agreement_rate": 0.812083
+        "compared_rows": 13000,
+        "agreements": 10551,
+        "agreement_rate": 0.811615
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 12000,
-        "agreements": 9603,
-        "agreement_rate": 0.80025
+        "compared_rows": 13000,
+        "agreements": 10423,
+        "agreement_rate": 0.801769
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 12000,
-        "agreements": 9391,
-        "agreement_rate": 0.782583
+        "compared_rows": 13000,
+        "agreements": 10189,
+        "agreement_rate": 0.783769
       }
     ],
-    "average_pairwise_agreement": 0.798305,
-    "krippendorff_alpha_ordinal": 0.786863
+    "average_pairwise_agreement": 0.799051,
+    "krippendorff_alpha_ordinal": 0.787026
   },
-  "total_records": 12000,
+  "total_records": 13000,
   "total_error_records": 0,
-  "total_scored_records": 12000
+  "total_scored_records": 13000
 }

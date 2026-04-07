@@ -1,6 +1,6 @@
 {
   "panel_id": "run_v2_latest146_claude_only_20260301_015128_panel",
-  "timestamp_utc": "2026-04-07T14:14:23.304538+00:00",
+  "timestamp_utc": "2026-04-07T22:06:11.185356+00:00",
   "panel_mode": "full",
   "judge_models": [
     "anthropic/claude-sonnet-4.6",
@@ -17,8 +17,8 @@
   "parallelism": 12,
   "primary_judges_max_inflight": 36,
   "grade_dirs_for_aggregate": [],
-  "disagreement_count": 2255,
-  "disagreement_rate": 0.1879,
+  "disagreement_count": 2449,
+  "disagreement_rate": 0.1884,
   "consensus_method": "mean",
   "fail_on_error": false,
   "publish_mode": "supplemental",
@@ -33,8 +33,9 @@
     "v2_gpt54mini_nano_20260317_175505_panel",
     "new_models_v2_20260318_panel",
     "missing_models_extremes_v2_20260406_panel_retry1",
-    "gemma31b_parasail_same_provider_v2_20260407_panel"
+    "gemma31b_parasail_same_provider_v2_20260407_panel",
+    "recent_missing_models_v2_20260407_panel_retry1"
   ],
   "execution_mode": "supplemental_merge",
-  "notes": "Supplemental publish appended panel run_v2_gpt52chat_20260302_1622_panel. Supplemental publish appended panel run_v2_gpt53chat_gemini31flashlite_20260303_225638_panel. Supplemental publish appended panel run_v2_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v2_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v2. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v2. Supplemental publish appended panel v2_gpt54mini_nano_20260317_175505_panel. Supplemental publish appended panel new_models_v2_20260318_panel. Supplemental publish appended panel missing_models_extremes_v2_20260406_panel_retry1. Supplemental publish appended panel gemma31b_parasail_same_provider_v2_20260407_panel."
+  "notes": "Supplemental publish appended panel run_v2_gpt52chat_20260302_1622_panel. Supplemental publish appended panel run_v2_gpt53chat_gemini31flashlite_20260303_225638_panel. Supplemental publish appended panel run_v2_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v2_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v2. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v2. Supplemental publish appended panel v2_gpt54mini_nano_20260317_175505_panel. Supplemental publish appended panel new_models_v2_20260318_panel. Supplemental publish appended panel missing_models_extremes_v2_20260406_panel_retry1. Supplemental publish appended panel gemma31b_parasail_same_provider_v2_20260407_panel. Supplemental publish appended panel recent_missing_models_v2_20260407_panel_retry1."
 }
