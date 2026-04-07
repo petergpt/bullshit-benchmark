@@ -6,20 +6,20 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-03-12
+- Updated: 2026-04-07
 
-## Latest Changelog Entry (2026-03-12)
+## Latest Changelog Entry (2026-04-07)
 
-- Added benchmark runs for the new Grok 4.20 variants across both published datasets:
-  - `x-ai/grok-4.20-beta`
-  - `x-ai/grok-4.20-multi-agent-beta`
-- Published the Grok 4.20 rows into both viewer tracks:
+- Added benchmark runs for the new Google Gemma 4 and Arcee Trinity variants across both published datasets:
+  - `google/gemma-4-26b-a4b-it`
+  - `google/gemma-4-31b-it`
+  - `arcee-ai/trinity-large-thinking`
+- Published the new rows into both viewer tracks:
   - `v1` (`data/latest`) with `55` questions
   - `v2` (`data/v2/latest`) with `100` questions
-- Simplified the visible model labels in the viewers by dropping the `Beta` suffix from the Grok 4.20 display names while keeping the underlying model IDs unchanged.
-- Refined the main chart row-selection treatment to make model selection easier to see without overpowering the chart.
-- Updated org color mapping so `xAI` renders in black and `OpenAI` renders in green in the viewers.
-- Added click-to-pin labels for scatter-chart dots in the v2 viewer so specific models can be called out on demand.
+- Re-ran `google/gemma-4-31b-it` on `v2` with matched-provider `none` and `high` reasoning settings so the public leaderboard reflects the clean same-provider comparison.
+- Added canonical launch-date and model-size metadata for the Gemma 4 and Trinity model families.
+- Updated the viewer publish pipeline to surface recent additions and keep the published JSONL files small enough for GitHub-hosted distribution.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -73,7 +73,7 @@ Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `80` model/reasoning rows.
+- Published v2 leaderboard currently includes `120` model/reasoning rows.
 
 ## What This Measures
 

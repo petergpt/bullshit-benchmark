@@ -1,0 +1,20 @@
+{
+  "generated_at_utc": "2026-04-07T14:14:16Z",
+  "publish_mode": "supplemental",
+  "models": [
+    "arcee-ai/trinity-large-thinking@reasoning=minimal",
+    "arcee-ai/trinity-large-thinking@reasoning=xhigh",
+    "google/gemma-4-26b-a4b-it@reasoning=none",
+    "google/gemma-4-26b-a4b-it@reasoning=xhigh",
+    "google/gemma-4-31b-it@reasoning=high",
+    "google/gemma-4-31b-it@reasoning=none"
+  ],
+  "model_bases": [
+    "arcee-ai/trinity-large-thinking",
+    "google/gemma-4-26b-a4b-it",
+    "google/gemma-4-31b-it"
+  ],
+  "model_count": 6,
+  "model_base_count": 3,
+  "notes": "Exact model variants newly added in the most recent publish."
+}

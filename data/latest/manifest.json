@@ -1,20 +1,21 @@
 {
-  "generated_at_utc": "2026-03-17T18:10:04Z",
+  "generated_at_utc": "2026-04-07T14:14:16Z",
   "sources": {
-    "responses_file": "/Users/peter/bullshit-benchmark/data/latest/responses.jsonl",
-    "collection_stats_file": "/Users/peter/bullshit-benchmark/data/latest/collection_stats.json",
-    "panel_summary_file": "/Users/peter/bullshit-benchmark/data/latest/panel_summary.json",
-    "aggregate_summary_file": "/Users/peter/bullshit-benchmark/data/latest/aggregate_summary.json",
-    "aggregate_rows_file": "/Users/peter/bullshit-benchmark/data/latest/aggregate.jsonl"
+    "responses_file": "data/latest/responses.jsonl",
+    "collection_stats_file": "data/latest/collection_stats.json",
+    "panel_summary_file": "data/latest/panel_summary.json",
+    "aggregate_summary_file": "data/latest/aggregate_summary.json",
+    "aggregate_rows_file": "data/latest/aggregate.jsonl",
+    "recent_additions_file": "data/latest/recent_additions.json"
   },
   "counts": {
-    "responses_rows": 5280,
-    "aggregate_rows": 5280
+    "responses_rows": 6710,
+    "aggregate_rows": 6710
   },
   "exports": {
-    "leaderboard_csv": "/Users/peter/bullshit-benchmark/data/latest/leaderboard.csv",
-    "leaderboard_with_launch_csv": "/Users/peter/bullshit-benchmark/data/latest/leaderboard_with_launch.csv",
-    "model_launch_dates_csv": "/Users/peter/bullshit-benchmark/data/latest/model_launch_dates.csv",
-    "model_params_csv": "/Users/peter/bullshit-benchmark/data/latest/model_params.csv"
+    "leaderboard_csv": "data/latest/leaderboard.csv",
+    "leaderboard_with_launch_csv": "data/latest/leaderboard_with_launch.csv",
+    "model_launch_dates_csv": "data/latest/model_launch_dates.csv",
+    "model_params_csv": "data/latest/model_params.csv"
   }
 }

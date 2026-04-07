@@ -1,6 +1,6 @@
 {
   "panel_id": "panel_merged_all_models_20260226_173526",
-  "timestamp_utc": "2026-03-17T18:10:03.996943+00:00",
+  "timestamp_utc": "2026-04-07T14:14:15.553310+00:00",
   "primary_judges": [
     "anthropic/claude-sonnet-4.6",
     "openai/gpt-5.2"
@@ -9,8 +9,8 @@
   "resumed": false,
   "parallelism": 12,
   "primary_judges_max_inflight": 24,
-  "disagreement_count": 1147,
-  "disagreement_rate": 0.2172,
+  "disagreement_count": 1492,
+  "disagreement_rate": 0.2224,
   "consensus_method": "mean",
   "execution_mode": "manual_merge_append_latest",
   "source_panels": [
@@ -23,9 +23,11 @@
     "run_v1_meta_trio_20260307_195222_panel",
     "run_grok420_full155_20260312_144856b_panel_openai3__v1",
     "hunter_healer_full155_none_xhigh_20260313_panel_openai3__v1",
-    "v1_gpt54mini_nano_20260317_175505_panel"
+    "v1_gpt54mini_nano_20260317_175505_panel",
+    "new_models_v1_20260318_panel",
+    "missing_models_extremes_v1_20260407_panel"
   ],
-  "notes": "Appended new OpenAI GPT-5/5.1 family panel into existing merged latest snapshot without replacing prior model rows. Supplemental publish appended panel run_v1_gpt53chat_gemini31flashlite_20260303_224524_panel. Supplemental publish appended panel run_v1_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v1_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v1. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v1. Supplemental publish appended panel v1_gpt54mini_nano_20260317_175505_panel.",
+  "notes": "Appended new OpenAI GPT-5/5.1 family panel into existing merged latest snapshot without replacing prior model rows. Supplemental publish appended panel run_v1_gpt53chat_gemini31flashlite_20260303_224524_panel. Supplemental publish appended panel run_v1_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v1_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v1. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v1. Supplemental publish appended panel v1_gpt54mini_nano_20260317_175505_panel. Supplemental publish appended panel new_models_v1_20260318_panel. Supplemental publish appended panel missing_models_extremes_v1_20260407_panel.",
   "panel_mode": "full",
   "judge_models": [
     "anthropic/claude-sonnet-4.6",
