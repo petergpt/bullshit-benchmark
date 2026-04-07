@@ -3739,13 +3739,15 @@ function renderLaunchAllOrgs(filtered) {
   const addQ = (t,n=1) => { const d=new Date(t); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth()+n*3, 1); };
   const qLabel = t => { const d=new Date(t); return `Q${Math.floor(d.getUTCMonth()/3)+1} ${d.getUTCFullYear()}`; };
 
-  const minDate = qStart(minDateRaw), maxDate = addQ(qStart(maxDateRaw), 1);
+  const DAY_MS = 86400000;
+  const DOMAIN_RIGHT_PAD_DAYS = 28;
+  const minDate = qStart(minDateRaw), maxDate = maxDateRaw + DOMAIN_RIGHT_PAD_DAYS * DAY_MS;
   const span = Math.max(1, maxDate - minDate);
   const xFor = t => ml + ((t - minDate)/span)*pw;
   const yFor = v => mt + ((100-v)/100)*ph;
 
   let xTicks = [];
-  for (let t = minDate; t <= maxDate; t = addQ(t,1)) { xTicks.push(t); if(xTicks.length>32) break; }
+  for (let t = qStart(minDateRaw); t <= maxDate; t = addQ(t,1)) { xTicks.push(t); if(xTicks.length>32) break; }
   if (xTicks.length > 12) { const step=Math.ceil(xTicks.length/12); xTicks=xTicks.filter((_,i)=>i%step===0||i===xTicks.length-1); }
   const yTicks = [0,20,40,60,80,100];
 
@@ -3779,7 +3781,8 @@ function renderLaunchAllOrgs(filtered) {
 
   // End-of-line model + org badges, positioned near each org's last dot.
   const approxTextWidth = (txt, fontSize) => String(txt || "").length * fontSize * 0.56;
-  const rightAlignedLabelEdge = W - 12;
+  const labelLeadIn = 14;
+  const labelRightInset = 12;
   const orgLabelItems = lineData.map(l => {
     const lastP = lastPointPerOrg.get(l.org);
     const anchorPt = l.lastPt || (lastP ? { x: xFor(lastP.launchDate.getTime()), y: yFor(lastP.greenRate) } : { x: W - mr - 10, y: mt + ph / 2 });
@@ -3796,7 +3799,7 @@ function renderLaunchAllOrgs(filtered) {
     const badgeW = Math.max(62, Math.ceil(approxTextWidth(badgeText, badgeFont) + badgePadX * 2));
     const gap = 12;
     const groupW = mainW + gap + badgeW;
-    const desiredX = Math.max(ml + 6, rightAlignedLabelEdge - groupW);
+    const desiredX = Math.max(ml + 6, Math.min(W - labelRightInset - groupW, anchorPt.x + labelLeadIn));
     return {
       org: l.org,
       color: l.color,
@@ -3808,6 +3811,7 @@ function renderLaunchAllOrgs(filtered) {
       badgeR,
       badgeW,
       modelFont,
+      mainW,
       gap,
       labelW: groupW,
       lastPt: anchorPt,
@@ -3836,9 +3840,9 @@ function renderLaunchAllOrgs(filtered) {
   }
 
   const orgEndLabels = orgLabelItems.map(item => {
-    const badgeX = rightAlignedLabelEdge - item.badgeW;
-    const modelX = badgeX - item.gap - approxTextWidth(item.mainLabel, item.modelFont);
-    const connectorX = Math.max(item.lastPt.x + 8, modelX - 8);
+    const modelX = item.x;
+    const badgeX = item.x + item.mainW + item.gap;
+    const connectorX = Math.max(item.lastPt.x + 8, item.x - 8);
     const connector = `<line x1="${item.lastPt.x.toFixed(1)}" y1="${item.lastPt.y.toFixed(1)}" x2="${connectorX.toFixed(1)}" y2="${(item.y - 3).toFixed(1)}" stroke="${esc(item.color)}" stroke-opacity="0.42" stroke-width="1.1"/>`;
     const badgeY = item.y - item.badgeH / 2;
     const badgeRect = `<rect x="${badgeX.toFixed(1)}" y="${badgeY.toFixed(1)}" width="${item.badgeW.toFixed(1)}" height="${item.badgeH}" rx="${item.badgeR}" ry="${item.badgeR}" fill="${esc(item.color)}" fill-opacity="0.11" stroke="${esc(item.color)}" stroke-opacity="0.44" stroke-width="1"/>`;
