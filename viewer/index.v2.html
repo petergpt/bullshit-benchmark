@@ -1049,84 +1049,6 @@
     .pill.score2 { color: #175f33; background: #e6f6ec; border-color: #bee2c8; }
     .pill.error { color: #27312e; background: #ecefee; border-color: #cdd4d1; }
 
-    /* Response viewer */
-    .compare-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .compare-head h2 {
-      margin: 0;
-    }
-    .compare-share-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      border-radius: 9px;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: #31443d;
-      box-shadow: none;
-      flex: 0 0 auto;
-    }
-    .compare-share-btn:hover {
-      background: #f6f4ef;
-      border-color: #d4cec2;
-    }
-    .compare-share-btn:focus-visible {
-      outline: 2px solid rgba(40, 83, 61, 0.18);
-      outline-offset: 2px;
-    }
-    .compare-share-btn svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.85;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .compare-share-toast {
-      position: absolute;
-      top: 50%;
-      left: calc(100% + 10px);
-      transform: translateY(-50%) translateX(-4px);
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid #d7ddd8;
-      background: rgba(255, 255, 255, 0.96);
-      color: #31443d;
-      font-size: 0.75rem;
-      font-weight: 600;
-      line-height: 1;
-      white-space: nowrap;
-      box-shadow: 0 6px 16px rgba(34, 47, 41, 0.08);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 140ms ease, transform 140ms ease;
-    }
-    .compare-share-toast::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: -5px;
-      width: 10px;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.96);
-      border-left: 1px solid #d7ddd8;
-      border-bottom: 1px solid #d7ddd8;
-      transform: translateY(-50%) rotate(45deg);
-    }
-    .compare-share-toast.is-visible {
-      opacity: 1;
-      transform: translateY(-50%) translateX(0);
-    }
     .compare-controls {
       display: grid; gap: 10px;
       grid-template-columns: 1.2fr 1fr 1fr 0.85fr;
@@ -1537,27 +1459,7 @@
 
     <!-- Response Viewer -->
     <section class="panel" id="response-viewer">
-      <div class="compare-head">
-        <h2 data-bench-heading="Response Viewer">BullshitBench: Response Viewer</h2>
-        <button
-          type="button"
-          id="compareShareBtn"
-          class="compare-share-btn"
-          data-default-label="Share compare link"
-          data-copied-label="Compare link copied"
-          aria-label="Share compare link"
-          title="Share compare link"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="18" cy="5.5" r="2.75"></circle>
-            <circle cx="6" cy="12" r="2.75"></circle>
-            <circle cx="18" cy="18.5" r="2.75"></circle>
-            <path d="M8.5 10.7l6.8-3.9"></path>
-            <path d="M8.5 13.3l6.8 3.9"></path>
-          </svg>
-          <span id="compareShareToast" class="compare-share-toast" aria-live="polite">Link copied</span>
-        </button>
-      </div>
+      <h2 data-bench-heading="Response Viewer">BullshitBench: Response Viewer</h2>
       <div class="compare-controls">
         <label><span>Question</span><select id="compareQuestion"></select></label>
         <label><span>Model A</span><select id="compareModelA"></select></label>
@@ -1663,42 +1565,17 @@ function benchmarkVersionFromUrl() {
   const raw = String(params.get("benchmark") || params.get("version") || "").trim().toLowerCase();
   return raw === "v1" ? "v1" : "v2";
 }
-function applyCompareStateToUrl(url) {
-  if (!(url instanceof URL)) return url;
-  const qSel = document.getElementById("compareQuestion");
-  const mA = document.getElementById("compareModelA");
-  const mB = document.getElementById("compareModelB");
-  const viewSel = document.getElementById("compareViewMode");
-  if (!qSel || !viewSel) return url;
-
-  const qid = String(qSel.value || "").trim();
-  const modelA = String(mA?.value || "").trim();
-  const modelB = String(mB?.value || "").trim();
-  const viewMode = viewSel.value === "all" ? "all" : "pair";
-
-  if (qid) url.searchParams.set("q", qid);
-  else url.searchParams.delete("q");
-
-  if (viewMode === "pair" && modelA) url.searchParams.set("a", modelA);
-  else url.searchParams.delete("a");
-
-  if (viewMode === "pair" && modelB) url.searchParams.set("b", modelB);
-  else url.searchParams.delete("b");
-
-  if (viewMode === "all") url.searchParams.set("view", "all");
-  else url.searchParams.delete("view");
-
-  return url;
-}
-function compareStateFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const rawView = String(params.get("view") || "").trim().toLowerCase();
-  return {
-    questionId: String(params.get("q") || "").trim(),
-    modelA: String(params.get("a") || "").trim(),
-    modelB: String(params.get("b") || "").trim(),
-    viewMode: rawView === "all" ? "all" : rawView === "pair" ? "pair" : "",
-  };
+function stripCompareParamsFromUrl() {
+  if (!window.history || typeof window.history.replaceState !== "function") return;
+  const url = new URL(window.location.href);
+  const keys = ["q", "a", "b", "view"];
+  let changed = false;
+  keys.forEach(key => {
+    if (!url.searchParams.has(key)) return;
+    url.searchParams.delete(key);
+    changed = true;
+  });
+  if (changed) window.history.replaceState({}, "", url.toString());
 }
 function currentBenchmarkConfig() {
   return BENCHMARK_CONFIGS[S.benchmarkVersion] || BENCHMARK_CONFIGS.v2;
@@ -1755,43 +1632,6 @@ function setBenchmarkInUrl(nextVersion) {
   if (next === "v2") url.searchParams.delete("benchmark");
   else url.searchParams.set("benchmark", next);
   window.location.href = url.toString();
-}
-function syncCompareStateToUrl() {
-  if (!window.history || typeof window.history.replaceState !== "function") return;
-  const url = new URL(window.location.href);
-  applyCompareStateToUrl(url);
-  window.history.replaceState({}, "", url.toString());
-}
-function buildCompareShareUrl() {
-  const url = new URL(window.location.href);
-  applyCompareStateToUrl(url);
-  url.hash = "response-viewer";
-  return url.toString();
-}
-let compareShareResetTimer = null;
-async function copyCompareShareLink() {
-  const btn = document.getElementById("compareShareBtn");
-  const toast = document.getElementById("compareShareToast");
-  const defaultLabel = btn?.dataset.defaultLabel || "Share Compare";
-  const copiedLabel = btn?.dataset.copiedLabel || "Compare link copied";
-  const shareUrl = buildCompareShareUrl();
-  try {
-    if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") throw new Error("Clipboard unavailable");
-    await navigator.clipboard.writeText(shareUrl);
-  } catch (err) {
-    window.prompt("Copy this compare link:", shareUrl);
-  }
-  if (btn) {
-    btn.setAttribute("aria-label", copiedLabel);
-    btn.setAttribute("title", copiedLabel);
-    if (toast) toast.classList.add("is-visible");
-    window.clearTimeout(compareShareResetTimer);
-    compareShareResetTimer = window.setTimeout(() => {
-      btn.setAttribute("aria-label", defaultLabel);
-      btn.setAttribute("title", defaultLabel);
-      if (toast) toast.classList.remove("is-visible");
-    }, 1400);
-  }
 }
 
 const CATEGORY_META = {
@@ -1870,8 +1710,6 @@ const S = {
   drilldown: null, lbSort: { key: "greenRate", direction: "desc" },
   tokenSort: "total",
   techniqueSeed: Math.floor(Math.random() * 1e9),
-  compareUrlState: compareStateFromUrl(),
-  compareUrlHydrated: false,
   legendExpanded: {},
 };
 
@@ -2560,16 +2398,8 @@ async function loadData() {
     refreshJudgeLabels();
     refreshFilters();
     renderAll();
-    const hasCompareUrlState = Boolean(
-      S.compareUrlState?.questionId ||
-      S.compareUrlState?.modelA ||
-      S.compareUrlState?.modelB ||
-      S.compareUrlState?.viewMode
-    );
-    if (!hasCompareUrlState) {
-      // Preserve the existing random compare default for plain page loads.
-      randomGreenRed();
-    }
+    // Preserve the existing random compare default for normal page loads.
+    randomGreenRed();
   } catch(e) {
     el.textContent = `Error loading data: ${e.message}`;
     console.error(e);
@@ -4269,9 +4099,7 @@ function renderLeaderboard(filtered) {
 
 // ====== RENDER: Response Viewer ======
 function renderCompare(filtered) {
-  const compareUrlState = S.compareUrlHydrated ? null : S.compareUrlState;
   const viewSel = document.getElementById("compareViewMode");
-  if(compareUrlState?.viewMode) viewSel.value=compareUrlState.viewMode;
 
   // Build question options
   const qGroups = groupBy(filtered, r=>r.question_id||"");
@@ -4292,8 +4120,7 @@ function renderCompare(filtered) {
     const label = parts.join(" \u00b7 ");
     return `<option value="${esc(e.qid)}">${label}</option>`;
   }).join("");
-  if(compareUrlState?.questionId&&qEntries.some(e=>e.qid===compareUrlState.questionId)) qSel.value=compareUrlState.questionId;
-  else if(prev&&qEntries.some(e=>e.qid===prev)) qSel.value=prev;
+  if(prev&&qEntries.some(e=>e.qid===prev)) qSel.value=prev;
   else if(qEntries[0]) qSel.value=qEntries[0].qid;
 
   const qid=qSel.value;
@@ -4318,11 +4145,9 @@ function renderCompare(filtered) {
   const mA=document.getElementById("compareModelA"), mB=document.getElementById("compareModelB");
   const prevA=mA.value, prevB=mB.value;
   mA.innerHTML=opts; mB.innerHTML=opts;
-  if(compareUrlState?.modelA&&models.some(m=>m.key===compareUrlState.modelA)) mA.value=compareUrlState.modelA;
-  else if(models.some(m=>m.key===prevA)) mA.value=prevA;
+  if(models.some(m=>m.key===prevA)) mA.value=prevA;
   else if(models.length>0) mA.value=models[0].key;
-  if(compareUrlState?.modelB&&models.some(m=>m.key===compareUrlState.modelB)) mB.value=compareUrlState.modelB;
-  else if(models.some(m=>m.key===prevB)) mB.value=prevB;
+  if(models.some(m=>m.key===prevB)) mB.value=prevB;
   else if(models.length>1) mB.value=models[1].key;
   else if(models.length>0) mB.value=models[0].key;
 
@@ -4370,8 +4195,6 @@ function renderCompare(filtered) {
     document.getElementById("cardA").innerHTML=renderCard(byKey.get(mA.value),"A \u00b7 ");
     document.getElementById("cardB").innerHTML=renderCard(byKey.get(mB.value),"B \u00b7 ");
   }
-  S.compareUrlHydrated = true;
-  syncCompareStateToUrl();
 }
 function catRank(c) { return c==="green"?3:c==="amber"?2:c==="red"?1:0; }
 
@@ -4662,11 +4485,11 @@ function bindEvents() {
   document.getElementById("randomBtn").addEventListener("click", randomGreenRed);
   document.getElementById("randomBestBtn").addEventListener("click",()=>randomRanked("best"));
   document.getElementById("randomWorstBtn").addEventListener("click",()=>randomRanked("worst"));
-  document.getElementById("compareShareBtn").addEventListener("click", copyCompareShareLink);
 }
 
 // ====== BOOTSTRAP ======
 function init() {
+  stripCompareParamsFromUrl();
   applyBenchmarkPresentation();
   buildScoreFilter();
   bindEvents();

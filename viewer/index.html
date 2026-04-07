@@ -26,9 +26,15 @@
 <body>
   <p>Redirecting to the current viewer at <a id="target" href="./index.v2.html">index.v2.html</a>.</p>
   <script>
-    const target = `./index.v2.html${window.location.search}${window.location.hash}`;
-    document.getElementById("target").href = target;
-    window.location.replace(target);
+    const current = new URL(window.location.href);
+    const targetUrl = new URL("./index.v2.html", window.location.href);
+    ["benchmark", "version"].forEach((key) => {
+      const value = current.searchParams.get(key);
+      if (value) targetUrl.searchParams.set(key, value);
+    });
+    targetUrl.hash = current.hash;
+    document.getElementById("target").href = targetUrl.toString();
+    window.location.replace(targetUrl.toString());
   </script>
 </body>
 </html>
