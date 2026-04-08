@@ -1681,20 +1681,7 @@ const BENCHMARK_CONFIGS = {
   },
 };
 
-const LOCAL_LAUNCH_OVERRIDES = [
-  {
-    model_id: "openai/gpt-5.4",
-    org: "openai",
-    launch_date: "2026-03-05",
-    evidence_url: "https://developers.openai.com/api/docs/models/gpt-5.4",
-    evidence_title: "GPT-5.4 Model | OpenAI API",
-    evidence_published_date: "2026-03-05",
-    evidence_type: "docs_model_page",
-    judge_status: "local_override",
-    notes: "Local chart override so GPT-5.4 appears in release-date charts while repo launch metadata catches up.",
-    updated_at_utc: "2026-03-08T00:00:00Z",
-  },
-];
+const LOCAL_LAUNCH_OVERRIDES = [];
 
 function benchmarkVersionFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -2028,6 +2015,16 @@ function prettyModel(r) {
   const rawNorm = raw.trim().toLowerCase();
   const rl=normReasoning(r?.model_reasoning_level);
   const suf=rl&&rl!=="none"?` (${rl.charAt(0).toUpperCase()+rl.slice(1)})`:"";
+  if (rawNorm === "minimax-m2.5") return `MiniMax M2.5${suf}`;
+  if (rawNorm === "minimax-m2.7") return `MiniMax M2.7${suf}`;
+  if (rawNorm === "mistral-large-2512") return `Mistral Large 3${suf}`;
+  if (rawNorm === "mistral-small-2603") return `Mistral Small 4${suf}`;
+  if (rawNorm === "glm-5-turbo") return `GLM 5 Turbo${suf}`;
+  if (rawNorm === "nemotron-3-super-120b-a12b") return `Nemotron 3 Super 120B A12B${suf}`;
+  if (rawNorm === "nemotron-3-super-120b-a12b:free") return `Nemotron 3 Super 120B A12B (Free)${suf}`;
+  if (rawNorm === "qwen3-max-thinking") return `Qwen3 Max Thinking${suf}`;
+  if (rawNorm === "grok-4.20" || rawNorm === "grok-4.20-beta") return `Grok 4.20${suf}`;
+  if (rawNorm === "grok-4.20-multi-agent" || rawNorm === "grok-4.20-multi-agent-beta") return `Grok 4.20 Multi-Agent${suf}`;
   if (rawNorm === "o3") return `o3${suf}`;
   if (rawNorm === "o4-mini" || rawNorm === "o4mini") return `o4-mini${suf}`;
   if (MODEL_DISPLAY_ALIAS[rawNorm]) return `${MODEL_DISPLAY_ALIAS[rawNorm]}${suf}`;

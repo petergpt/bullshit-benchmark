@@ -46,14 +46,19 @@
       "openai/o3",
       "openai/o4-mini",
       "z-ai/glm-5",
+      "z-ai/glm-5-turbo",
       "baidu/ernie-4.5-300b-a47b",
       "google/gemma-3-27b-it",
       "google/gemma-4-26b-a4b-it",
       "google/gemma-4-31b-it",
       "qwen/qwen3.5-397b-a17b",
-      "arcee-ai/trinity-large-thinking",
+      "qwen/qwen3-max-thinking",
       "moonshotai/kimi-k2.5",
-      "minimax/minimax-m2.5"
+      "minimax/minimax-m2.5",
+      "minimax/minimax-m2.7",
+      "mistralai/mistral-small-2603",
+      "nvidia/nemotron-3-super-120b-a12b",
+      "arcee-ai/trinity-large-thinking"
     ],
     "models_file": "",
     "model_providers": {
@@ -170,6 +175,10 @@
         "none",
         "high"
       ],
+      "z-ai/glm-5-turbo": [
+        "none",
+        "high"
+      ],
       "google/gemma-4-26b-a4b-it": [
         "none",
         "xhigh"
@@ -182,9 +191,9 @@
         "none",
         "high"
       ],
-      "arcee-ai/trinity-large-thinking": [
-        "minimal",
-        "xhigh"
+      "qwen/qwen3-max-thinking": [
+        "none",
+        "high"
       ],
       "moonshotai/kimi-k2.5": [
         "none",
@@ -193,6 +202,22 @@
       "minimax/minimax-m2.5": [
         "low",
         "high"
+      ],
+      "minimax/minimax-m2.7": [
+        "low",
+        "high"
+      ],
+      "mistralai/mistral-small-2603": [
+        "none",
+        "high"
+      ],
+      "nvidia/nemotron-3-super-120b-a12b": [
+        "none",
+        "high"
+      ],
+      "arcee-ai/trinity-large-thinking": [
+        "minimal",
+        "xhigh"
       ]
     },
     "shuffle_tasks": true,
