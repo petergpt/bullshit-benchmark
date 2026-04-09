@@ -3338,7 +3338,7 @@ function placeLabelsGreedy(points, opts = {}) {
         placed.push(box);
         const anchor = o.dx < -labelW/2 ? "end" : o.dx > 0 ? "start" : "middle";
         const textX = anchor === "end" ? box.x + box.w : anchor === "middle" ? box.x + box.w/2 : box.x;
-        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor });
+        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor, box });
         return;
       }
       for (const o of offsets) {
@@ -3347,12 +3347,12 @@ function placeLabelsGreedy(points, opts = {}) {
         placed.push(box);
         const anchor = o.dx < -labelW/2 ? "end" : o.dx > 0 ? "start" : "middle";
         const textX = anchor === "end" ? box.x + box.w : anchor === "middle" ? box.x + box.w/2 : box.x;
-        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor });
+        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor, box });
         return;
       }
       const fallbackBox = clampBoxToPlot({ x: cx + 8, y: cy - labelH/2, w: labelW, h: labelH });
       placed.push(fallbackBox);
-      result.push({ point: pt, x: fallbackBox.x, y: fallbackBox.y + labelH - 2, anchor: "start" });
+      result.push({ point: pt, x: fallbackBox.x, y: fallbackBox.y + labelH - 2, anchor: "start", box: fallbackBox });
       return;
     }
 
@@ -3362,7 +3362,7 @@ function placeLabelsGreedy(points, opts = {}) {
         placed.push(box);
         const anchor = o.dx < -labelW/2 ? "end" : o.dx > 0 ? "start" : "middle";
         const textX = anchor === "end" ? box.x + box.w : anchor === "middle" ? box.x + box.w/2 : box.x;
-        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor });
+        result.push({ point: pt, x: textX, y: box.y + labelH - 2, anchor, box });
         autoLabelsPlaced++;
         return;
       }
@@ -3488,6 +3488,28 @@ function renderScatterLabelHalo(lp, chartId) {
   return `<circle class="scatter-label-halo${point._pinnedLabel ? " is-selected" : ""}" data-scatter-chart="${esc(chartId)}" data-scatter-point-key="${esc(point._scatterKey)}" tabindex="0" role="button" aria-pressed="${point._pinnedLabel ? "true" : "false"}" aria-label="${esc(scatterToggleAriaLabel(point))}" cx="${point._cx.toFixed(1)}" cy="${point._cy.toFixed(1)}" r="${point._pinnedLabel ? "6.4" : "5.6"}" fill="none" stroke="${orgColor(point.org)}" stroke-opacity="${point._pinnedLabel ? "0.7" : "0.45"}" stroke-width="${point._pinnedLabel ? "1.4" : "1"}"/>`;
 }
 
+function renderScatterLabelConnector(lp, chartId, opts = {}) {
+  const point = lp?.point;
+  const box = lp?.box;
+  if (!point || !box) return "";
+  if (opts.onlyPinned && !point._pinnedLabel) return "";
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const boxX = clamp(point._cx, box.x, box.x + box.w);
+  const boxY = clamp(point._cy, box.y, box.y + box.h);
+  if (!Number.isFinite(boxX) || !Number.isFinite(boxY)) return "";
+  const dx = boxX - point._cx;
+  const dy = boxY - point._cy;
+  const length = Math.hypot(dx, dy);
+  if (length < 1) return "";
+  const dotGap = opts.dotGap || 6.4;
+  const labelGap = opts.labelGap || 1.8;
+  const startX = point._cx + (dx / length) * dotGap;
+  const startY = point._cy + (dy / length) * dotGap;
+  const endX = boxX - (dx / length) * labelGap;
+  const endY = boxY - (dy / length) * labelGap;
+  return `<line class="scatter-label-connector${point._pinnedLabel ? " is-selected" : ""}" data-scatter-chart="${esc(chartId)}" data-scatter-point-key="${esc(point._scatterKey)}" x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${endX.toFixed(1)}" y2="${endY.toFixed(1)}" stroke="${orgColor(point.org)}" stroke-opacity="${point._pinnedLabel ? "0.62" : "0.28"}" stroke-width="${point._pinnedLabel ? "1.3" : "1"}"/>`;
+}
+
 function renderScatterTextLabel(lp, chartId, opts = {}) {
   const point = lp.point;
   const normalLabel = typeof opts.labelFormatter === "function" ? opts.labelFormatter(point) : launchChartModelLabel(point.label);
@@ -3533,7 +3555,7 @@ function selectReleaseScatterLabelPoints(points, maxLabels = 10) {
 function selectLaunchScatterLabelPoints(points, maxLabels = 12, preferredModels = []) {
   const selected = [];
   const seen = new Set();
-  const add = p => {
+  const add = (p, force = false) => {
     if (!p) return;
     const k = scatterPointKey(p);
     if (seen.has(k)) return;
@@ -3545,7 +3567,7 @@ function selectLaunchScatterLabelPoints(points, maxLabels = 12, preferredModels 
     const preferredPoint = points
       .filter(p => scatterBaseModelKey(p) === baseModel)
       .sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0];
-    add(preferredPoint);
+    add(preferredPoint, true);
   });
 
   const byOrg = groupBy(points, p => normOrg(p.org));
@@ -3946,7 +3968,7 @@ function renderLaunchAllOrgs(filtered) {
   const labelPoints = points.filter(p => p._pinnedLabel || !lastPtSet.has(p));
   const labelCandidates = mergePinnedScatterLabelPoints(
     labelPoints,
-    selectLaunchScatterLabelPoints(labelPoints, 12, PREFERRED_LAUNCH_CHART_BASE_MODELS)
+    selectLaunchScatterLabelPoints(labelPoints, 14, PREFERRED_LAUNCH_CHART_BASE_MODELS)
   );
   const labelPlacements = placeLabelsGreedy(labelCandidates, {
     fontSize: 10, svgW: W, svgH: H, ml, mr: mr + 120, mt, mb,
@@ -3955,6 +3977,10 @@ function renderLaunchAllOrgs(filtered) {
     labelFormatter: point => launchChartModelLabel(point.label),
     pinnedLabelFormatter: point => launchChartModelLabel(point.label),
   });
+  const labelConnectors = labelPlacements.map(lp => renderScatterLabelConnector(lp, "launchAllOrgs", {
+    dotGap: 6.6,
+    labelGap: 1.6,
+  })).join("");
   const labelsHtml = labelPlacements.map(lp => renderScatterTextLabel(lp, "launchAllOrgs", {
     fontSize: "10",
     pinnedFontSize: "10.6",
@@ -3967,7 +3993,7 @@ function renderLaunchAllOrgs(filtered) {
     pinnedLabelFormatter: point => launchChartModelLabel(point.label),
   })).join("");
 
-  svg.innerHTML = `${gridY}${gridX}${lines}${dots}${labelsHtml}${orgEndLabels}
+  svg.innerHTML = `${gridY}${gridX}${lines}${dots}${labelConnectors}${labelsHtml}${orgEndLabels}
     <text x="${ml+pw/2}" y="${H-10}" text-anchor="middle" fill="#425851" font-size="12">Release Date</text>
     <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">Green Rate (%)</text>`;
 
