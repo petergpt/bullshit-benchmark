@@ -24,6 +24,7 @@ All notable benchmark, data, and viewer changes are tracked in this file.
 - Refreshed the published viewer datasets in `data/latest/*` and `data/v2/latest/*` so the new `Claude Opus 4.7` rows are live in the local/public leaderboard artifacts.
 - Refreshed the README chart screenshots in `docs/images/*` so the static documentation matches the current viewer data.
 - Updated the v2 viewer’s scatter-label layout so pinned labels retain their placement boxes and render connector lines back to their chart points.
+- Updated the v2 reasoning-tokens scatter to keep zero-token models visible in a dedicated `0` lane instead of dropping them from the chart.
 
 ## [2.0.7] - 2026-04-07
 
