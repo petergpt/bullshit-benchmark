@@ -1,23 +1,17 @@
 {
-  "generated_at_utc": "2026-04-07T20:45:00Z",
-  "publish_mode": "replace",
+  "generated_at_utc": "2026-04-17T07:02:21Z",
+  "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-03-31T20:45:00Z",
+  "window_start_utc": "2026-04-10T07:02:21Z",
   "models": [
-    "arcee-ai/trinity-large-thinking@reasoning=minimal",
-    "arcee-ai/trinity-large-thinking@reasoning=xhigh",
-    "google/gemma-4-26b-a4b-it@reasoning=none",
-    "google/gemma-4-26b-a4b-it@reasoning=xhigh",
-    "google/gemma-4-31b-it@reasoning=high",
-    "google/gemma-4-31b-it@reasoning=none"
+    "anthropic/claude-opus-4.7@reasoning=max",
+    "anthropic/claude-opus-4.7@reasoning=none"
   ],
   "model_bases": [
-    "arcee-ai/trinity-large-thinking",
-    "google/gemma-4-26b-a4b-it",
-    "google/gemma-4-31b-it"
+    "anthropic/claude-opus-4.7"
   ],
-  "model_count": 6,
-  "model_base_count": 3,
+  "model_count": 2,
+  "model_base_count": 1,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T07:47:21Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-02-26T15:26:33Z",
@@ -33,6 +27,8 @@
     "anthropic/claude-opus-4.5@reasoning=none": "2026-02-24T09:30:29Z",
     "anthropic/claude-opus-4.6@reasoning=high": "2026-02-24T09:30:29Z",
     "anthropic/claude-opus-4.6@reasoning=none": "2026-02-24T09:30:46Z",
+    "anthropic/claude-opus-4.7@reasoning=max": "2026-04-17T06:20:22Z",
+    "anthropic/claude-opus-4.7@reasoning=none": "2026-04-17T06:20:22Z",
     "anthropic/claude-opus-4@reasoning=default": "2026-02-26T15:26:42Z",
     "anthropic/claude-sonnet-4.5@reasoning=high": "2026-02-24T09:32:56Z",
     "anthropic/claude-sonnet-4.5@reasoning=none": "2026-02-24T09:30:54Z",
@@ -154,6 +150,7 @@
     "anthropic/claude-opus-4.1": "2026-02-24T09:30:29Z",
     "anthropic/claude-opus-4.5": "2026-02-24T09:30:29Z",
     "anthropic/claude-opus-4.6": "2026-02-24T09:30:29Z",
+    "anthropic/claude-opus-4.7": "2026-04-17T06:20:22Z",
     "anthropic/claude-sonnet-4": "2026-02-24T09:30:29Z",
     "anthropic/claude-sonnet-4.5": "2026-02-24T09:30:54Z",
     "anthropic/claude-sonnet-4.6": "2026-02-24T09:31:08Z",
@@ -220,5 +217,5 @@
     "z-ai/glm-4.5": "2026-03-18T07:47:31Z",
     "z-ai/glm-5": "2026-02-24T09:30:29Z"
   },
-  "notes": "Exact model variants first added to this dataset in the last 7 days. Replace publishes preserve first-seen timestamps when the prior sidecar is available."
+  "notes": "Exact model variants first added to this dataset in the last 7 days."
 }

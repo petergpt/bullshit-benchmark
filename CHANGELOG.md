@@ -2,6 +2,29 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.8] - 2026-04-17
+
+### Added
+- Added published `v1` benchmark results for:
+  - `anthropic/claude-opus-4.7@reasoning=none`
+  - `anthropic/claude-opus-4.7@reasoning=max`
+- Added published `v2` benchmark results for:
+  - `anthropic/claude-opus-4.7@reasoning=none`
+  - `anthropic/claude-opus-4.7@reasoning=max`
+- Added canonical launch-date metadata for `anthropic/claude-opus-4.7`.
+- Added star-milestone helper scripts and generated assets for the repository’s GitHub star charts:
+  - `scripts/render_star_milestone_chart.py`
+  - `scripts/annotate_star_history_milestone.py`
+  - `docs/images/bullshitbench-1000-stars-milestone.{svg,png}`
+  - `docs/images/bullshitbench-star-history-1000-stars.{svg,png}`
+- Added `scripts/push_bullshitbench_to_forge.py` to transform aggregate benchmark rows into Forge pairwise feedback events.
+
+### Changed
+- Updated the benchmark runner to support `max` as a reasoning tier and to route `anthropic/claude-opus-4.7` high-effort OpenRouter requests through adaptive thinking with `verbosity=max`.
+- Refreshed the published viewer datasets in `data/latest/*` and `data/v2/latest/*` so the new `Claude Opus 4.7` rows are live in the local/public leaderboard artifacts.
+- Refreshed the README chart screenshots in `docs/images/*` so the static documentation matches the current viewer data.
+- Updated the v2 viewer’s scatter-label layout so pinned labels retain their placement boxes and render connector lines back to their chart points.
+
 ## [2.0.7] - 2026-04-07
 
 ### Added

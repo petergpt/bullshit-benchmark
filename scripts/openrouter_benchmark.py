@@ -49,6 +49,7 @@ REASONING_EFFORT_VALUES: tuple[str, ...] = (
     "medium",
     "high",
     "xhigh",
+    "max",
 )
 
 REASONING_EFFORT_CLI_CHOICES: tuple[str, ...] = (
@@ -59,6 +60,7 @@ REASONING_EFFORT_CLI_CHOICES: tuple[str, ...] = (
     "medium",
     "high",
     "xhigh",
+    "max",
 )
 
 MODEL_PROVIDER_ALIASES: dict[str, str] = {
@@ -1236,11 +1238,27 @@ def build_model_variants(
                 )
 
             if effort is not None:
-                reasoning_override = request_overrides.get("reasoning")
-                if not isinstance(reasoning_override, dict):
-                    reasoning_override = {}
-                reasoning_override["effort"] = effort
-                request_overrides["reasoning"] = reasoning_override
+                if (
+                    provider == "openrouter"
+                    and model == "anthropic/claude-opus-4.7"
+                    and effort != "none"
+                ):
+                    # OpenRouter's current Anthropic 4.7 path expects adaptive
+                    # thinking to be enabled and the native effort value passed
+                    # through top-level verbosity rather than reasoning.effort.
+                    reasoning_override = request_overrides.get("reasoning")
+                    if not isinstance(reasoning_override, dict):
+                        reasoning_override = {}
+                    reasoning_override.pop("effort", None)
+                    reasoning_override["enabled"] = True
+                    request_overrides["reasoning"] = reasoning_override
+                    request_overrides["verbosity"] = effort
+                else:
+                    reasoning_override = request_overrides.get("reasoning")
+                    if not isinstance(reasoning_override, dict):
+                        reasoning_override = {}
+                    reasoning_override["effort"] = effort
+                    request_overrides["reasoning"] = reasoning_override
             variants.append(
                 {
                     "model_id": model,

@@ -17,3 +17,6 @@ data/model_metadata/open_source_params_sidecar.csv
 readme.preview.html
 drafts/*.html
 side-tests/
+drafts/*.docx
+drafts/*.py
+drafts/screenshots/

@@ -178,6 +178,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "anthropic/claude-opus-4.7@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 4,
+      "score_1": 13,
+      "score_2": 83,
+      "score_3": 0,
+      "avg_score": 1.7833,
+      "detection_rate_score_2": 0.83,
+      "full_engagement_rate_score_0": 0.04,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.8148,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.6,
+        "fabricated_authority": 1.8182,
+        "false_granularity": 1.8889,
+        "misapplied_mechanism": 1.8718,
+        "nested_nonsense": 1.8571,
+        "plausible_nonexistent_framework": 1.875,
+        "reified_metaphor": 1.4444,
+        "specificity_trap": 1.5,
+        "sunk_cost_framing": 1.6667,
+        "temporal_category_error": 1.5556,
+        "wrong_unit_of_analysis": 2.0
+      },
+      "run_average_scores": {
+        "1": 1.7833
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "qwen/qwen3.5-397b-a17b@reasoning=high",
       "count": 100,
       "scored_count": 100,
@@ -349,6 +384,41 @@
       },
       "run_average_scores": {
         "1": 1.6267
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "anthropic/claude-opus-4.7@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 11,
+      "score_1": 15,
+      "score_2": 74,
+      "score_3": 0,
+      "avg_score": 1.6167,
+      "detection_rate_score_2": 0.74,
+      "full_engagement_rate_score_0": 0.11,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.6667,
+        "confident_extrapolation": 1.9167,
+        "cross_domain_stitching": 0.8,
+        "fabricated_authority": 1.9394,
+        "false_granularity": 1.8333,
+        "misapplied_mechanism": 1.2308,
+        "nested_nonsense": 1.619,
+        "plausible_nonexistent_framework": 1.7917,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 1.5834,
+        "sunk_cost_framing": 1.3333,
+        "temporal_category_error": 1.6667,
+        "wrong_unit_of_analysis": 1.7333
+      },
+      "run_average_scores": {
+        "1": 1.6167
       },
       "run_average_stddev": null
     },
@@ -4558,29 +4628,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 13000,
-        "agreements": 10551,
-        "agreement_rate": 0.811615
+        "compared_rows": 13200,
+        "agreements": 10729,
+        "agreement_rate": 0.812803
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 13000,
-        "agreements": 10423,
-        "agreement_rate": 0.801769
+        "compared_rows": 13200,
+        "agreements": 10587,
+        "agreement_rate": 0.802045
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 13000,
-        "agreements": 10189,
-        "agreement_rate": 0.783769
+        "compared_rows": 13200,
+        "agreements": 10359,
+        "agreement_rate": 0.784773
       }
     ],
-    "average_pairwise_agreement": 0.799051,
-    "krippendorff_alpha_ordinal": 0.787026
+    "average_pairwise_agreement": 0.799874,
+    "krippendorff_alpha_ordinal": 0.790405
   },
-  "total_records": 13000,
+  "total_records": 13200,
   "total_error_records": 0,
-  "total_scored_records": 13000
+  "total_scored_records": 13200
 }
