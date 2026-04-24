@@ -2,6 +2,22 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.10] - 2026-04-24
+
+### Added
+- Added published `v2` benchmark results for:
+  - `openai/gpt-5.5@reasoning=low`
+  - `openai/gpt-5.5@reasoning=xhigh`
+  - `openai/gpt-5.5-pro@reasoning=medium`
+  - `openai/gpt-5.5-pro@reasoning=xhigh`
+- Added canonical launch-date and closed-model metadata for `openai/gpt-5.5` and `openai/gpt-5.5-pro` using OpenAI's public GPT-5.5 launch materials.
+
+### Changed
+- Folded the GPT-5.5 and GPT-5.5 Pro v2 rows into `config.v2.json` with the tested reasoning settings and OpenAI provider routing.
+- Refreshed `data/v2/latest/*` so the GPT-5.5 rows appear in the normal published v2 viewer dataset, leaderboard, release-date charts, and reasoning-token/cost charts.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated public viewer data.
+- Added private/local-only run guardrails to `AGENTS.md` so future benchmark work keeps private artifacts outside tracked release paths until explicitly approved for publication.
+
 ## [2.0.9] - 2026-04-21
 
 ### Added

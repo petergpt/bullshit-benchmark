@@ -6,18 +6,18 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-04-21
+- Updated: 2026-04-24
 
-## Latest Changelog Entry (2026-04-21)
+## Latest Changelog Entry (2026-04-24)
 
-- Added native-provider OpenRouter benchmark runs for three new v2 model families:
-  - `moonshotai/kimi-k2.6`
-  - `z-ai/glm-5.1`
-  - `qwen/qwen3.6-plus`
-- Published both low/no-reasoning and highest-reasoning rows for each new model into the `v2` viewer track (`data/v2/latest`) with `100` questions.
-- Added canonical launch-date, model-size, access, and license metadata for the new rows.
-- Backfilled model-size/access metadata for closed frontier APIs and public-weight models so release-date, reasoning, and weights charts share the same metadata source.
-- Updated durable v2 config coverage so the published rows are represented outside ad hoc run artifacts.
+- Added GPT-5.5 and GPT-5.5 Pro benchmark results to the `v2` viewer track (`data/v2/latest`) with `100` questions per reasoning variant.
+- Published:
+  - `openai/gpt-5.5@reasoning=low`
+  - `openai/gpt-5.5@reasoning=xhigh`
+  - `openai/gpt-5.5-pro@reasoning=medium`
+  - `openai/gpt-5.5-pro@reasoning=xhigh`
+- Added canonical launch-date and closed-model metadata using OpenAI's public GPT-5.5 launch materials.
+- Updated durable v2 config coverage and refreshed the README chart screenshots so the static docs match the published viewer data.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -78,7 +78,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `138` model/reasoning rows.
+- Published v2 leaderboard currently includes `142` model/reasoning rows.
 
 ## What This Measures
 
