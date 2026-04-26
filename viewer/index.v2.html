@@ -413,13 +413,35 @@
       font-size: 0.78rem; color: var(--muted); white-space: nowrap;
     }
     .domain-bar-filter-toggle {
-      margin-left: auto;
       white-space: nowrap;
       border-radius: 8px;
       padding: 7px 12px;
       font-size: 0.78rem;
       font-weight: 600;
       min-height: 32px;
+    }
+    .domain-bar-sort-inline {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap;
+    }
+    .domain-bar-sort-inline > span { font-weight: 600; color: #35423e; }
+    .domain-bar-sort-inline select {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      min-height: 32px;
+      cursor: pointer;
+    }
+    .domain-bar-sort-inline select:hover { border-color: var(--line-strong); background: #ebe7de; }
+    .domain-bar-sort-inline select:focus-visible {
+      outline: 2px solid rgba(29, 91, 80, 0.3);
+      outline-offset: 2px;
     }
     .domain-bar-filter-toggle[aria-expanded="true"] {
       background: var(--panel-alt);
@@ -1303,6 +1325,13 @@
         <div class="domain-bar-pills" id="domainBarPills"></div>
         <span class="domain-bar-sep"></span>
         <span class="filter-count" id="domainBarSummary">Overall</span>
+        <label class="domain-bar-sort-inline" title="Choose which outcome drives the main-view rankings">
+          <span>Sort by</span>
+          <select id="domainBarSortSelect" aria-label="Primary ranking metric">
+            <option value="green">Clear Pushback</option>
+            <option value="red">Accepted Nonsense</option>
+          </select>
+        </label>
         <button type="button" id="domainBarFilterToggle" class="domain-bar-filter-toggle alt" aria-controls="filtersCollapsible" aria-expanded="false">Show Filters</button>
         <button type="button" id="domainBarPinToggle" class="domain-bar-pin-toggle" aria-pressed="false" aria-label="Pin Domain Scope banner to top" title="Pin Domain Scope banner to top">
           <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -1680,6 +1709,39 @@ const CATEGORY_META = {
 };
 const CATEGORY_ORDER = ["green", "amber", "red", "error"];
 
+// strongestDir puts the best model at the top: desc for green (higher = better),
+// asc for red (lower = better). Keeps the "strongest model wins" framing.
+const PRIMARY_METRIC_META = {
+  green: { label: "Clear Pushback",    rateField: "greenRate", lbKey: "greenRate", strongestDir: "desc" },
+  red:   { label: "Accepted Nonsense", rateField: "redRate",   lbKey: "redRate",   strongestDir: "asc"  },
+};
+const DEFAULT_PRIMARY_METRIC = "green";
+function primaryMetricMeta(metric) {
+  return PRIMARY_METRIC_META[metric] || PRIMARY_METRIC_META[DEFAULT_PRIMARY_METRIC];
+}
+function primaryMetricComparator(labelKey = "label", metric = undefined) {
+  const active = metric || S.primaryMetric || DEFAULT_PRIMARY_METRIC;
+  return (a, b) => {
+    let cmp;
+    if (active === "red") {
+      cmp = (a.redRate - b.redRate) ||
+            (b.greenRate - a.greenRate) ||
+            (b.amberRate - a.amberRate);
+    } else {
+      cmp = (b.greenRate - a.greenRate) ||
+            (b.amberRate - a.amberRate) ||
+            (a.redRate - b.redRate);
+    }
+    if (cmp) return cmp;
+    const al = String(a[labelKey] || ""), bl = String(b[labelKey] || "");
+    return al.localeCompare(bl);
+  };
+}
+function defaultLbSortForMetric(metric) {
+  const meta = primaryMetricMeta(metric);
+  return { key: meta.lbKey, direction: meta.strongestDir };
+}
+
 const ORG_COLORS = {
   anthropic: "#f97316", openai: "#1f9d55", google: "#1a73e8",
   meta: "#0866ff",
@@ -1748,7 +1810,9 @@ const S = {
   topVariantsOnly: false,
   heroPinned: false,
   domainPinned: false,
-  drilldown: null, lbSort: { key: "greenRate", direction: "desc" },
+  drilldown: null,
+  primaryMetric: DEFAULT_PRIMARY_METRIC,
+  lbSort: defaultLbSortForMetric(DEFAULT_PRIMARY_METRIC),
   tokenSort: "total",
   techniqueSeed: Math.floor(Math.random() * 1e9),
   legendExpanded: {},
@@ -2693,12 +2757,7 @@ function renderModelBars(modelChartRows) {
       ...s,
     };
   });
-  rows.sort((a,b)=>
-    (b.greenRate-a.greenRate) ||
-    (b.amberRate-a.amberRate) ||
-    (a.redRate-b.redRate) ||
-    a.label.localeCompare(b.label)
-  );
+  rows.sort(primaryMetricComparator("label"));
   rows.forEach((row, idx) => {
     row.rank = idx + 1;
   });
@@ -2761,7 +2820,8 @@ function renderDomainHeatmap(filtered) {
     });
     return { mk, label:prettyModel(sample), org:modelOrg(sample), overall, byDomain };
   });
-  modelData.sort((a,b)=>b.overall.greenRate-a.overall.greenRate||a.label.localeCompare(b.label));
+  const overallCmp = primaryMetricComparator("label");
+  modelData.sort((a,b)=>overallCmp({...a.overall, label:a.label}, {...b.overall, label:b.label}));
 
   const heatColor = (rate) => {
     if(rate===null) return "#f3f6f4";
@@ -4301,13 +4361,8 @@ function renderLeaderboard(filtered) {
       avgCost,
     };
   });
-  // Baseline ranking
-  const baseline=[...rows].sort((a,b)=>
-    (b.greenRate-a.greenRate) ||
-    (b.amberRate-a.amberRate) ||
-    (a.redRate-b.redRate) ||
-    a.model.localeCompare(b.model)
-  );
+  const baselineCmp = primaryMetricComparator("model");
+  const baseline=[...rows].sort(baselineCmp);
   baseline.forEach((r,i)=>r.rank=i+1);
   // Apply user sort
   const {key,direction}=S.lbSort;
@@ -4317,14 +4372,7 @@ function renderLeaderboard(filtered) {
     let cmp=0;
     if(numKeys.has(key)) cmp=Number(a[key]||0)-Number(b[key]||0);
     else cmp=String(a[key]||"").localeCompare(String(b[key]||""));
-    return cmp!==0
-      ? cmp*dir
-      : (
-        (b.greenRate-a.greenRate) ||
-        (b.amberRate-a.amberRate) ||
-        (a.redRate-b.redRate) ||
-        a.model.localeCompare(b.model)
-      );
+    return cmp!==0 ? cmp*dir : baselineCmp(a,b);
   });
 
   const lbBody = document.getElementById("lbBody");
@@ -4366,14 +4414,15 @@ function renderCompare(filtered) {
   const qGroups = groupBy(filtered, r=>r.question_id||"");
   const qEntries = [...qGroups.entries()].map(([qid,rows])=>{
     const s=summarize(rows), sample=rows[0]||{};
-    return { qid, rows, sample, greenRate:s.greenRate };
-  }).sort((a,b)=>b.greenRate-a.greenRate||a.qid.localeCompare(b.qid));
+    return { qid, rows, sample, greenRate:s.greenRate, amberRate:s.amberRate, redRate:s.redRate };
+  }).sort(primaryMetricComparator("qid"));
 
+  const metricMeta = primaryMetricMeta(S.primaryMetric);
   const qSel=document.getElementById("compareQuestion");
   const prev=qSel.value;
   qSel.innerHTML=qEntries.map(e=>{
     const qm=questionMeta(e.qid);
-    const parts = [e.qid, fmtPct(e.greenRate)];
+    const parts = [e.qid, fmtPct(e[metricMeta.rateField])];
     const scope = questionScopeLabel(qm);
     if (scope) parts.push(scope);
     if (qm.difficulty) parts.push(DIFFICULTY_LABELS[qm.difficulty] || qm.difficulty);
@@ -4636,6 +4685,19 @@ function bindEvents() {
     renderAll();
   });
 
+  // Primary ranking metric selector
+  const sortSelect = document.getElementById("domainBarSortSelect");
+  if (sortSelect) {
+    sortSelect.value = S.primaryMetric;
+    sortSelect.addEventListener("change", () => {
+      const next = PRIMARY_METRIC_META[sortSelect.value] ? sortSelect.value : DEFAULT_PRIMARY_METRIC;
+      if (next === S.primaryMetric) return;
+      S.primaryMetric = next;
+      S.lbSort = defaultLbSortForMetric(next);
+      renderAll();
+    });
+  }
+
   // Sticky filter toggle button
   const filterToggleBtn = document.getElementById("domainBarFilterToggle");
   const filterDetails = document.getElementById("filtersCollapsible");
@@ -4693,6 +4755,10 @@ function bindEvents() {
     document.getElementById("leaderboardRecentSelect").value=LEADERBOARD_WINDOW_DEFAULT;
     [1,2,3].forEach(i=>{if(!document.getElementById(`judge${i}Toggle`).disabled) document.getElementById(`judge${i}Toggle`).checked=true;});
     syncJudges(); S.hiddenModels.clear(); S.topVariantsOnly = false; S.leaderboardRecentWindow = LEADERBOARD_WINDOW_DEFAULT; S.modelChartFocusOrg = "all";
+    S.primaryMetric = DEFAULT_PRIMARY_METRIC;
+    S.lbSort = defaultLbSortForMetric(DEFAULT_PRIMARY_METRIC);
+    const sortSel = document.getElementById("domainBarSortSelect");
+    if (sortSel) sortSel.value = DEFAULT_PRIMARY_METRIC;
     [...document.querySelectorAll('input[name="scoreFilter"]')].forEach(n=>n.checked=true);
     refreshTopVariantToggle();
     renderModelToggles(); renderAll();
