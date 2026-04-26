@@ -413,13 +413,35 @@
       font-size: 0.78rem; color: var(--muted); white-space: nowrap;
     }
     .domain-bar-filter-toggle {
-      margin-left: auto;
       white-space: nowrap;
       border-radius: 8px;
       padding: 7px 12px;
       font-size: 0.78rem;
       font-weight: 600;
       min-height: 32px;
+    }
+    .domain-bar-sort-inline {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap;
+    }
+    .domain-bar-sort-inline > span { font-weight: 600; color: #35423e; }
+    .domain-bar-sort-inline select {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      min-height: 32px;
+      cursor: pointer;
+    }
+    .domain-bar-sort-inline select:hover { border-color: var(--line-strong); background: #ebe7de; }
+    .domain-bar-sort-inline select:focus-visible {
+      outline: 2px solid rgba(29, 91, 80, 0.3);
+      outline-offset: 2px;
     }
     .domain-bar-filter-toggle[aria-expanded="true"] {
       background: var(--panel-alt);
@@ -1303,6 +1325,13 @@
         <div class="domain-bar-pills" id="domainBarPills"></div>
         <span class="domain-bar-sep"></span>
         <span class="filter-count" id="domainBarSummary">Overall</span>
+        <label class="domain-bar-sort-inline" title="Choose which outcome drives the main-view rankings">
+          <span>Sort by</span>
+          <select id="domainBarSortSelect" aria-label="Primary ranking metric">
+            <option value="green">Clear Pushback</option>
+            <option value="red">Accepted Nonsense</option>
+          </select>
+        </label>
         <button type="button" id="domainBarFilterToggle" class="domain-bar-filter-toggle alt" aria-controls="filtersCollapsible" aria-expanded="false">Show Filters</button>
         <button type="button" id="domainBarPinToggle" class="domain-bar-pin-toggle" aria-pressed="false" aria-label="Pin Domain Scope banner to top" title="Pin Domain Scope banner to top">
           <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -1394,8 +1423,10 @@
 
     <!-- Domain Performance Heatmap -->
     <section class="panel" id="domainHeatmapSection">
-      <h2 data-bench-heading="Detection Rate by Domain">BullshitBench: Detection Rate by Domain</h2>
-      <p class="subtle">Green rate (%) for each model across the 5 domain groups. Darker green = higher detection. Click any cell to see example responses.</p>
+      <h2 data-bench-heading="Detection Rate by Domain" data-bench-heading-red="Accepted Nonsense by Domain">BullshitBench: Detection Rate by Domain</h2>
+      <p class="subtle"
+         data-metric-subtitle="Clear pushback rate (%) for each model across the 5 domain groups. Darker green = higher detection. Click any cell to see example responses."
+         data-metric-subtitle-red="Accepted nonsense rate (%) for each model across the 5 domain groups. Darker green = fewer accepted responses. Click any cell to see example responses.">Clear pushback rate (%) for each model across the 5 domain groups. Darker green = higher detection. Click any cell to see example responses.</p>
       <div class="heatmap-wrap" style="max-height:520px;overflow:auto;">
         <table class="heatmap" id="domainHeatmap"></table>
       </div>
@@ -1417,8 +1448,10 @@
 
     <!-- Release Date vs Green Score: All Orgs -->
     <section class="panel">
-      <h2 data-bench-heading="Detection Rate Over Time">BullshitBench: Detection Rate Over Time</h2>
-      <p class="subtle">Release date vs. green rate (clear pushback %) for all organizations. Best model per release date shown.</p>
+      <h2 data-bench-heading="Detection Rate Over Time" data-bench-heading-red="Accepted Nonsense Over Time">BullshitBench: Detection Rate Over Time</h2>
+      <p class="subtle"
+         data-metric-subtitle="Release date vs. clear pushback rate (%) for all organizations. Best model per release date shown."
+         data-metric-subtitle-red="Release date vs. accepted nonsense rate (%) for all organizations. Best model per release date shown.">Release date vs. clear pushback rate (%) for all organizations. Best model per release date shown.</p>
       <div class="launch-controls">
         <label class="launch-toggle">
           <input type="checkbox" id="launchBestOnlyToggle" checked>
@@ -1433,7 +1466,9 @@
     <div class="two-col">
       <section class="panel">
         <h2 data-bench-heading="Do Newer Models Perform Better?">BullshitBench: Do Newer Models Perform Better?</h2>
-        <p class="subtle">Every tested model plotted by release date vs. green rate.</p>
+        <p class="subtle"
+           data-metric-subtitle="Every tested model plotted by release date vs. clear pushback rate."
+           data-metric-subtitle-red="Every tested model plotted by release date vs. accepted nonsense rate.">Every tested model plotted by release date vs. clear pushback rate.</p>
         <div class="chart-legend" id="allModelsLegend"></div>
         <svg id="allModelsScatter" class="scatter-svg" viewBox="0 0 600 420"></svg>
       </section>
@@ -1455,7 +1490,9 @@
       <section class="panel size-scatter-panel">
         <div class="size-scatter-copy">
           <h2 data-bench-heading="Do Bigger Models Perform Better?">BullshitBench: Do Bigger Models Perform Better?</h2>
-          <p class="subtle">Public total parameter counts vs. green rate. The x-axis uses a log scale so 8B through 1T remain readable.</p>
+          <p class="subtle"
+             data-metric-subtitle="Public total parameter counts vs. clear pushback rate. The x-axis uses a log scale so 8B through 1T remain readable."
+             data-metric-subtitle-red="Public total parameter counts vs. accepted nonsense rate. The x-axis uses a log scale so 8B through 1T remain readable.">Public total parameter counts vs. clear pushback rate. The x-axis uses a log scale so 8B through 1T remain readable.</p>
         </div>
         <div class="chart-legend" id="sizeScatterTotalLegend"></div>
         <svg id="sizeScatterTotal" class="scatter-svg" viewBox="0 0 600 420"></svg>
@@ -1464,7 +1501,9 @@
       <section class="panel size-scatter-panel">
         <div class="size-scatter-copy">
           <h2 data-bench-heading="Do Active Parameters Matter?">BullshitBench: Do Active Parameters Matter?</h2>
-          <p class="subtle">Activated parameter counts from public sources vs. green rate. Dense models appear when active parameters equal total.</p>
+          <p class="subtle"
+             data-metric-subtitle="Activated parameter counts from public sources vs. clear pushback rate. Dense models appear when active parameters equal total."
+             data-metric-subtitle-red="Activated parameter counts from public sources vs. accepted nonsense rate. Dense models appear when active parameters equal total.">Activated parameter counts from public sources vs. clear pushback rate. Dense models appear when active parameters equal total.</p>
         </div>
         <div class="chart-legend" id="sizeScatterActiveLegend"></div>
         <svg id="sizeScatterActive" class="scatter-svg" viewBox="0 0 600 420"></svg>
@@ -1680,6 +1719,66 @@ const CATEGORY_META = {
 };
 const CATEGORY_ORDER = ["green", "amber", "red", "error"];
 
+// strongestDir puts the best model at the top: desc for green (higher = better),
+// asc for red (lower = better). Keeps the "strongest model wins" framing.
+const PRIMARY_METRIC_META = {
+  green: {
+    label: "Clear Pushback",    rateField: "greenRate", lbKey: "greenRate", strongestDir: "desc",
+    yAxisLabel: "Clear Pushback Rate (%)", tooltipLabel: "Clear Pushback",
+  },
+  red: {
+    label: "Accepted Nonsense", rateField: "redRate",   lbKey: "redRate",   strongestDir: "asc",
+    yAxisLabel: "Accepted Nonsense Rate (%)", tooltipLabel: "Accepted Nonsense",
+  },
+};
+const DEFAULT_PRIMARY_METRIC = "green";
+function primaryMetricMeta(metric) {
+  return PRIMARY_METRIC_META[metric] || PRIMARY_METRIC_META[DEFAULT_PRIMARY_METRIC];
+}
+// Returns the rate value from a point matching the active primary metric.
+function primaryMetricRate(point, metric) {
+  const field = primaryMetricMeta(metric || S.primaryMetric).rateField;
+  return Number(point?.[field]) || 0;
+}
+// Normalizes a raw rate to "performance" (0=worst, 100=best) — used for color ramps.
+function primaryMetricPerformance(rate, metric) {
+  return (metric || S.primaryMetric) === "red" ? 100 - (Number(rate) || 0) : (Number(rate) || 0);
+}
+// Builds a yFor(rate) function that places best-performing rates at the top.
+// Flips mapping direction for red so low-red lands up top like high-green does.
+function makeMetricYForRate(mt, ph, metric) {
+  return (rate) => mt + ((100 - primaryMetricPerformance(rate, metric)) / 100) * ph;
+}
+// Sort key where higher = stronger model, valid in either metric mode.
+function scatterStrengthValue(point, metric) {
+  const m = metric || S.primaryMetric;
+  const field = primaryMetricMeta(m).rateField;
+  const v = Number(point?.[field]) || 0;
+  return m === "red" ? -v : v;
+}
+function primaryMetricComparator(labelKey = "label", metric = undefined) {
+  const active = metric || S.primaryMetric || DEFAULT_PRIMARY_METRIC;
+  return (a, b) => {
+    let cmp;
+    if (active === "red") {
+      cmp = (a.redRate - b.redRate) ||
+            (b.greenRate - a.greenRate) ||
+            (b.amberRate - a.amberRate);
+    } else {
+      cmp = (b.greenRate - a.greenRate) ||
+            (b.amberRate - a.amberRate) ||
+            (a.redRate - b.redRate);
+    }
+    if (cmp) return cmp;
+    const al = String(a[labelKey] || ""), bl = String(b[labelKey] || "");
+    return al.localeCompare(bl);
+  };
+}
+function defaultLbSortForMetric(metric) {
+  const meta = primaryMetricMeta(metric);
+  return { key: meta.lbKey, direction: meta.strongestDir };
+}
+
 const ORG_COLORS = {
   anthropic: "#f97316", openai: "#1f9d55", google: "#1a73e8",
   meta: "#0866ff",
@@ -1748,7 +1847,9 @@ const S = {
   topVariantsOnly: false,
   heroPinned: false,
   domainPinned: false,
-  drilldown: null, lbSort: { key: "greenRate", direction: "desc" },
+  drilldown: null,
+  primaryMetric: DEFAULT_PRIMARY_METRIC,
+  lbSort: defaultLbSortForMetric(DEFAULT_PRIMARY_METRIC),
   tokenSort: "total",
   techniqueSeed: Math.floor(Math.random() * 1e9),
   legendExpanded: {},
@@ -2033,9 +2134,17 @@ function applyBenchmarkPresentation() {
   if (heroTitle) heroTitle.textContent = cfg.heroTitle;
   if (heroSubtitle) heroSubtitle.textContent = cfg.heroSubtitle;
   if (versionSelect && versionSelect.value !== cfg.key) versionSelect.value = cfg.key;
+  const isRedMetric = S.primaryMetric === "red";
   document.querySelectorAll("[data-bench-heading]").forEach(el => {
-    const suffix = el.getAttribute("data-bench-heading") || "";
+    const green = el.getAttribute("data-bench-heading") || "";
+    const red = el.getAttribute("data-bench-heading-red") || green;
+    const suffix = isRedMetric ? red : green;
     el.textContent = suffix ? `${headingPrefix}: ${suffix}` : headingPrefix;
+  });
+  document.querySelectorAll("[data-metric-subtitle]").forEach(el => {
+    const green = el.getAttribute("data-metric-subtitle") || "";
+    const red = el.getAttribute("data-metric-subtitle-red") || green;
+    el.textContent = isRedMetric ? red : green;
   });
   const domainBar = document.getElementById("domainBar");
   const domainSection = document.getElementById("domainHeatmapSection");
@@ -2693,12 +2802,7 @@ function renderModelBars(modelChartRows) {
       ...s,
     };
   });
-  rows.sort((a,b)=>
-    (b.greenRate-a.greenRate) ||
-    (b.amberRate-a.amberRate) ||
-    (a.redRate-b.redRate) ||
-    a.label.localeCompare(b.label)
-  );
+  rows.sort(primaryMetricComparator("label"));
   rows.forEach((row, idx) => {
     row.rank = idx + 1;
   });
@@ -2757,21 +2861,25 @@ function renderDomainHeatmap(filtered) {
     const byDomain={};
     domains.forEach(d=>{
       const dr=modelRows.filter(r=>r.domain_group===d);
-      byDomain[d]=dr.length?summarize(dr):{greenRate:null};
+      byDomain[d]=dr.length?summarize(dr):{greenRate:null, redRate:null};
     });
     return { mk, label:prettyModel(sample), org:modelOrg(sample), overall, byDomain };
   });
-  modelData.sort((a,b)=>b.overall.greenRate-a.overall.greenRate||a.label.localeCompare(b.label));
+  const overallCmp = primaryMetricComparator("label");
+  modelData.sort((a,b)=>overallCmp({...a.overall, label:a.label}, {...b.overall, label:b.label}));
 
+  // Color by "performance" (higher = better) so the ramp stays green-for-good
+  // regardless of whether we're displaying green-rate or red-rate numbers.
   const heatColor = (rate) => {
-    if(rate===null) return "#f3f6f4";
-    // Map 0-100 to red-yellow-green
-    if(rate>=90) return "#dcfce7";
-    if(rate>=70) return "#e6f6ec";
-    if(rate>=50) return "#fef9c3";
-    if(rate>=30) return "#fef3c7";
+    if(rate===null||rate===undefined) return "#f3f6f4";
+    const perf = primaryMetricPerformance(rate);
+    if(perf>=90) return "#dcfce7";
+    if(perf>=70) return "#e6f6ec";
+    if(perf>=50) return "#fef9c3";
+    if(perf>=30) return "#fef3c7";
     return "#fecaca";
   };
+  const yField = primaryMetricMeta(S.primaryMetric).rateField;
 
   document.getElementById("domainHeatmap").innerHTML = `
     <thead><tr>
@@ -2779,14 +2887,16 @@ function renderDomainHeatmap(filtered) {
       <th>Overall</th>
       ${domains.map(d=>`<th>${esc(DOMAIN_GROUP_LABELS[d]||d)}</th>`).join("")}
     </tr></thead>
-    <tbody>${modelData.map(m=>`<tr>
+    <tbody>${modelData.map(m=>{
+      const overallRate = m.overall[yField];
+      return `<tr>
       <td class="model-col"><span class="org-dot" style="background:${orgColor(m.org)};"></span> ${esc(m.label)}</td>
-      <td class="heat-cell heat-cell-click" data-mk="${esc(m.mk)}" data-domain="all" style="background:${heatColor(m.overall.greenRate)}">${fmtPct(m.overall.greenRate)}</td>
+      <td class="heat-cell heat-cell-click" data-mk="${esc(m.mk)}" data-domain="all" style="background:${heatColor(overallRate)}">${fmtPct(overallRate)}</td>
       ${domains.map(d=>{
-        const rate=m.byDomain[d]?.greenRate;
-        return `<td class="heat-cell heat-cell-click" data-mk="${esc(m.mk)}" data-domain="${esc(d)}" style="background:${heatColor(rate)}">${rate!==null?fmtPct(rate):"\u2014"}</td>`;
+        const rate=m.byDomain[d]?.[yField];
+        return `<td class="heat-cell heat-cell-click" data-mk="${esc(m.mk)}" data-domain="${esc(d)}" style="background:${heatColor(rate)}">${rate!==null&&rate!==undefined?fmtPct(rate):"\u2014"}</td>`;
       }).join("")}
-    </tr>`).join("")}</tbody>`;
+    </tr>`;}).join("")}</tbody>`;
 }
 
 function renderDomainInsights() {
@@ -3047,7 +3157,7 @@ function placeLabelsGreedy(points, opts = {}) {
   const maxLabels = opts.maxLabels || points.length;
   const priorityFn = typeof opts.priorityFn === "function"
     ? opts.priorityFn
-    : (point => Number(point?.greenRate) || 0);
+    : (point => scatterStrengthValue(point));
   const labelFormatter = typeof opts.labelFormatter === "function"
     ? opts.labelFormatter
     : (point => launchChartModelLabel(point?.label));
@@ -3059,7 +3169,7 @@ function placeLabelsGreedy(points, opts = {}) {
   const sorted = points.slice().sort((a,b) => {
     const priorityDelta = priorityFn(b) - priorityFn(a);
     if (Math.abs(priorityDelta) > 1e-9) return priorityDelta;
-    return (Number(b?.greenRate) || 0) - (Number(a?.greenRate) || 0);
+    return scatterStrengthValue(b) - scatterStrengthValue(a);
   });
 
   // Collect all dot positions as obstacles
@@ -3285,7 +3395,7 @@ function primeDefaultScatterSelections(chartId, points, preferredModels = []) {
   preferredModels.forEach((baseModel) => {
     const preferredPoint = points
       .filter(point => scatterBaseModelKey(point) === baseModel)
-      .sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0];
+      .sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0];
     if (preferredPoint) selected.add(scatterPointKey(preferredPoint));
   });
 }
@@ -3308,7 +3418,7 @@ function mergePinnedScatterLabelPoints(points, autoCandidates) {
 }
 
 function scatterLabelPriority(point) {
-  return (point?._pinnedLabel ? 100000 : 0) + (Number(point?.greenRate) || 0);
+  return (point?._pinnedLabel ? 100000 : 0) + scatterStrengthValue(point);
 }
 
 function scatterBaseModelKey(point) {
@@ -3386,15 +3496,15 @@ function selectReleaseScatterLabelPoints(points, maxLabels = 10) {
   const byOrg = groupBy(points, p => normOrg(p.org));
   const orgBySize = [...byOrg.entries()].sort((a,b) => b[1].length - a[1].length || orgName(a[0]).localeCompare(orgName(b[0])));
   orgBySize.slice(0, 5).forEach(([, orgPts]) => {
-    const best = orgPts.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0];
+    const best = orgPts.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0];
     add(best);
   });
   orgBySize.slice(0, 4).forEach(([, orgPts]) => {
-    const latest = orgPts.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || b.greenRate - a.greenRate)[0];
+    const latest = orgPts.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || scatterStrengthValue(b) - scatterStrengthValue(a))[0];
     add(latest);
   });
-  points.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime()).slice(0, 4).forEach(add);
-  points.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || b.greenRate - a.greenRate).slice(0, 3).forEach(add);
+  points.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime()).slice(0, 4).forEach(add);
+  points.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || scatterStrengthValue(b) - scatterStrengthValue(a)).slice(0, 3).forEach(add);
   return selected.slice(0, maxLabels);
 }
 
@@ -3412,14 +3522,14 @@ function selectLaunchScatterLabelPoints(points, maxLabels = 12, preferredModels 
   preferredModels.forEach((baseModel) => {
     const preferredPoint = points
       .filter(p => scatterBaseModelKey(p) === baseModel)
-      .sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0];
+      .sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0];
     add(preferredPoint, true);
   });
 
   const byOrg = groupBy(points, p => normOrg(p.org));
   [...byOrg.values()].forEach(orgPts => {
-    add(orgPts.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0]);
-    add(orgPts.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || b.greenRate - a.greenRate)[0]);
+    add(orgPts.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0]);
+    add(orgPts.slice().sort((a,b) => b.launchDate.getTime() - a.launchDate.getTime() || scatterStrengthValue(b) - scatterStrengthValue(a))[0]);
   });
 
   const byDate = points.slice().sort((a,b) => a.launchDate.getTime() - b.launchDate.getTime());
@@ -3428,10 +3538,10 @@ function selectLaunchScatterLabelPoints(points, maxLabels = 12, preferredModels 
     const start = Math.floor((i * byDate.length) / binCount);
     const end = Math.floor(((i + 1) * byDate.length) / binCount);
     const bin = byDate.slice(start, Math.max(start + 1, end));
-    add(bin.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0]);
+    add(bin.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0]);
   }
 
-  points.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime()).slice(0, maxLabels).forEach(add);
+  points.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime()).slice(0, maxLabels).forEach(add);
   return selected.slice(0, maxLabels);
 }
 
@@ -3452,13 +3562,13 @@ function selectReasoningScatterLabelPoints(points, maxLabels = 9, metricKey = "a
   };
   const byOrg = groupBy(points, p => normOrg(p.org));
   const orgBySize = [...byOrg.entries()].sort((a,b) => b[1].length - a[1].length || orgName(a[0]).localeCompare(orgName(b[0])));
-  add(points.slice().sort((a,b) => b.greenRate - a.greenRate || metricValue(a) - metricValue(b))[0]); // strongest
-  add(points.slice().sort((a,b) => metricValue(b) - metricValue(a) || b.greenRate - a.greenRate)[0]); // highest x
-  add(points.slice().sort((a,b) => metricValue(a) - metricValue(b) || b.greenRate - a.greenRate)[0]); // lowest x
+  add(points.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || metricValue(a) - metricValue(b))[0]); // strongest
+  add(points.slice().sort((a,b) => metricValue(b) - metricValue(a) || scatterStrengthValue(b) - scatterStrengthValue(a))[0]); // highest x
+  add(points.slice().sort((a,b) => metricValue(a) - metricValue(b) || scatterStrengthValue(b) - scatterStrengthValue(a))[0]); // lowest x
   preferredModels.forEach((baseModel) => {
     const preferredPoint = points
       .filter(p => String(p?.mk || "").replace(/@reasoning=[^@]+$/i, "") === baseModel)
-      .sort((a,b) => metricValue(b) - metricValue(a) || b.greenRate - a.greenRate)[0];
+      .sort((a,b) => metricValue(b) - metricValue(a) || scatterStrengthValue(b) - scatterStrengthValue(a))[0];
     add(preferredPoint);
   });
 
@@ -3469,13 +3579,13 @@ function selectReasoningScatterLabelPoints(points, maxLabels = 9, metricKey = "a
     const start = Math.floor((i * byMetric.length) / binCount);
     const end = Math.floor(((i + 1) * byMetric.length) / binCount);
     const bin = byMetric.slice(start, Math.max(start + 1, end));
-    const bestInBin = bin.slice().sort((a,b) => b.greenRate - a.greenRate || metricValue(b) - metricValue(a))[0];
+    const bestInBin = bin.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || metricValue(b) - metricValue(a))[0];
     add(bestInBin);
   }
 
   // Keep a few top organizations represented.
   orgBySize.slice(0, 3).forEach(([, orgPts]) => {
-    const top = orgPts.slice().sort((a,b) => b.greenRate - a.greenRate || metricValue(b) - metricValue(a))[0];
+    const top = orgPts.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || metricValue(b) - metricValue(a))[0];
     add(top);
   });
 
@@ -3521,7 +3631,7 @@ function renderAllModelsScatter(filtered) {
     const launchDate = parseIsoDate(launch.launch_date);
     if (!launchDate) return null;
     const stats = summarizeRows(modelRows);
-    return { label: prettyModel(sample), org, launchDate, greenRate: stats.greenRate };
+    return { label: prettyModel(sample), org, launchDate, greenRate: stats.greenRate, redRate: stats.redRate };
   }).filter(Boolean);
 
   if (!points.length) {
@@ -3544,7 +3654,8 @@ function renderAllModelsScatter(filtered) {
   const minDate = qStart(minDateRaw), maxDate = addQ(qStart(maxDateRaw), 1);
   const span = Math.max(1, maxDate - minDate);
   const xFor = t => ml + ((t - minDate)/span)*pw;
-  const yFor = v => mt + ((100-v)/100)*ph;
+  const yCfg = primaryMetricMeta(S.primaryMetric);
+  const yFor = makeMetricYForRate(mt, ph, S.primaryMetric);
 
   let xTicks = [];
   for (let t = minDate; t <= maxDate; t = addQ(t,1)) { xTicks.push(t); if(xTicks.length>32) break; }
@@ -3563,7 +3674,7 @@ function renderAllModelsScatter(filtered) {
   if (points.length >= 3) {
     const dayScale = 86400000;
     const xs = points.map(p => p.launchDate.getTime()/dayScale);
-    const ys = points.map(p => p.greenRate);
+    const ys = points.map(p => primaryMetricRate(p));
     const mx = xs.reduce((s,v)=>s+v,0)/xs.length;
     const my = ys.reduce((s,v)=>s+v,0)/ys.length;
     let cov=0, vx=0;
@@ -3578,7 +3689,7 @@ function renderAllModelsScatter(filtered) {
   }
 
   // Dots + selective standout labels
-  points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(p.greenRate); });
+  points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(primaryMetricRate(p)); });
   annotateScatterPoints("allModelsScatter", points);
   const dots = points.map(p => renderScatterCircle(p, "allModelsScatter", { strokeOpacity: 0.2 })).join("");
   const labelCandidates = mergePinnedScatterLabelPoints(points, selectReleaseScatterLabelPoints(points, 10));
@@ -3600,11 +3711,11 @@ function renderAllModelsScatter(filtered) {
 
   svg.innerHTML = `${gridY}${gridX}${trendHtml}${dots}${labelHalo}${labelsHtml}
     <text x="${ml+pw/2}" y="${H-8}" text-anchor="middle" fill="#425851" font-size="12">Release Date</text>
-    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">Green Rate (%)</text>`;
+    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">${esc(yCfg.yAxisLabel)}</text>`;
 
   setupScatterTooltips(svg, points, "_cx", "_cy", p => {
     const dateStr = p.launchDate.toISOString().slice(0,10);
-    return `<strong>${esc(p.label)}</strong><br>Green: ${p.greenRate.toFixed(1)}%<br>Launch: ${dateStr}<br>Org: ${esc(orgName(p.org))}`;
+    return `<strong>${esc(p.label)}</strong><br>${esc(yCfg.tooltipLabel)}: ${primaryMetricRate(p).toFixed(1)}%<br>Launch: ${dateStr}<br>Org: ${esc(orgName(p.org))}`;
   });
 }
 
@@ -3627,7 +3738,7 @@ function renderLaunchAllOrgs(filtered) {
     const launchDate = parseIsoDate(launch.launch_date);
     if (!launchDate) return null;
     const stats = summarizeRows(modelRows);
-    return { mk, label: prettyModel(sample), org, launchDate, greenRate: stats.greenRate };
+    return { mk, label: prettyModel(sample), org, launchDate, greenRate: stats.greenRate, redRate: stats.redRate };
   }).filter(Boolean);
 
   if (!rawPoints.length) {
@@ -3637,7 +3748,7 @@ function renderLaunchAllOrgs(filtered) {
   }
 
   const bestOnly = document.getElementById("launchBestOnlyToggle")?.checked ?? true;
-  const pickBest = pts => pts.slice().sort((a,b) => b.greenRate - a.greenRate || b.launchDate.getTime() - a.launchDate.getTime())[0];
+  const pickBest = pts => pts.slice().sort((a,b) => scatterStrengthValue(b) - scatterStrengthValue(a) || b.launchDate.getTime() - a.launchDate.getTime())[0];
 
   const points = bestOnly ? (() => {
     const kept = [];
@@ -3685,7 +3796,8 @@ function renderLaunchAllOrgs(filtered) {
   const minDate = qStart(minDateRaw), maxDate = maxDateRaw + DOMAIN_RIGHT_PAD_DAYS * DAY_MS;
   const span = Math.max(1, maxDate - minDate);
   const xFor = t => ml + ((t - minDate)/span)*pw;
-  const yFor = v => mt + ((100-v)/100)*ph;
+  const yCfg = primaryMetricMeta(S.primaryMetric);
+  const yFor = makeMetricYForRate(mt, ph, S.primaryMetric);
 
   let xTicks = [];
   for (let t = qStart(minDateRaw); t <= maxDate; t = addQ(t,1)) { xTicks.push(t); if(xTicks.length>32) break; }
@@ -3703,7 +3815,7 @@ function renderLaunchAllOrgs(filtered) {
   const allLineSegs = []; // collect for label avoidance
   const lineData = [...byOrg3.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([org, orgPts]) => {
     const color = orgColor(org);
-    const pts = orgPts.map(p => ({ x:xFor(p.launchDate.getTime()), y:yFor(p.greenRate) }));
+    const pts = orgPts.map(p => ({ x:xFor(p.launchDate.getTime()), y:yFor(primaryMetricRate(p)) }));
     const path = pts.map((pt,i) => `${i===0?"M":"L"}${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(" ");
     // Record segments for label avoidance
     for (let i = 1; i < pts.length; i++) {
@@ -3726,7 +3838,7 @@ function renderLaunchAllOrgs(filtered) {
   const labelRightInset = 12;
   const orgLabelItems = lineData.map(l => {
     const lastP = lastPointPerOrg.get(l.org);
-    const anchorPt = l.lastPt || (lastP ? { x: xFor(lastP.launchDate.getTime()), y: yFor(lastP.greenRate) } : { x: W - mr - 10, y: mt + ph / 2 });
+    const anchorPt = l.lastPt || (lastP ? { x: xFor(lastP.launchDate.getTime()), y: yFor(primaryMetricRate(lastP)) } : { x: W - mr - 10, y: mt + ph / 2 });
     const modelLabel = lastP ? launchChartModelLabel(lastP.label) : "";
     const orgText = orgName(l.org);
     const mainLabel = modelLabel || orgText;
@@ -3793,7 +3905,7 @@ function renderLaunchAllOrgs(filtered) {
   }).join("");
 
   // Dots + labels
-  points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(p.greenRate); });
+  points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(primaryMetricRate(p)); });
   primeDefaultScatterSelections("launchAllOrgs", points, PREFERRED_LAUNCH_CHART_BASE_MODELS);
   annotateScatterPoints("launchAllOrgs", points);
   const dots = points.map(p => renderScatterCircle(p, "launchAllOrgs", {
@@ -3841,11 +3953,11 @@ function renderLaunchAllOrgs(filtered) {
 
   svg.innerHTML = `${gridY}${gridX}${lines}${dots}${labelConnectors}${labelsHtml}${orgEndLabels}
     <text x="${ml+pw/2}" y="${H-10}" text-anchor="middle" fill="#425851" font-size="12">Release Date</text>
-    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">Green Rate (%)</text>`;
+    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">${esc(yCfg.yAxisLabel)}</text>`;
 
   setupScatterTooltips(svg, points, "_cx", "_cy", p => {
     const dateStr = p.launchDate.toISOString().slice(0,10);
-    return `<strong>${esc(p.label)}</strong><br>Green: ${p.greenRate.toFixed(1)}%<br>Launch: ${dateStr}`;
+    return `<strong>${esc(p.label)}</strong><br>${esc(yCfg.tooltipLabel)}: ${primaryMetricRate(p).toFixed(1)}%<br>Launch: ${dateStr}`;
   });
 
   if (metaEl) metaEl.textContent = `${points.length} models shown from ${[...byOrg3.keys()].sort().map(o=>orgName(o)).join(", ")}.`;
@@ -3857,10 +3969,11 @@ function renderReasoningScatter(filtered) {
   if (!svg) return;
 
   const mode = S.reasoningScatterMode === "cost" ? "cost" : "tokens";
+  const yPhrase = S.primaryMetric === "red" ? "accepted nonsense rate" : "clear pushback rate";
   const modeCfg = mode === "cost"
     ? {
         headingSuffix: "Does Higher Cost Help?",
-        subtitle: "Average cost per response vs. green rate. Higher cost can reflect more compute and longer reasoning. The x-axis is log scale.",
+        subtitle: `Average cost per response vs. ${yPhrase}. Higher cost can reflect more compute and longer reasoning. The x-axis is log scale.`,
         metricKey: "avgCost",
         xAxisLabel: "Average Cost per Response (USD, log scale)",
         tooltipLabel: "Avg Cost",
@@ -3868,7 +3981,7 @@ function renderReasoningScatter(filtered) {
       }
     : {
         headingSuffix: "Does Thinking Harder Help?",
-        subtitle: 'Average reasoning tokens used vs. green rate. Zero-token models are shown in a dedicated 0 lane; positive values stay on a log scale.',
+        subtitle: `Average reasoning tokens used vs. ${yPhrase}. Zero-token models are shown in a dedicated 0 lane; positive values stay on a log scale.`,
         metricKey: "avgReasoning",
         xAxisLabel: "Average Reasoning Tokens per Response (0 lane + log scale)",
         tooltipLabel: "Avg Reasoning Tokens",
@@ -3901,7 +4014,7 @@ function renderReasoningScatter(filtered) {
     const u = S.usageByModel.get(mk);
     const avgReasoning = u && u.count ? u.reasoning / u.count : 0;
     const avgCost = u && u.count ? u.cost / u.count : 0;
-    return { mk, label: prettyModel(sample), org: modelOrg(sample), greenRate: s.greenRate, avgReasoning, avgCost };
+    return { mk, label: prettyModel(sample), org: modelOrg(sample), greenRate: s.greenRate, redRate: s.redRate, avgReasoning, avgCost };
   });
   const points = allPoints.filter((p) => {
     const value = Number(p[metricKey]);
@@ -3938,7 +4051,8 @@ function renderReasoningScatter(filtered) {
     if (zeroLaneEnabled && value <= 0) return zeroLaneX;
     return logPlotLeft + ((Math.log10(Math.max(value, minX)) - logMin) / Math.max(1e-9, logMax - logMin)) * pw;
   };
-  const yFor = v => mt + ((100 - v) / 100) * ph;
+  const yCfg = primaryMetricMeta(S.primaryMetric);
+  const yFor = makeMetricYForRate(mt, ph, S.primaryMetric);
 
   const yTicks = [0, 20, 40, 60, 80, 100];
   const xTicks = metricValues.length ? buildDisplayLogTicks(minX, maxX, mode === "cost" ? 7 : 8) : [];
@@ -3955,7 +4069,7 @@ function renderReasoningScatter(filtered) {
   let trendHtml = "";
   if (positivePoints.length >= 3) {
     const xs = positivePoints.map(p => Math.log10(Math.max(Number(p[metricKey]) || minX, minX)));
-    const ys = positivePoints.map(p => p.greenRate);
+    const ys = positivePoints.map(p => primaryMetricRate(p));
     const mx = xs.reduce((s,v) => s+v, 0) / xs.length;
     const my = ys.reduce((s,v) => s+v, 0) / ys.length;
     let cov = 0, vx = 0;
@@ -3969,7 +4083,7 @@ function renderReasoningScatter(filtered) {
     }
   }
 
-  points.forEach(p => { p._cx = xFor(p[metricKey]); p._cy = yFor(p.greenRate); });
+  points.forEach(p => { p._cx = xFor(p[metricKey]); p._cy = yFor(primaryMetricRate(p)); });
   annotateScatterPoints("reasoningScatter", points);
 
   // Dots + selective standout labels
@@ -3993,11 +4107,11 @@ function renderReasoningScatter(filtered) {
 
   svg.innerHTML = `${gridLines}${zeroLaneHtml}${xGridLines}${trendHtml}${circles}${labelHalo}${labelsHtml}
     <text x="${(logPlotLeft + pw/2).toFixed(1)}" y="${H-8}" text-anchor="middle" fill="#425851" font-size="12">${esc(modeCfg.xAxisLabel)}</text>
-    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">Green Rate (%)</text>`;
+    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">${esc(yCfg.yAxisLabel)}</text>`;
 
-  setupScatterTooltips(svg, points, metricKey, "greenRate", p => {
+  setupScatterTooltips(svg, points, metricKey, yCfg.rateField, p => {
     const xValue = mode === "cost" ? fmtUsd(p.avgCost) : fmtNum(Math.round(p.avgReasoning));
-    return `<strong>${esc(p.label)}</strong><br>Green: ${p.greenRate.toFixed(1)}%<br>${esc(modeCfg.tooltipLabel)}: ${esc(xValue)}`;
+    return `<strong>${esc(p.label)}</strong><br>${esc(yCfg.tooltipLabel)}: ${primaryMetricRate(p).toFixed(1)}%<br>${esc(modeCfg.tooltipLabel)}: ${esc(xValue)}`;
   });
 }
 
@@ -4019,6 +4133,7 @@ function renderSizeScatterChart(filtered, options) {
       label: prettyModel(sample),
       org: modelOrg(sample),
       greenRate: s.greenRate,
+      redRate: s.redRate,
       totalParamsB: sizeMeta.totalParamsB,
       activeParamsB: sizeMeta.activeParamsB,
       sizeDisplay: sizeMeta.display,
@@ -4050,7 +4165,8 @@ function renderSizeScatterChart(filtered, options) {
   const W = 600, H = 420, ml = 78, mr = 24, mt = 20, mb = 56;
   const pw = W - ml - mr, ph = H - mt - mb;
   const xFor = v => ml + ((Math.log10(Number(v) || minX) - logMin) / Math.max(1e-9, logMax - logMin)) * pw;
-  const yFor = v => mt + ((100 - v) / 100) * ph;
+  const yCfg = primaryMetricMeta(S.primaryMetric);
+  const yFor = makeMetricYForRate(mt, ph, S.primaryMetric);
   const xTicks = buildLogTicks(minX, maxX);
   const yTicks = [0, 20, 40, 60, 80, 100];
   const gridLines = yTicks.map(t => `<line x1="${ml}" y1="${yFor(t).toFixed(1)}" x2="${W-mr}" y2="${yFor(t).toFixed(1)}" stroke="#d8e2dd" stroke-width="1"/><text x="${ml-8}" y="${(yFor(t)+4).toFixed(1)}" text-anchor="end" fill="#586d66" font-size="11">${t}%</text>`).join("");
@@ -4059,7 +4175,7 @@ function renderSizeScatterChart(filtered, options) {
   let trendHtml = "";
   if (points.length >= 3) {
     const xs = points.map(p => Math.log10(Number(p[metricKey]) || minX));
-    const ys = points.map(p => p.greenRate);
+    const ys = points.map(p => primaryMetricRate(p));
     const mx = xs.reduce((s,v) => s+v, 0) / xs.length;
     const my = ys.reduce((s,v) => s+v, 0) / ys.length;
     let cov = 0;
@@ -4080,7 +4196,7 @@ function renderSizeScatterChart(filtered, options) {
     }
   }
 
-  points.forEach(p => { p._cx = xFor(p[metricKey]); p._cy = yFor(p.greenRate); });
+  points.forEach(p => { p._cx = xFor(p[metricKey]); p._cy = yFor(primaryMetricRate(p)); });
   annotateScatterPoints(options.svgId, points);
   const circles = points.map(p => renderScatterCircle(p, options.svgId)).join("");
   const labelCandidates = mergePinnedScatterLabelPoints(points, selectReasoningScatterLabelPoints(points, 8, metricKey));
@@ -4102,15 +4218,15 @@ function renderSizeScatterChart(filtered, options) {
 
   svg.innerHTML = `${gridLines}${xGridLines}${trendHtml}${circles}${labelHalo}${labelsHtml}
     <text x="${ml+pw/2}" y="${H-8}" text-anchor="middle" fill="#425851" font-size="12">${esc(options.xAxisLabel)}</text>
-    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">Green Rate (%)</text>`;
+    <text x="14" y="${mt+ph/2}" transform="rotate(-90,14,${mt+ph/2})" text-anchor="middle" fill="#425851" font-size="12">${esc(yCfg.yAxisLabel)}</text>`;
 
   if (metaEl) {
     metaEl.textContent = `Showing ${points.length} of ${allPoints.length} visible model variants with public ${options.metaLabel}-parameter metadata.`;
   }
-  setupScatterTooltips(svg, points, metricKey, "greenRate", p => {
+  setupScatterTooltips(svg, points, metricKey, yCfg.rateField, p => {
     const bits = [
       `<strong>${esc(p.label)}</strong>`,
-      `Green: ${p.greenRate.toFixed(1)}%`,
+      `${esc(yCfg.tooltipLabel)}: ${primaryMetricRate(p).toFixed(1)}%`,
       `${esc(options.tooltipLabel)}: ${esc(fmtParamBillions(p[metricKey]))}`,
     ];
     if (p.sizeDisplay && p.sizeDisplay !== fmtParamBillions(p[metricKey])) bits.push(`Size summary: ${esc(p.sizeDisplay)}`);
@@ -4250,7 +4366,7 @@ function recentModelWindowRows(rows, maxAgeDays = leaderboardRecentWindowDays())
 }
 function summarizeRows(rows) {
   const c = aggCounts(rows), scored = c.green+c.amber+c.red;
-  return { greenRate: pct(c.green, scored) };
+  return { greenRate: pct(c.green, scored), redRate: pct(c.red, scored) };
 }
 function launchChartModelLabel(label) {
   // Shorten model names for launch chart: strip style tags + date/build noise.
@@ -4301,13 +4417,8 @@ function renderLeaderboard(filtered) {
       avgCost,
     };
   });
-  // Baseline ranking
-  const baseline=[...rows].sort((a,b)=>
-    (b.greenRate-a.greenRate) ||
-    (b.amberRate-a.amberRate) ||
-    (a.redRate-b.redRate) ||
-    a.model.localeCompare(b.model)
-  );
+  const baselineCmp = primaryMetricComparator("model");
+  const baseline=[...rows].sort(baselineCmp);
   baseline.forEach((r,i)=>r.rank=i+1);
   // Apply user sort
   const {key,direction}=S.lbSort;
@@ -4317,14 +4428,7 @@ function renderLeaderboard(filtered) {
     let cmp=0;
     if(numKeys.has(key)) cmp=Number(a[key]||0)-Number(b[key]||0);
     else cmp=String(a[key]||"").localeCompare(String(b[key]||""));
-    return cmp!==0
-      ? cmp*dir
-      : (
-        (b.greenRate-a.greenRate) ||
-        (b.amberRate-a.amberRate) ||
-        (a.redRate-b.redRate) ||
-        a.model.localeCompare(b.model)
-      );
+    return cmp!==0 ? cmp*dir : baselineCmp(a,b);
   });
 
   const lbBody = document.getElementById("lbBody");
@@ -4366,14 +4470,15 @@ function renderCompare(filtered) {
   const qGroups = groupBy(filtered, r=>r.question_id||"");
   const qEntries = [...qGroups.entries()].map(([qid,rows])=>{
     const s=summarize(rows), sample=rows[0]||{};
-    return { qid, rows, sample, greenRate:s.greenRate };
-  }).sort((a,b)=>b.greenRate-a.greenRate||a.qid.localeCompare(b.qid));
+    return { qid, rows, sample, greenRate:s.greenRate, amberRate:s.amberRate, redRate:s.redRate };
+  }).sort(primaryMetricComparator("qid"));
 
+  const metricMeta = primaryMetricMeta(S.primaryMetric);
   const qSel=document.getElementById("compareQuestion");
   const prev=qSel.value;
   qSel.innerHTML=qEntries.map(e=>{
     const qm=questionMeta(e.qid);
-    const parts = [e.qid, fmtPct(e.greenRate)];
+    const parts = [e.qid, fmtPct(e[metricMeta.rateField])];
     const scope = questionScopeLabel(qm);
     if (scope) parts.push(scope);
     if (qm.difficulty) parts.push(DIFFICULTY_LABELS[qm.difficulty] || qm.difficulty);
@@ -4462,6 +4567,7 @@ function catRank(c) { return c==="green"?3:c==="amber"?2:c==="red"?1:0; }
 // ====== RENDER ALL ======
 function renderAll() {
   if(!S.rows.length) return;
+  applyBenchmarkPresentation();
   const cfg = currentBenchmarkConfig();
   const filtered = applyFilters(S.rows);
   const recentModelRows = recentModelWindowRows(filtered);
@@ -4636,6 +4742,19 @@ function bindEvents() {
     renderAll();
   });
 
+  // Primary ranking metric selector
+  const sortSelect = document.getElementById("domainBarSortSelect");
+  if (sortSelect) {
+    sortSelect.value = S.primaryMetric;
+    sortSelect.addEventListener("change", () => {
+      const next = PRIMARY_METRIC_META[sortSelect.value] ? sortSelect.value : DEFAULT_PRIMARY_METRIC;
+      if (next === S.primaryMetric) return;
+      S.primaryMetric = next;
+      S.lbSort = defaultLbSortForMetric(next);
+      renderAll();
+    });
+  }
+
   // Sticky filter toggle button
   const filterToggleBtn = document.getElementById("domainBarFilterToggle");
   const filterDetails = document.getElementById("filtersCollapsible");
@@ -4693,6 +4812,10 @@ function bindEvents() {
     document.getElementById("leaderboardRecentSelect").value=LEADERBOARD_WINDOW_DEFAULT;
     [1,2,3].forEach(i=>{if(!document.getElementById(`judge${i}Toggle`).disabled) document.getElementById(`judge${i}Toggle`).checked=true;});
     syncJudges(); S.hiddenModels.clear(); S.topVariantsOnly = false; S.leaderboardRecentWindow = LEADERBOARD_WINDOW_DEFAULT; S.modelChartFocusOrg = "all";
+    S.primaryMetric = DEFAULT_PRIMARY_METRIC;
+    S.lbSort = defaultLbSortForMetric(DEFAULT_PRIMARY_METRIC);
+    const sortSel = document.getElementById("domainBarSortSelect");
+    if (sortSel) sortSel.value = DEFAULT_PRIMARY_METRIC;
     [...document.querySelectorAll('input[name="scoreFilter"]')].forEach(n=>n.checked=true);
     refreshTopVariantToggle();
     renderModelToggles(); renderAll();
