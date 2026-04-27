@@ -2,6 +2,28 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.11] - 2026-04-27
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `deepseek/deepseek-v4-flash@reasoning=none`
+  - `deepseek/deepseek-v4-flash@reasoning=xhigh`
+  - `deepseek/deepseek-v4-pro@reasoning=none`
+  - `deepseek/deepseek-v4-pro@reasoning=xhigh`
+  - `tencent/hy3-preview:free@reasoning=none`
+  - `tencent/hy3-preview:free@reasoning=xhigh`
+  - `xiaomi/mimo-v2.5@reasoning=none`
+  - `xiaomi/mimo-v2.5@reasoning=xhigh`
+  - `xiaomi/mimo-v2.5-pro@reasoning=none`
+  - `xiaomi/mimo-v2.5-pro@reasoning=xhigh`
+- Added canonical launch-date metadata for the DeepSeek V4, Tencent Hy3 preview, and Xiaomi MiMo V2.5 model families using OpenRouter release listings.
+- Added model-size and open-weight metadata for DeepSeek V4 Flash, DeepSeek V4 Pro, Tencent Hy3 Preview, Xiaomi MiMo V2.5, and Xiaomi MiMo V2.5 Pro.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the leaderboard, domain, release-date, reasoning-token/cost, and model-size charts include the new rows.
+- Folded the new DeepSeek, Tencent, and Xiaomi model families into `config.json` and `config.v2.json` with the tested `none`/`xhigh` reasoning settings.
+- Updated the OpenRouter collector to retry retryable provider error payloads returned inside HTTP-200 JSON responses, including aborted operations and prematurely closed provider connections.
+
 ## [2.0.10] - 2026-04-24
 
 ### Added

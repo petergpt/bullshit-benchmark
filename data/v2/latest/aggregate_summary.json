@@ -668,6 +668,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "xiaomi/mimo-v2.5-pro@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 15,
+      "score_1": 23,
+      "score_2": 62,
+      "score_3": 0,
+      "avg_score": 1.4233,
+      "detection_rate_score_2": 0.62,
+      "full_engagement_rate_score_0": 0.15,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.5556,
+        "confident_extrapolation": 0.9167,
+        "cross_domain_stitching": 0.9333,
+        "fabricated_authority": 2.0,
+        "false_granularity": 1.8889,
+        "misapplied_mechanism": 1.359,
+        "nested_nonsense": 1.2381,
+        "plausible_nonexistent_framework": 1.3958,
+        "reified_metaphor": 1.5556,
+        "specificity_trap": 0.625,
+        "sunk_cost_framing": 1.619,
+        "temporal_category_error": 1.7222,
+        "wrong_unit_of_analysis": 1.3333
+      },
+      "run_average_scores": {
+        "1": 1.4233
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "qwen/qwen3.6-plus@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -1998,6 +2033,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "xiaomi/mimo-v2.5-pro@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 41,
+      "score_1": 21,
+      "score_2": 38,
+      "score_3": 0,
+      "avg_score": 0.9367,
+      "detection_rate_score_2": 0.38,
+      "full_engagement_rate_score_0": 0.41,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.5556,
+        "confident_extrapolation": 1.0,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.303,
+        "false_granularity": 1.6111,
+        "misapplied_mechanism": 0.9744,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.2708,
+        "reified_metaphor": 1.1111,
+        "specificity_trap": 0.1667,
+        "sunk_cost_framing": 0.5714,
+        "temporal_category_error": 1.6667,
+        "wrong_unit_of_analysis": 0.9333
+      },
+      "run_average_scores": {
+        "1": 0.9367
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openrouter/healer-alpha@reasoning=none",
       "count": 100,
       "scored_count": 100,
@@ -2099,6 +2169,41 @@
       },
       "run_average_scores": {
         "1": 0.87
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "xiaomi/mimo-v2.5@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 43,
+      "score_1": 22,
+      "score_2": 35,
+      "score_3": 0,
+      "avg_score": 0.8667,
+      "detection_rate_score_2": 0.35,
+      "full_engagement_rate_score_0": 0.43,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.1111,
+        "confident_extrapolation": 1.8333,
+        "cross_domain_stitching": 0.4667,
+        "fabricated_authority": 1.1212,
+        "false_granularity": 1.4445,
+        "misapplied_mechanism": 0.9487,
+        "nested_nonsense": 0.6191,
+        "plausible_nonexistent_framework": 0.6875,
+        "reified_metaphor": 1.7778,
+        "specificity_trap": 0.1667,
+        "sunk_cost_framing": 0.2857,
+        "temporal_category_error": 1.2222,
+        "wrong_unit_of_analysis": 0.4667
+      },
+      "run_average_scores": {
+        "1": 0.8667
       },
       "run_average_stddev": null
     },
@@ -2768,6 +2873,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "xiaomi/mimo-v2.5@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 60,
+      "score_1": 16,
+      "score_2": 24,
+      "score_3": 0,
+      "avg_score": 0.6333,
+      "detection_rate_score_2": 0.24,
+      "full_engagement_rate_score_0": 0.6,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.2593,
+        "confident_extrapolation": 0.25,
+        "cross_domain_stitching": 0.3333,
+        "fabricated_authority": 1.0606,
+        "false_granularity": 0.4445,
+        "misapplied_mechanism": 0.8462,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.2292,
+        "reified_metaphor": 1.2222,
+        "specificity_trap": 0.1667,
+        "sunk_cost_framing": 0.1429,
+        "temporal_category_error": 0.7222,
+        "wrong_unit_of_analysis": 0.7333
+      },
+      "run_average_scores": {
+        "1": 0.6333
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "qwen/qwen3-coder@reasoning=default",
       "count": 100,
       "scored_count": 100,
@@ -2978,6 +3118,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "deepseek/deepseek-v4-flash@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 58,
+      "score_1": 24,
+      "score_2": 18,
+      "score_3": 0,
+      "avg_score": 0.58,
+      "detection_rate_score_2": 0.18,
+      "full_engagement_rate_score_0": 0.58,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.2593,
+        "confident_extrapolation": 0.1666,
+        "cross_domain_stitching": 0.5333,
+        "fabricated_authority": 0.5455,
+        "false_granularity": 0.5555,
+        "misapplied_mechanism": 0.7436,
+        "nested_nonsense": 0.6667,
+        "plausible_nonexistent_framework": 0.2917,
+        "reified_metaphor": 1.0,
+        "specificity_trap": 0.0,
+        "sunk_cost_framing": 0.2857,
+        "temporal_category_error": 1.2222,
+        "wrong_unit_of_analysis": 0.5333
+      },
+      "run_average_scores": {
+        "1": 0.58
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "x-ai/grok-4.1-fast@reasoning=high",
       "count": 100,
       "scored_count": 100,
@@ -3009,6 +3184,41 @@
       },
       "run_average_scores": {
         "1": 0.5767
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "deepseek/deepseek-v4-pro@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 59,
+      "score_1": 27,
+      "score_2": 14,
+      "score_3": 0,
+      "avg_score": 0.5733,
+      "detection_rate_score_2": 0.14,
+      "full_engagement_rate_score_0": 0.59,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.5556,
+        "confident_extrapolation": 0.6667,
+        "cross_domain_stitching": 0.2,
+        "fabricated_authority": 1.0303,
+        "false_granularity": 0.7222,
+        "misapplied_mechanism": 0.5128,
+        "nested_nonsense": 0.8571,
+        "plausible_nonexistent_framework": 0.5,
+        "reified_metaphor": 0.7778,
+        "specificity_trap": 0.3333,
+        "sunk_cost_framing": 0.3333,
+        "temporal_category_error": 0.5555,
+        "wrong_unit_of_analysis": 0.3333
+      },
+      "run_average_scores": {
+        "1": 0.5733
       },
       "run_average_stddev": null
     },
@@ -3146,6 +3356,41 @@
         "sunk_cost_framing": 0.1905,
         "temporal_category_error": 1.1111,
         "wrong_unit_of_analysis": 0.6667
+      },
+      "run_average_scores": {
+        "1": 0.55
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "tencent/hy3-preview:free@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 57,
+      "score_1": 27,
+      "score_2": 16,
+      "score_3": 0,
+      "avg_score": 0.55,
+      "detection_rate_score_2": 0.16,
+      "full_engagement_rate_score_0": 0.57,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.037,
+        "confident_extrapolation": 0.75,
+        "cross_domain_stitching": 0.3333,
+        "fabricated_authority": 1.0,
+        "false_granularity": 0.8333,
+        "misapplied_mechanism": 0.5641,
+        "nested_nonsense": 0.6667,
+        "plausible_nonexistent_framework": 0.375,
+        "reified_metaphor": 0.2222,
+        "specificity_trap": 0.0,
+        "sunk_cost_framing": 0.1429,
+        "temporal_category_error": 0.6667,
+        "wrong_unit_of_analysis": 0.2667
       },
       "run_average_scores": {
         "1": 0.55
@@ -3363,6 +3608,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "deepseek/deepseek-v4-pro@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 66,
+      "score_1": 20,
+      "score_2": 14,
+      "score_3": 0,
+      "avg_score": 0.4867,
+      "detection_rate_score_2": 0.14,
+      "full_engagement_rate_score_0": 0.66,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.2963,
+        "confident_extrapolation": 0.5,
+        "cross_domain_stitching": 0.4,
+        "fabricated_authority": 0.5758,
+        "false_granularity": 0.8889,
+        "misapplied_mechanism": 0.6667,
+        "nested_nonsense": 0.5238,
+        "plausible_nonexistent_framework": 0.25,
+        "reified_metaphor": 0.4444,
+        "specificity_trap": 0.0417,
+        "sunk_cost_framing": 0.7143,
+        "temporal_category_error": 0.7778,
+        "wrong_unit_of_analysis": 0.5333
+      },
+      "run_average_scores": {
+        "1": 0.4867
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "google/gemini-2.0-flash-001@reasoning=default",
       "count": 100,
       "scored_count": 100,
@@ -3429,6 +3709,41 @@
       },
       "run_average_scores": {
         "1": 0.46
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "tencent/hy3-preview:free@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 58,
+      "score_1": 34,
+      "score_2": 8,
+      "score_3": 0,
+      "avg_score": 0.4567,
+      "detection_rate_score_2": 0.08,
+      "full_engagement_rate_score_0": 0.58,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.5556,
+        "confident_extrapolation": 0.1667,
+        "cross_domain_stitching": 0.1333,
+        "fabricated_authority": 0.6364,
+        "false_granularity": 1.0,
+        "misapplied_mechanism": 0.5385,
+        "nested_nonsense": 0.6667,
+        "plausible_nonexistent_framework": 0.25,
+        "reified_metaphor": 0.5555,
+        "specificity_trap": 0.2083,
+        "sunk_cost_framing": 0.0952,
+        "temporal_category_error": 0.8333,
+        "wrong_unit_of_analysis": 0.3333
+      },
+      "run_average_scores": {
+        "1": 0.4567
       },
       "run_average_stddev": null
     },
@@ -3744,6 +4059,41 @@
       },
       "run_average_scores": {
         "1": 0.4033
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "deepseek/deepseek-v4-flash@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 71,
+      "score_1": 15,
+      "score_2": 14,
+      "score_3": 0,
+      "avg_score": 0.4,
+      "detection_rate_score_2": 0.14,
+      "full_engagement_rate_score_0": 0.71,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.2963,
+        "confident_extrapolation": 0.5834,
+        "cross_domain_stitching": 0.0,
+        "fabricated_authority": 0.7576,
+        "false_granularity": 0.5,
+        "misapplied_mechanism": 0.4359,
+        "nested_nonsense": 0.619,
+        "plausible_nonexistent_framework": 0.1667,
+        "reified_metaphor": 0.4445,
+        "specificity_trap": 0.2083,
+        "sunk_cost_framing": 0.2857,
+        "temporal_category_error": 1.0,
+        "wrong_unit_of_analysis": 0.0
+      },
+      "run_average_scores": {
+        "1": 0.4
       },
       "run_average_stddev": null
     },
@@ -4978,29 +5328,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 14200,
-        "agreements": 11501,
-        "agreement_rate": 0.80993
+        "compared_rows": 15200,
+        "agreements": 12302,
+        "agreement_rate": 0.809342
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 14200,
-        "agreements": 11339,
-        "agreement_rate": 0.798521
+        "compared_rows": 15200,
+        "agreements": 12103,
+        "agreement_rate": 0.79625
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 14200,
-        "agreements": 11099,
-        "agreement_rate": 0.78162
+        "compared_rows": 15200,
+        "agreements": 11865,
+        "agreement_rate": 0.780592
       }
     ],
-    "average_pairwise_agreement": 0.79669,
-    "krippendorff_alpha_ordinal": 0.787702
+    "average_pairwise_agreement": 0.795395,
+    "krippendorff_alpha_ordinal": 0.786714
   },
-  "total_records": 14200,
+  "total_records": 15200,
   "total_error_records": 0,
-  "total_scored_records": 14200
+  "total_scored_records": 15200
 }

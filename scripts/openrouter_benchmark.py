@@ -2840,6 +2840,7 @@ def collect_one(
             empty_attempt = 0
             payload = {}
             effective_max_tokens = max_tokens
+            provider_payload_error_attempt = 0
             while True:
                 try:
                     payload = client.chat(
@@ -2872,6 +2873,23 @@ def collect_one(
                         effective_max_tokens = next_max_tokens
                         continue
                     raise
+                payload_error = payload.get("error")
+                if isinstance(payload_error, dict):
+                    error_code = str(payload_error.get("code", "")).strip().lower()
+                    error_message = str(payload_error.get("message", "")).strip().lower()
+                    metadata = payload_error.get("metadata")
+                    raw_metadata = ""
+                    if isinstance(metadata, dict):
+                        raw_metadata = str(metadata.get("raw", "")).strip().lower()
+                    retryable_payload_error = (
+                        error_code in {"408", "429", "500", "502", "503", "504", "timeout"}
+                        or "operation was aborted" in error_message
+                        or "connection prematurely closed" in raw_metadata
+                    )
+                    if retryable_payload_error and provider_payload_error_attempt < retries - 1:
+                        provider_payload_error_attempt += 1
+                        time.sleep(compute_retry_delay_seconds(provider_payload_error_attempt, None))
+                        continue
                 if store_response_raw:
                     record["response_raw"] = payload
                 response_text = extract_model_text(payload)
