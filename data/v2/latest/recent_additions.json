@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-05-01T19:12:06Z",
+  "generated_at_utc": "2026-05-01T19:41:33Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-04-24T19:12:06Z",
+  "window_start_utc": "2026-04-24T19:41:33Z",
   "models": [
     "deepseek/deepseek-v4-flash@reasoning=none",
     "deepseek/deepseek-v4-flash@reasoning=xhigh",

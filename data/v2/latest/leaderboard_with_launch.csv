@@ -20,7 +20,7 @@ rank,model,org,reasoning,avg_score,green_rate,red_rate,score_2,score_1,score_0,n
 19,x-ai/grok-4.20-multi-agent-beta@reasoning=low,x-ai,low,1.43,0.67,0.19,67,14,19,100,0,x-ai/grok-4.20-multi-agent-beta,2026-03-10,52,https://docs.x.ai/docs/changelog,closed,,,not_disclosed,proprietary
 20,xiaomi/mimo-v2.5-pro@reasoning=xhigh,xiaomi,xhigh,1.4233,0.62,0.15,62,23,15,100,0,xiaomi/mimo-v2.5-pro,2026-04-22,9,https://openrouter.ai/xiaomi/mimo-v2.5-pro,closed,1000,42,reported,proprietary
 21,qwen/qwen3.6-plus@reasoning=xhigh,qwen,xhigh,1.4167,0.59,0.14,59,27,14,100,0,qwen/qwen3.6-plus,2026-04-01,30,https://qwen.ai/blog?id=qwen3.6,closed,,,not_disclosed,proprietary
-22,x-ai/grok-4.3@reasoning=xhigh,x-ai,xhigh,1.3167,0.52,0.18,52,30,18,100,0,x-ai/grok-4.3,,,,,,,,
+22,x-ai/grok-4.3@reasoning=xhigh,x-ai,xhigh,1.3167,0.52,0.18,52,30,18,100,0,x-ai/grok-4.3,2026-04-30,1,https://openrouter.ai/x-ai/grok-4.3,closed,,,not_disclosed,proprietary
 23,x-ai/grok-4.20-beta@reasoning=xhigh,x-ai,xhigh,1.27,0.54,0.25,54,21,25,100,0,x-ai/grok-4.20-beta,2026-03-10,52,https://docs.x.ai/docs/changelog,closed,,,not_disclosed,proprietary
 24,moonshotai/kimi-k2.6@reasoning=xhigh,moonshotai,xhigh,1.27,0.5,0.19,50,31,19,100,0,moonshotai/kimi-k2.6,2026-04-20,11,https://www.kimi.com/blog/kimi-k2-6,open_source,1000,32,reported,modified-mit
 25,openai/gpt-5.5@reasoning=xhigh,openai,xhigh,1.2667,0.47,0.13,47,40,13,100,0,openai/gpt-5.5,2026-04-23,8,https://openai.com/index/introducing-gpt-5-5/,closed,,,not_disclosed,proprietary

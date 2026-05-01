@@ -9,7 +9,7 @@
   "final_rate_limit_error_count": 0,
   "resumed": false,
   "checkpoint_rows_at_start": 0,
-  "new_rows_processed": 100,
+  "new_rows_processed": 0,
   "usage_summary": {
     "overall": {
       "rows": 15300,
