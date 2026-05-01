@@ -3,6 +3,12 @@ runs_*/
 __pycache__/
 *.pyc
 .DS_Store
+.env
+.env.*
+*.local.md
+cost_probe.py
+cost_probe_*.json
+config.grok-4.3.*.json
 share/
 tmp_*.json
 *.zip
