@@ -2,6 +2,18 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.12] - 2026-05-01
+
+### Added
+- Added published `v2` benchmark results for:
+  - `x-ai/grok-4.3@reasoning=xhigh`
+- Added canonical launch-date metadata for `x-ai/grok-4.3` from the OpenRouter model listing.
+- Added closed-model size/licensing metadata for `x-ai/grok-4.3` mirroring the other xAI rows (parameter counts not publicly disclosed).
+
+### Changed
+- Refreshed `data/v2/latest/*` from a completed 3-judge panel so the new Grok 4.3 row appears in the leaderboard, domain, release-date, and reasoning-token/cost charts.
+- Folded `x-ai/grok-4.3` into `config.v2.json` with the tested `xhigh` reasoning setting.
+
 ## [2.0.11] - 2026-04-27
 
 ### Added

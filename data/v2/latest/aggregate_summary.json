@@ -738,6 +738,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "x-ai/grok-4.3@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 18,
+      "score_1": 30,
+      "score_2": 52,
+      "score_3": 0,
+      "avg_score": 1.3167,
+      "detection_rate_score_2": 0.52,
+      "full_engagement_rate_score_0": 0.18,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.6667,
+        "confident_extrapolation": 0.6666,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.6061,
+        "false_granularity": 1.7778,
+        "misapplied_mechanism": 1.5385,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.8958,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.8333,
+        "sunk_cost_framing": 1.4286,
+        "temporal_category_error": 1.4444,
+        "wrong_unit_of_analysis": 1.7333
+      },
+      "run_average_scores": {
+        "1": 1.3167
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "x-ai/grok-4.20-beta@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -5328,29 +5363,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 15200,
-        "agreements": 12302,
-        "agreement_rate": 0.809342
+        "compared_rows": 15300,
+        "agreements": 12385,
+        "agreement_rate": 0.809477
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 15200,
-        "agreements": 12103,
-        "agreement_rate": 0.79625
+        "compared_rows": 15300,
+        "agreements": 12185,
+        "agreement_rate": 0.796405
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 15200,
-        "agreements": 11865,
-        "agreement_rate": 0.780592
+        "compared_rows": 15300,
+        "agreements": 11943,
+        "agreement_rate": 0.780588
       }
     ],
-    "average_pairwise_agreement": 0.795395,
-    "krippendorff_alpha_ordinal": 0.786714
+    "average_pairwise_agreement": 0.79549,
+    "krippendorff_alpha_ordinal": 0.786717
   },
-  "total_records": 15200,
+  "total_records": 15300,
   "total_error_records": 0,
-  "total_scored_records": 15200
+  "total_scored_records": 15300
 }

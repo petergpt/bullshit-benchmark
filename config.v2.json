@@ -25,6 +25,7 @@
       "google/gemini-2.0-flash-001",
       "mistralai/mistral-large-2512",
       "x-ai/grok-4.1-fast",
+      "x-ai/grok-4.3",
       "bytedance-seed/seed-1.6",
       "xiaomi/mimo-v2-flash",
       "xiaomi/mimo-v2.5",
@@ -137,6 +138,9 @@
       "x-ai/grok-4.1-fast": [
         "none",
         "high"
+      ],
+      "x-ai/grok-4.3": [
+        "xhigh"
       ],
       "bytedance-seed/seed-1.6": [
         "none",

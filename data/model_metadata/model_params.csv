@@ -91,3 +91,4 @@ z-ai/glm-4.5,open_source,355,32,reported,mit,https://docs.z.ai/guides/llm/glm-4.
 z-ai/glm-5,open_source,744,40,reported,mit,https://huggingface.co/zai-org/GLM-5,,Model card states GLM-5 scales to 744B parameters with 40B active parameters under an MIT license.,2026-03-02T00:00:00Z
 z-ai/glm-5-turbo,closed,,,not_disclosed,proprietary,https://docs.z.ai/guides/llm/glm-5-turbo,https://docs.z.ai/guides/overview/pricing,API-only model; no public weights or exact parameter disclosure found.,2026-04-08T00:00:00Z
 z-ai/glm-5.1,open_source,754,,not_disclosed,mit,https://huggingface.co/zai-org/GLM-5.1,https://docs.z.ai/guides/llm/glm-5.1,GLM-5.1 publisher card lists a 754B parameter model under MIT; no active parameter count was disclosed in the public model card.,2026-04-21T10:58:31Z
+x-ai/grok-4.3,closed,,,not_disclosed,proprietary,https://docs.x.ai/docs/models,,xAI does not disclose parameter counts or licensing for Grok 4.3.,2026-05-01T00:00:00Z
