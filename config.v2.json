@@ -25,6 +25,7 @@
       "google/gemini-2.0-flash-001",
       "mistralai/mistral-large-2512",
       "x-ai/grok-4.1-fast",
+      "x-ai/grok-4.3",
       "bytedance-seed/seed-1.6",
       "xiaomi/mimo-v2-flash",
       "xiaomi/mimo-v2.5",
@@ -80,6 +81,17 @@
       "openai/gpt-5.5-pro": "openai",
       "openai/gpt-5.4-mini": "openai",
       "openai/gpt-5.4-nano": "openai"
+    },
+    "model_request_overrides": {
+      "x-ai/grok-4.3": {
+        "provider": {
+          "order": [
+            "xAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      }
     },
     "num_runs": 1,
     "parallelism": 64,
@@ -137,6 +149,10 @@
       "x-ai/grok-4.1-fast": [
         "none",
         "high"
+      ],
+      "x-ai/grok-4.3": [
+        "minimal",
+        "xhigh"
       ],
       "bytedance-seed/seed-1.6": [
         "none",

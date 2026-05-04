@@ -2,6 +2,18 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.12] - 2026-05-04
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `x-ai/grok-4.3@reasoning=minimal`
+  - `x-ai/grok-4.3@reasoning=xhigh`
+- Added canonical launch-date and closed-model metadata for `x-ai/grok-4.3`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the Grok 4.3 rows appear in the viewer datasets, leaderboards, and metadata exports.
+- Folded `x-ai/grok-4.3` into `config.json` and `config.v2.json` with the verified `minimal`/`xhigh` reasoning endpoints and xAI provider lock.
+
 ## [2.0.11] - 2026-04-27
 
 ### Added

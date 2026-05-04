@@ -75,6 +75,7 @@ stepfun/step-3.5-flash,stepfun,true,false,true,3,stepfun/step-3.5-flash@reasonin
 x-ai/grok-4.1-fast,x-ai,true,true,true,3,x-ai/grok-4.1-fast@reasoning=default;x-ai/grok-4.1-fast@reasoning=high;x-ai/grok-4.1-fast@reasoning=none
 x-ai/grok-4.20-beta,x-ai,true,false,true,3,x-ai/grok-4.20-beta@reasoning=default;x-ai/grok-4.20-beta@reasoning=low;x-ai/grok-4.20-beta@reasoning=xhigh
 x-ai/grok-4.20-multi-agent-beta,x-ai,true,false,true,3,x-ai/grok-4.20-multi-agent-beta@reasoning=default;x-ai/grok-4.20-multi-agent-beta@reasoning=low;x-ai/grok-4.20-multi-agent-beta@reasoning=xhigh
+x-ai/grok-4.3,x-ai,true,true,true,2,x-ai/grok-4.3@reasoning=minimal;x-ai/grok-4.3@reasoning=xhigh
 xiaomi/mimo-v2-flash,xiaomi,true,true,true,3,xiaomi/mimo-v2-flash@reasoning=default;xiaomi/mimo-v2-flash@reasoning=high;xiaomi/mimo-v2-flash@reasoning=none
 z-ai/glm-4.5,z-ai,true,false,true,3,z-ai/glm-4.5@reasoning=default;z-ai/glm-4.5@reasoning=none;z-ai/glm-4.5@reasoning=xhigh
 z-ai/glm-5,z-ai,true,true,true,3,z-ai/glm-5@reasoning=default;z-ai/glm-5@reasoning=high;z-ai/glm-5@reasoning=none
