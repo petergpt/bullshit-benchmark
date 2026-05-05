@@ -6,23 +6,15 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-04-27
+- Updated: 2026-05-05
 
-## Latest Changelog Entry (2026-04-27)
+## Latest Changelog Entry (2026-05-05)
 
-- Added DeepSeek V4, Tencent Hy3 Preview, and Xiaomi MiMo V2.5 benchmark results to both published tracks: `v1` with `55` questions per reasoning variant and `v2` with `100` questions per reasoning variant.
+- Added GPT-5.5 none-reasoning benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
 - Published:
-  - `deepseek/deepseek-v4-flash@reasoning=none`
-  - `deepseek/deepseek-v4-flash@reasoning=xhigh`
-  - `deepseek/deepseek-v4-pro@reasoning=none`
-  - `deepseek/deepseek-v4-pro@reasoning=xhigh`
-  - `tencent/hy3-preview:free@reasoning=none`
-  - `tencent/hy3-preview:free@reasoning=xhigh`
-  - `xiaomi/mimo-v2.5@reasoning=none`
-  - `xiaomi/mimo-v2.5@reasoning=xhigh`
-  - `xiaomi/mimo-v2.5-pro@reasoning=none`
-  - `xiaomi/mimo-v2.5-pro@reasoning=xhigh`
-- Added canonical launch-date and model-size metadata for the new DeepSeek, Tencent, and Xiaomi rows.
+  - `openai/gpt-5.5@reasoning=none`
+- v1 score: `0.9152` average, `15` Clear Pushback, `22` Partial Challenge, `18` Accepted Nonsense.
+- v2 score: `1.2233` average, `45` Clear Pushback, `39` Partial Challenge, `16` Accepted Nonsense.
 - Updated durable v1/v2 config coverage and refreshed the published leaderboard, release-date, reasoning-token/cost, and model-size chart data from completed 3-judge panels.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
@@ -84,7 +76,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `152` model/reasoning rows.
+- Published v2 leaderboard currently includes `155` model/reasoning rows.
 
 ## What This Measures
 

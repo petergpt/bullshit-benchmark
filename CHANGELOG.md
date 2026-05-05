@@ -2,6 +2,17 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.13] - 2026-05-05
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `openai/gpt-5.5@reasoning=none`
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the GPT-5.5 none-reasoning rows appear in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Folded `openai/gpt-5.5` into `config.json` for the published v1 `none` reasoning run and added `none` to the existing GPT-5.5 reasoning set in `config.v2.json`.
+- Updated the public v2 leaderboard to include `155` model/reasoning rows.
+
 ## [2.0.12] - 2026-05-04
 
 ### Added

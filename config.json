@@ -39,6 +39,7 @@
       "openai/gpt-4o-mini-2024-07-18",
       "openai/gpt-5.2",
       "openai/gpt-5.4",
+      "openai/gpt-5.5",
       "openai/gpt-5.4-mini",
       "openai/gpt-5.4-nano",
       "openai/gpt-5.3-chat",
@@ -72,6 +73,7 @@
     "models_file": "",
     "model_providers": {
       "*": "openrouter",
+      "openai/gpt-5.5": "openai",
       "openai/gpt-5.4-mini": "openai",
       "openai/gpt-5.4-nano": "openai"
     },
@@ -145,6 +147,7 @@
       "tencent/hy3-preview:free": ["none", "xhigh"],
       "openai/gpt-5.2": ["none", "high"],
       "openai/gpt-5.4": ["none", "xhigh"],
+      "openai/gpt-5.5": ["none"],
       "openai/gpt-5.4-mini": ["none", "high", "xhigh"],
       "openai/gpt-5.4-nano": ["none", "high", "xhigh"],
       "openai/gpt-5.2-codex": ["low", "high", "xhigh"],
