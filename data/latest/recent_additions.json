@@ -1,19 +1,21 @@
 {
-  "generated_at_utc": "2026-05-05T20:52:28Z",
+  "generated_at_utc": "2026-05-07T13:01:44Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-04-28T20:52:28Z",
+  "window_start_utc": "2026-04-30T13:01:44Z",
   "models": [
+    "openai/gpt-5.5-chat@reasoning=default",
     "openai/gpt-5.5@reasoning=none",
     "x-ai/grok-4.3@reasoning=minimal",
     "x-ai/grok-4.3@reasoning=xhigh"
   ],
   "model_bases": [
     "openai/gpt-5.5",
+    "openai/gpt-5.5-chat",
     "x-ai/grok-4.3"
   ],
-  "model_count": 3,
-  "model_base_count": 2,
+  "model_count": 4,
+  "model_base_count": 3,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T07:47:21Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-02-26T15:26:33Z",
@@ -112,6 +114,7 @@
     "openai/gpt-5.4-nano@reasoning=xhigh": "2026-03-17T17:55:36Z",
     "openai/gpt-5.4@reasoning=none": "2026-03-05T20:15:00Z",
     "openai/gpt-5.4@reasoning=xhigh": "2026-03-05T20:15:00Z",
+    "openai/gpt-5.5-chat@reasoning=default": "2026-05-07T12:53:44Z",
     "openai/gpt-5.5@reasoning=none": "2026-05-05T20:21:13Z",
     "openai/gpt-5@reasoning=default": "2026-02-26T16:59:05Z",
     "openai/gpt-oss-120b@reasoning=high": "2026-02-24T09:32:39Z",
@@ -218,6 +221,7 @@
     "openai/gpt-5.4-mini": "2026-03-17T17:55:36Z",
     "openai/gpt-5.4-nano": "2026-03-17T17:55:36Z",
     "openai/gpt-5.5": "2026-05-05T20:21:13Z",
+    "openai/gpt-5.5-chat": "2026-05-07T12:53:44Z",
     "openai/gpt-oss-120b": "2026-02-24T09:31:36Z",
     "openai/o3": "2026-02-25T20:18:35Z",
     "openai/o4-mini": "2026-02-24T09:30:29Z",

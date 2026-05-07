@@ -2,6 +2,19 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.14] - 2026-05-07
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `openai/gpt-5.5-chat@reasoning=default`
+- Added canonical launch-date and closed-model metadata for `openai/gpt-5.5-chat`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the GPT-5.5 chat row appears in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Folded `openai/gpt-5.5-chat` into `config.json` and `config.v2.json` with OpenAI provider routing.
+- Added a durable note that `openai/gpt-5.5-chat` is the benchmark display row for OpenAI's `chat-latest` API slug. OpenAI documents `chat-latest` as the latest Instant model used in ChatGPT and recommends GPT-5.5 for API usage, but no `gpt-5.5-chat-latest` API slug exists.
+- Updated the public v2 leaderboard to include `156` model/reasoning rows.
+
 ## [2.0.13] - 2026-05-05
 
 ### Added

@@ -43,6 +43,7 @@
       "openai/gpt-5.5-pro",
       "openai/gpt-5.4-mini",
       "openai/gpt-5.4-nano",
+      "openai/gpt-5.5-chat",
       "openai/gpt-5.3-chat",
       "openai/gpt-5.1-chat",
       "openai/gpt-5.1",
@@ -79,6 +80,7 @@
       "*": "openrouter",
       "openai/gpt-5.5": "openai",
       "openai/gpt-5.5-pro": "openai",
+      "openai/gpt-5.5-chat": "openai",
       "openai/gpt-5.4-mini": "openai",
       "openai/gpt-5.4-nano": "openai"
     },

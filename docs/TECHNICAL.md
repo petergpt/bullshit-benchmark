@@ -145,6 +145,7 @@ Publishing also exports:
 - Question set (v1): `questions.json`
 - Question set (v2): `questions.v2.json` (generated from `drafts/new-questions.md` via `scripts/build_questions_v2_from_draft.py`)
 - Provider routing is controlled by `collect.model_providers` and `grade.model_providers` (`openrouter` or `openai`; supports `*` and `<org>/*` patterns, e.g. `{"*":"openrouter","gpt-5.3":"openai"}`).
+- `openai/gpt-5.5-chat` is a benchmark display/model row for OpenAI's `chat-latest` API slug. OpenAI documents `chat-latest` as the latest Instant model used in ChatGPT and recommends GPT-5.5 for API usage, but the API slug itself does not expose the GPT-5.5 chat-family name.
 - Configs include `openai/gpt-5.2-codex` and `openai/gpt-5.3-codex` with reasoning sweeps (`low`, `high`, `xhigh`).
 - Config model lists are aligned to `data/model_metadata/tested_models_inventory.csv` run history, including legacy OpenAI IDs (`openai/gpt-4.1`, `openai/gpt-4o*`, `openai/o3`).
 - When publishing model results from ad hoc or catch-up runs, update the durable config path in the same change. Published v1 rows should be represented in `config.json`, published v2 rows should be represented in `config.v2.json`, and candidate unrun catch-up models should live in `config.new-models.v1.json` / `config.new-models.v2.json` until they are either published or intentionally deferred.

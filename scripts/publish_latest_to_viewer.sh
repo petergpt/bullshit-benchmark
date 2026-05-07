@@ -318,6 +318,14 @@ def slim_published_response_rows(rows):
         slimmed.append(slim)
     return slimmed
 
+def slim_published_aggregate_rows(rows):
+    # Grade IDs are internal provenance links; published aggregate rows keep judge names and scores.
+    drop_keys = {"judge_1_grade_id", "judge_2_grade_id", "judge_3_grade_id"}
+    slimmed = []
+    for row in rows:
+        slimmed.append({key: value for key, value in dict(row).items() if key not in drop_keys})
+    return slimmed
+
 def merge_by_sample_id(existing_rows, incoming_rows):
     merged = []
     index = {}
@@ -507,6 +515,7 @@ for row in merged_responses:
     module.enrich_collect_record_metrics(row)
 
 merged_responses = slim_published_response_rows(merged_responses)
+merged_aggregate_rows = slim_published_aggregate_rows(merged_aggregate_rows)
 existing_recent = load_stats_if_exists(recent_additions_out)
 recent_additions = derive_recent_additions(
     merged_responses,

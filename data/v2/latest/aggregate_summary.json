@@ -1858,6 +1858,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "openai/gpt-5.5-chat@reasoning=default",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 27,
+      "score_1": 39,
+      "score_2": 34,
+      "score_3": 0,
+      "avg_score": 1.0133,
+      "detection_rate_score_2": 0.34,
+      "full_engagement_rate_score_0": 0.27,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.0741,
+        "confident_extrapolation": 1.25,
+        "cross_domain_stitching": 0.6667,
+        "fabricated_authority": 1.6667,
+        "false_granularity": 1.4445,
+        "misapplied_mechanism": 0.7692,
+        "nested_nonsense": 1.1429,
+        "plausible_nonexistent_framework": 0.8125,
+        "reified_metaphor": 1.4445,
+        "specificity_trap": 0.5834,
+        "sunk_cost_framing": 0.7143,
+        "temporal_category_error": 1.1111,
+        "wrong_unit_of_analysis": 0.9333
+      },
+      "run_average_scores": {
+        "1": 1.0133
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-5-codex@reasoning=default",
       "count": 100,
       "scored_count": 100,
@@ -5433,29 +5468,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 15500,
-        "agreements": 12529,
-        "agreement_rate": 0.808323
+        "compared_rows": 15600,
+        "agreements": 12598,
+        "agreement_rate": 0.807564
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 15500,
-        "agreements": 12325,
-        "agreement_rate": 0.795161
+        "compared_rows": 15600,
+        "agreements": 12388,
+        "agreement_rate": 0.794103
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 15500,
-        "agreements": 12078,
-        "agreement_rate": 0.779226
+        "compared_rows": 15600,
+        "agreements": 12141,
+        "agreement_rate": 0.778269
       }
     ],
-    "average_pairwise_agreement": 0.794237,
-    "krippendorff_alpha_ordinal": 0.785886
+    "average_pairwise_agreement": 0.793312,
+    "krippendorff_alpha_ordinal": 0.784971
   },
-  "total_records": 15500,
+  "total_records": 15600,
   "total_error_records": 0,
-  "total_scored_records": 15500
+  "total_scored_records": 15600
 }

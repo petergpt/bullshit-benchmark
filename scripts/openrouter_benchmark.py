@@ -79,6 +79,14 @@ DEFAULT_MODEL_PROVIDER = "openrouter"
 # Code-level aliases for internal OpenAI model IDs that should be benchmarked
 # under public-facing display names.
 OPENAI_BENCHMARK_MODEL_PROFILES: dict[str, dict[str, Any]] = {
+    # The API slug is intentionally generic: OpenAI documents chat-latest as
+    # the latest Instant model used in ChatGPT and recommends GPT-5.5 for API
+    # usage. Benchmark and publish it under a stable public row name so the
+    # leaderboard does not lose that GPT-5.5 chat-family context.
+    "gpt-5.5-chat": {
+        "request_model": "chat-latest",
+        "display_name": "gpt-5.5-chat",
+    },
     "gpt-5.4": {
         "request_model": "galapagos-alpha",
         "display_name": "gpt-5.4",
