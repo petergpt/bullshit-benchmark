@@ -2,6 +2,20 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.15] - 2026-05-20
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `google/gemini-3.5-flash@reasoning=minimal`
+  - `google/gemini-3.5-flash@reasoning=xhigh`
+- Added canonical OpenRouter launch-date and closed-model metadata for `google/gemini-3.5-flash`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the Gemini 3.5 Flash rows appear in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Pinned Gemini 3.5 Flash in the v2 viewer release-date and reasoning scatter defaults.
+- Folded `google/gemini-3.5-flash` into `config.json` and `config.v2.json` with the verified `minimal`/`xhigh` reasoning settings.
+- Updated the public v2 leaderboard to include `158` model/reasoning rows.
+
 ## [2.0.14] - 2026-05-07
 
 ### Added

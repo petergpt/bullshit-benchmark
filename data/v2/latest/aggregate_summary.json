@@ -3468,6 +3468,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "google/gemini-3.5-flash@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 63,
+      "score_1": 17,
+      "score_2": 20,
+      "score_3": 0,
+      "avg_score": 0.5567,
+      "detection_rate_score_2": 0.2,
+      "full_engagement_rate_score_0": 0.63,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.0,
+        "confident_extrapolation": 0.8334,
+        "cross_domain_stitching": 0.0,
+        "fabricated_authority": 1.4545,
+        "false_granularity": 0.8889,
+        "misapplied_mechanism": 0.4615,
+        "nested_nonsense": 1.1429,
+        "plausible_nonexistent_framework": 0.3333,
+        "reified_metaphor": 0.0,
+        "specificity_trap": 0.0833,
+        "sunk_cost_framing": 0.381,
+        "temporal_category_error": 1.0,
+        "wrong_unit_of_analysis": 0.4667
+      },
+      "run_average_scores": {
+        "1": 0.5567
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "xiaomi/mimo-v2-flash@reasoning=none",
       "count": 100,
       "scored_count": 100,
@@ -3744,6 +3779,41 @@
       },
       "run_average_scores": {
         "1": 0.4933
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "google/gemini-3.5-flash@reasoning=minimal",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 69,
+      "score_1": 12,
+      "score_2": 19,
+      "score_3": 0,
+      "avg_score": 0.4867,
+      "detection_rate_score_2": 0.19,
+      "full_engagement_rate_score_0": 0.69,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.0741,
+        "confident_extrapolation": 0.5834,
+        "cross_domain_stitching": 0.0,
+        "fabricated_authority": 1.1212,
+        "false_granularity": 0.7222,
+        "misapplied_mechanism": 0.4359,
+        "nested_nonsense": 0.9524,
+        "plausible_nonexistent_framework": 0.2292,
+        "reified_metaphor": 0.0,
+        "specificity_trap": 0.1667,
+        "sunk_cost_framing": 0.4286,
+        "temporal_category_error": 1.2222,
+        "wrong_unit_of_analysis": 0.2667
+      },
+      "run_average_scores": {
+        "1": 0.4867
       },
       "run_average_stddev": null
     },
@@ -5468,29 +5538,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 15600,
-        "agreements": 12598,
-        "agreement_rate": 0.807564
+        "compared_rows": 15800,
+        "agreements": 12775,
+        "agreement_rate": 0.808544
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 15600,
-        "agreements": 12388,
-        "agreement_rate": 0.794103
+        "compared_rows": 15800,
+        "agreements": 12559,
+        "agreement_rate": 0.794873
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 15600,
-        "agreements": 12141,
-        "agreement_rate": 0.778269
+        "compared_rows": 15800,
+        "agreements": 12317,
+        "agreement_rate": 0.779557
       }
     ],
-    "average_pairwise_agreement": 0.793312,
-    "krippendorff_alpha_ordinal": 0.784971
+    "average_pairwise_agreement": 0.794325,
+    "krippendorff_alpha_ordinal": 0.785863
   },
-  "total_records": 15600,
+  "total_records": 15800,
   "total_error_records": 0,
-  "total_scored_records": 15600
+  "total_scored_records": 15800
 }
