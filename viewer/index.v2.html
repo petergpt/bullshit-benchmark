@@ -828,9 +828,24 @@
       color: #30433d;
       padding: 4px 8px;
       font-size: 0.72rem;
+      font-family: inherit;
       white-space: nowrap;
       line-height: 1;
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease, opacity 120ms ease;
     }
+    .chart-legend-chip:hover { background: #f5f2ea; }
+    .chart-legend-chip:focus-visible {
+      outline: 2px solid rgba(31, 157, 85, 0.35);
+      outline-offset: 2px;
+    }
+    .chart-legend-chip.is-muted {
+      background: #f7f5ef;
+      border-color: #d6ddd7;
+      color: #708179;
+      opacity: 0.56;
+    }
+    .chart-legend-chip.is-muted .org-dot { opacity: 0.36; }
     .chart-legend-more {
       font-size: 0.72rem;
       color: #5f726b;
@@ -1752,6 +1767,7 @@ const S = {
   tokenSort: "total",
   techniqueSeed: Math.floor(Math.random() * 1e9),
   legendExpanded: {},
+  legendHiddenOrgs: {},
 };
 
 // ====== UTILS ======
@@ -3487,11 +3503,12 @@ function selectReasoningScatterLabelPoints(points, maxLabels = 9, metricKey = "a
 
 function renderCompactScatterLegend(containerId, points, opts = {}) {
   const el = document.getElementById(containerId);
-  if (!el) return;
-  if (!points || !points.length) { el.innerHTML = ""; return; }
+  if (!el) return points || [];
+  if (!points || !points.length) { el.innerHTML = ""; return []; }
   const maxOrgs = opts.maxOrgs || 6;
   const expandable = opts.expandable !== false;
   const expanded = expandable && !!S.legendExpanded[containerId];
+  const hidden = legendHiddenOrgSet(containerId);
   const byOrg = new Map();
   points.forEach(p => {
     const org = normOrg(p.org);
@@ -3500,14 +3517,31 @@ function renderCompactScatterLegend(containerId, points, opts = {}) {
   const orgEntries = [...byOrg.entries()].sort((a,b) => b[1] - a[1] || orgName(a[0]).localeCompare(orgName(b[0])));
   const shown = expanded ? orgEntries : orgEntries.slice(0, maxOrgs);
   const hiddenCount = Math.max(0, orgEntries.length - shown.length);
-  const orgHtml = shown.map(([org, cnt]) => (
-    `<span class="chart-legend-chip" title="${esc(orgName(org))}: ${cnt} models"><span class="org-dot" style="background:${orgColor(org)};"></span>${esc(orgName(org))}</span>`
-  )).join("");
+  const orgHtml = shown.map(([org, cnt]) => {
+    const active = !hidden.has(org);
+    const action = active ? "Hide" : "Show";
+    const title = `${action} ${orgName(org)} (${cnt} models)`;
+    return `<button type="button" class="chart-legend-chip${active ? "" : " is-muted"}" data-legend-org="${esc(org)}" data-legend-container="${esc(containerId)}" aria-pressed="${active ? "true" : "false"}" title="${esc(title)}"><span class="org-dot" style="background:${orgColor(org)};"></span>${esc(orgName(org))}</button>`;
+  }).join("");
   const moreHtml = hiddenCount ? `<span class="chart-legend-more">+${hiddenCount} more orgs</span>` : "";
   const toggleHtml = (expandable && orgEntries.length > maxOrgs)
     ? `<button type="button" class="chart-legend-toggle" data-legend-toggle="${esc(containerId)}" data-next="${expanded ? "collapse" : "expand"}">${expanded ? "Show fewer" : "Show all orgs"}</button>`
     : "";
   el.innerHTML = `${orgHtml}${moreHtml}${toggleHtml}`;
+  return points.filter(p => !hidden.has(normOrg(p.org)));
+}
+
+function legendHiddenOrgSet(containerId) {
+  const key = String(containerId || "");
+  if (!key) return new Set();
+  if (!(S.legendHiddenOrgs[key] instanceof Set)) {
+    S.legendHiddenOrgs[key] = new Set();
+  }
+  return S.legendHiddenOrgs[key];
+}
+
+function renderScatterLegendHiddenMessage(svg, chartLabel) {
+  svg.innerHTML = `<text x="300" y="205" text-anchor="middle" fill="#5d726b" font-size="14">All visible ${esc(chartLabel)} are hidden by the legend.</text><text x="300" y="226" text-anchor="middle" fill="#7a8a84" font-size="11">Click a muted organization chip to bring it back.</text>`;
 }
 
 // ====== RENDER: All Models by Release Date (no lines, just dots) ======
@@ -3516,7 +3550,7 @@ function renderAllModelsScatter(filtered) {
   if (!svg) return;
 
   const byModel2 = groupBy(filtered, modelKey);
-  const points = [...byModel2.entries()].map(([, modelRows]) => {
+  const allPoints = [...byModel2.entries()].map(([, modelRows]) => {
     const sample = modelRows[0] || {};
     const org = normOrg(modelOrg(sample));
     const launch = launchMetaForRow(sample);
@@ -3527,13 +3561,18 @@ function renderAllModelsScatter(filtered) {
     return { label: prettyModel(sample), org, launchDate, greenRate: stats.greenRate };
   }).filter(Boolean);
 
-  if (!points.length) {
+  if (!allPoints.length) {
     svg.innerHTML = `<text x="300" y="210" text-anchor="middle" fill="#5d726b" font-size="14">No launch-date data available.</text>`;
     renderCompactScatterLegend("allModelsLegend", []);
     return;
   }
 
-  renderCompactScatterLegend("allModelsLegend", points, { maxOrgs: 6, expandable: true });
+  const points = renderCompactScatterLegend("allModelsLegend", allPoints, { maxOrgs: 6, expandable: true });
+
+  if (!points.length) {
+    renderScatterLegendHiddenMessage(svg, "launch-date models");
+    return;
+  }
 
   const W = 600, H = 420, ml = 55, mr = 30, mt = 20, mb = 50;
   const pw = W - ml - mr, ph = H - mt - mb;
@@ -3906,21 +3945,25 @@ function renderReasoningScatter(filtered) {
     const avgCost = u && u.count ? u.cost / u.count : 0;
     return { mk, label: prettyModel(sample), org: modelOrg(sample), greenRate: s.greenRate, avgReasoning, avgCost };
   });
-  const points = allPoints.filter((p) => {
+  const legendPoints = allPoints.filter((p) => {
     const value = Number(p[metricKey]);
     if (!Number.isFinite(value)) return false;
     return mode === "tokens" ? value >= 0 : value > 0;
   });
-  const positivePoints = points.filter(p => Number(p[metricKey]) > 0);
-  const zeroLaneEnabled = mode === "tokens" && points.some(p => Number(p[metricKey]) === 0);
 
-  if (!points.length) {
+  if (!legendPoints.length) {
     svg.innerHTML = `<text x="300" y="210" text-anchor="middle" fill="#5d726b" font-size="14">${esc(modeCfg.emptyText)}</text>`;
     renderCompactScatterLegend("reasoningScatterLegend", []);
     return;
   }
 
-  renderCompactScatterLegend("reasoningScatterLegend", points, { maxOrgs: 6, expandable: true });
+  const points = renderCompactScatterLegend("reasoningScatterLegend", legendPoints, { maxOrgs: 6, expandable: true });
+  if (!points.length) {
+    renderScatterLegendHiddenMessage(svg, mode === "cost" ? "cost points" : "reasoning-token points");
+    return;
+  }
+  const positivePoints = points.filter(p => Number(p[metricKey]) > 0);
+  const zeroLaneEnabled = mode === "tokens" && points.some(p => Number(p[metricKey]) === 0);
 
   const W = 600, H = 420, ml = 70, mr = 30, mt = 20, mb = 50;
   const ph = H - mt - mb;
@@ -4030,9 +4073,9 @@ function renderSizeScatterChart(filtered, options) {
       modelLicense: String(paramsMeta?.license || "").trim(),
     };
   });
-  const points = allPoints.filter(p => Number(p[metricKey]) > 0);
+  const legendPoints = allPoints.filter(p => Number(p[metricKey]) > 0);
 
-  if (!points.length) {
+  if (!legendPoints.length) {
     svg.innerHTML = `<text x="300" y="210" text-anchor="middle" fill="#5d726b" font-size="14">${esc(options.emptyText)}</text>`;
     renderCompactScatterLegend(options.legendId, []);
     if (metaEl) {
@@ -4041,7 +4084,14 @@ function renderSizeScatterChart(filtered, options) {
     return;
   }
 
-  renderCompactScatterLegend(options.legendId, points, { maxOrgs: 6, expandable: true });
+  const points = renderCompactScatterLegend(options.legendId, legendPoints, { maxOrgs: 6, expandable: true });
+  if (!points.length) {
+    renderScatterLegendHiddenMessage(svg, `${options.metaLabel}-parameter points`);
+    if (metaEl) {
+      metaEl.textContent = `Showing 0 of ${allPoints.length} visible model variants with public ${options.metaLabel}-parameter metadata.`;
+    }
+    return;
+  }
 
   const values = points.map(p => Number(p[metricKey]) || 0).filter(v => v > 0);
   const minMetric = Math.min(...values);
@@ -4586,8 +4636,19 @@ function bindEvents() {
     renderAll();
   });
 
-  // Scatter legend expand/collapse
+  // Scatter legend org visibility + expand/collapse
   document.addEventListener("click", e => {
+    const chip = e.target.closest("[data-legend-org][data-legend-container]");
+    if (chip) {
+      const id = chip.getAttribute("data-legend-container");
+      const org = normOrg(chip.getAttribute("data-legend-org"));
+      if (!id || !org) return;
+      const hidden = legendHiddenOrgSet(id);
+      if (hidden.has(org)) hidden.delete(org);
+      else hidden.add(org);
+      renderAll();
+      return;
+    }
     const btn = e.target.closest("[data-legend-toggle]");
     if (!btn) return;
     const id = btn.getAttribute("data-legend-toggle");
