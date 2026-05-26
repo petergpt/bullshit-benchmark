@@ -71,6 +71,7 @@ qwen/qwen3-235b-a22b,qwen,collector_apac_longtail,apac_longtail
 qwen/qwen3-coder,qwen,collector_apac_longtail,apac_longtail
 qwen/qwen3.5-397b-a17b,qwen,collector_apac_longtail,apac_longtail
 qwen/qwen3.6-plus,qwen,collector_apac_longtail,apac_longtail
+qwen/qwen3.7-max,qwen,collector_apac_longtail,apac_longtail
 stepfun/step-3.5-flash,stepfun,collector_frontier_other,frontier_other
 x-ai/grok-4.1-fast,x-ai,collector_frontier_other,frontier_other
 x-ai/grok-4.20-beta,x-ai,collector_frontier_other,frontier_other

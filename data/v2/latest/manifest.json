@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-19T23:13:46Z",
+  "generated_at_utc": "2026-05-26T10:44:43Z",
   "sources": {
     "responses_file": "data/v2/latest/responses.jsonl",
     "collection_stats_file": "data/v2/latest/collection_stats.json",
@@ -9,21 +9,21 @@
     "recent_additions_file": "data/v2/latest/recent_additions.json"
   },
   "counts": {
-    "responses_rows": 15800,
-    "aggregate_rows": 15800
+    "responses_rows": 16000,
+    "aggregate_rows": 16000
   },
   "coverage": {
     "responses": {
-      "rows": 15800,
-      "rows_with_model_reasoning_level": 15800,
-      "rows_with_response_reasoning_effort": 15800,
-      "rows_with_response_usage": 15800,
-      "rows_with_response_reasoning_tokens": 15800
+      "rows": 16000,
+      "rows_with_model_reasoning_level": 16000,
+      "rows_with_response_reasoning_effort": 16000,
+      "rows_with_response_usage": 16000,
+      "rows_with_response_reasoning_tokens": 16000
     },
     "aggregate": {
-      "rows": 15800,
-      "rows_with_model_reasoning_level": 15800,
-      "rows_with_response_reasoning_effort": 15800,
+      "rows": 16000,
+      "rows_with_model_reasoning_level": 16000,
+      "rows_with_response_reasoning_effort": 16000,
       "rows_with_response_usage": 0,
       "rows_with_response_reasoning_tokens": 0
     }

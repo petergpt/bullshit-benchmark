@@ -2,6 +2,21 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.16] - 2026-05-26
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `qwen/qwen3.7-max@reasoning=none`
+  - `qwen/qwen3.7-max@reasoning=xhigh`
+- Added canonical OpenRouter launch-date and closed-model metadata for `qwen/qwen3.7-max`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the Qwen3.7 Max rows appear in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Pinned Qwen3.7 Max in the v2 viewer release-date and reasoning scatter defaults.
+- Folded `qwen/qwen3.7-max` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings and Alibaba provider lock.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated public viewer data.
+- Updated the public v2 leaderboard to include `160` model/reasoning rows.
+
 ## [2.0.15] - 2026-05-20
 
 ### Added

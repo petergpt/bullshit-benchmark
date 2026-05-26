@@ -6,17 +6,20 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-05-07
+- Updated: 2026-05-26
 
-## Latest Changelog Entry (2026-05-07)
+## Latest Changelog Entry (2026-05-26)
 
-- Added GPT-5.5 chat benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
+- Added Qwen3.7 Max benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
 - Published:
-  - `openai/gpt-5.5-chat@reasoning=default`
-- v1 score: `0.6303` average, `8` Clear Pushback, `20` Partial Challenge, `27` Accepted Nonsense.
-- v2 score: `1.0133` average, `34` Clear Pushback, `39` Partial Challenge, `27` Accepted Nonsense.
-- Recorded `openai/gpt-5.5-chat` as the benchmark display row for OpenAI's `chat-latest` API slug, since the slug does not expose the GPT-5.5 chat-family name directly.
-- Updated durable v1/v2 config coverage and refreshed the published leaderboard, release-date, reasoning-token/cost, and model-size chart data from completed 3-judge panels.
+  - `qwen/qwen3.7-max@reasoning=none`
+  - `qwen/qwen3.7-max@reasoning=xhigh`
+- v1 `none`: `1.297` average, `29` Clear Pushback, `16` Partial Challenge, `10` Accepted Nonsense.
+- v1 `xhigh`: `0.9212` average, `21` Clear Pushback, `10` Partial Challenge, `24` Accepted Nonsense.
+- v2 `none`: `1.5667` average, `71` Clear Pushback, `16` Partial Challenge, `13` Accepted Nonsense.
+- v2 `xhigh`: `1.3333` average, `56` Clear Pushback, `21` Partial Challenge, `23` Accepted Nonsense.
+- Added canonical OpenRouter launch-date and closed-model metadata for `qwen/qwen3.7-max`.
+- Updated durable v1/v2 config coverage and refreshed the published leaderboard, release-date, reasoning-token/cost, model-size chart data, and README chart screenshots from completed 3-judge panels.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -77,7 +80,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `156` model/reasoning rows.
+- Published v2 leaderboard currently includes `160` model/reasoning rows.
 
 ## What This Measures
 

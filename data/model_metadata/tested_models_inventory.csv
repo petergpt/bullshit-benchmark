@@ -71,6 +71,7 @@ qwen/qwen3-235b-a22b,qwen,true,false,true,3,qwen/qwen3-235b-a22b@reasoning=defau
 qwen/qwen3-coder,qwen,true,false,true,1,qwen/qwen3-coder@reasoning=default
 qwen/qwen3.5-397b-a17b,qwen,true,true,true,3,qwen/qwen3.5-397b-a17b@reasoning=default;qwen/qwen3.5-397b-a17b@reasoning=high;qwen/qwen3.5-397b-a17b@reasoning=none
 qwen/qwen3.6-plus,qwen,true,true,true,2,qwen/qwen3.6-plus@reasoning=none;qwen/qwen3.6-plus@reasoning=xhigh
+qwen/qwen3.7-max,qwen,true,true,true,2,qwen/qwen3.7-max@reasoning=none;qwen/qwen3.7-max@reasoning=xhigh
 stepfun/step-3.5-flash,stepfun,true,false,true,3,stepfun/step-3.5-flash@reasoning=default;stepfun/step-3.5-flash@reasoning=minimal;stepfun/step-3.5-flash@reasoning=xhigh
 x-ai/grok-4.1-fast,x-ai,true,true,true,3,x-ai/grok-4.1-fast@reasoning=default;x-ai/grok-4.1-fast@reasoning=high;x-ai/grok-4.1-fast@reasoning=none
 x-ai/grok-4.20-beta,x-ai,true,false,true,3,x-ai/grok-4.20-beta@reasoning=default;x-ai/grok-4.20-beta@reasoning=low;x-ai/grok-4.20-beta@reasoning=xhigh

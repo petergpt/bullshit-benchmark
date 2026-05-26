@@ -1,17 +1,20 @@
 {
-  "generated_at_utc": "2026-05-19T23:13:33Z",
+  "generated_at_utc": "2026-05-26T10:44:34Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-05-12T23:13:33Z",
+  "window_start_utc": "2026-05-19T10:44:34Z",
   "models": [
     "google/gemini-3.5-flash@reasoning=minimal",
-    "google/gemini-3.5-flash@reasoning=xhigh"
+    "google/gemini-3.5-flash@reasoning=xhigh",
+    "qwen/qwen3.7-max@reasoning=none",
+    "qwen/qwen3.7-max@reasoning=xhigh"
   ],
   "model_bases": [
-    "google/gemini-3.5-flash"
+    "google/gemini-3.5-flash",
+    "qwen/qwen3.7-max"
   ],
-  "model_count": 2,
-  "model_base_count": 1,
+  "model_count": 4,
+  "model_base_count": 2,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T07:47:21Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-02-26T15:26:33Z",
@@ -131,6 +134,8 @@
     "qwen/qwen3-coder@reasoning=default": "2026-03-18T07:47:21Z",
     "qwen/qwen3.5-397b-a17b@reasoning=high": "2026-02-24T09:33:47Z",
     "qwen/qwen3.5-397b-a17b@reasoning=none": "2026-02-24T09:31:06Z",
+    "qwen/qwen3.7-max@reasoning=none": "2026-05-26T09:07:04Z",
+    "qwen/qwen3.7-max@reasoning=xhigh": "2026-05-26T09:07:04Z",
     "stepfun/step-3.5-flash@reasoning=minimal": "2026-03-18T07:47:26Z",
     "stepfun/step-3.5-flash@reasoning=xhigh": "2026-03-18T07:47:26Z",
     "tencent/hy3-preview:free@reasoning=none": "2026-04-26T22:01:07Z",
@@ -230,6 +235,7 @@
     "qwen/qwen3-235b-a22b": "2026-03-18T07:47:21Z",
     "qwen/qwen3-coder": "2026-03-18T07:47:21Z",
     "qwen/qwen3.5-397b-a17b": "2026-02-24T09:31:06Z",
+    "qwen/qwen3.7-max": "2026-05-26T09:07:04Z",
     "stepfun/step-3.5-flash": "2026-03-18T07:47:26Z",
     "tencent/hy3-preview:free": "2026-04-26T22:01:07Z",
     "x-ai/grok-4.1-fast": "2026-02-24T09:32:25Z",

@@ -65,6 +65,7 @@
       "google/gemma-4-31b-it",
       "qwen/qwen3.5-397b-a17b",
       "qwen/qwen3-max-thinking",
+      "qwen/qwen3.7-max",
       "moonshotai/kimi-k2.5",
       "minimax/minimax-m2.5",
       "minimax/minimax-m2.7",
@@ -112,6 +113,15 @@
         "provider": {
           "order": [
             "Parasail"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen3.7-max": {
+        "provider": {
+          "order": [
+            "Alibaba"
           ],
           "allow_fallbacks": false,
           "require_parameters": true
@@ -165,6 +175,7 @@
       "google/gemma-4-31b-it": ["none", "high"],
       "qwen/qwen3.5-397b-a17b": ["none", "high"],
       "qwen/qwen3-max-thinking": ["none", "high"],
+      "qwen/qwen3.7-max": ["none", "xhigh"],
       "moonshotai/kimi-k2.5": ["none", "high"],
       "minimax/minimax-m2.5": ["low", "high"],
       "minimax/minimax-m2.7": ["low", "high"],

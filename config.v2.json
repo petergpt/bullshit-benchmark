@@ -70,6 +70,7 @@
       "moonshotai/kimi-k2.6",
       "z-ai/glm-5.1",
       "qwen/qwen3.6-plus",
+      "qwen/qwen3.7-max",
       "minimax/minimax-m2.5",
       "minimax/minimax-m2.7",
       "mistralai/mistral-small-2603",
@@ -301,6 +302,10 @@
       "qwen/qwen3.6-plus": [
         "none",
         "xhigh"
+      ],
+      "qwen/qwen3.7-max": [
+        "none",
+        "xhigh"
       ]
     },
     "shuffle_tasks": true,
@@ -332,6 +337,15 @@
         }
       },
       "qwen/qwen3.6-plus": {
+        "provider": {
+          "order": [
+            "Alibaba"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen3.7-max": {
         "provider": {
           "order": [
             "Alibaba"
