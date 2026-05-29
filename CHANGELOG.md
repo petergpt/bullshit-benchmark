@@ -2,6 +2,22 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.17] - 2026-05-29
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `anthropic/claude-opus-4.8@reasoning=none`
+  - `anthropic/claude-opus-4.8@reasoning=xhigh`
+- Added canonical launch-date and closed-model metadata for `anthropic/claude-opus-4.8`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the Opus 4.8 rows appear in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Pinned Claude Opus 4.8 in the v2 viewer release-date and reasoning scatter defaults.
+- Folded `anthropic/claude-opus-4.8` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated public viewer data.
+- Updated the public v2 leaderboard to include `162` model/reasoning rows.
+- Slimmed empty response and aggregate diagnostic fields during viewer publishing while retaining populated diagnostics, keeping the expanded published JSONL datasets within GitHub file-size limits.
+
 ## [2.0.16] - 2026-05-26
 
 ### Added

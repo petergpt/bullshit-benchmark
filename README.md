@@ -6,19 +6,19 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-05-26
+- Updated: 2026-05-29
 
-## Latest Changelog Entry (2026-05-26)
+## Latest Changelog Entry (2026-05-29)
 
-- Added Qwen3.7 Max benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
+- Added Claude Opus 4.8 benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
 - Published:
-  - `qwen/qwen3.7-max@reasoning=none`
-  - `qwen/qwen3.7-max@reasoning=xhigh`
-- v1 `none`: `1.297` average, `29` Clear Pushback, `16` Partial Challenge, `10` Accepted Nonsense.
-- v1 `xhigh`: `0.9212` average, `21` Clear Pushback, `10` Partial Challenge, `24` Accepted Nonsense.
-- v2 `none`: `1.5667` average, `71` Clear Pushback, `16` Partial Challenge, `13` Accepted Nonsense.
-- v2 `xhigh`: `1.3333` average, `56` Clear Pushback, `21` Partial Challenge, `23` Accepted Nonsense.
-- Added canonical OpenRouter launch-date and closed-model metadata for `qwen/qwen3.7-max`.
+  - `anthropic/claude-opus-4.8@reasoning=none`
+  - `anthropic/claude-opus-4.8@reasoning=xhigh`
+- v1 `none`: `1.9636` average, `53` Clear Pushback, `2` Partial Challenge, `0` Accepted Nonsense.
+- v1 `xhigh`: `1.8909` average, `51` Clear Pushback, `3` Partial Challenge, `1` Accepted Nonsense.
+- v2 `none`: `1.93` average, `95` Clear Pushback, `4` Partial Challenge, `1` Accepted Nonsense.
+- v2 `xhigh`: `1.9233` average, `94` Clear Pushback, `5` Partial Challenge, `1` Accepted Nonsense.
+- Added canonical launch-date and closed-model metadata for `anthropic/claude-opus-4.8`.
 - Updated durable v1/v2 config coverage and refreshed the published leaderboard, release-date, reasoning-token/cost, model-size chart data, and README chart screenshots from completed 3-judge panels.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
@@ -80,7 +80,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `160` model/reasoning rows.
+- Published v2 leaderboard currently includes `162` model/reasoning rows.
 
 ## What This Measures
 

@@ -315,6 +315,16 @@ def slim_published_response_rows(rows):
                 slim["response_model_snapshot"] = raw_model
         slim.pop("response_raw", None)
         slim.pop("request_messages", None)
+        for key in (
+            "warnings",
+            "error_kind",
+            "error_http_status",
+            "error_retryable",
+            "error_retry_after_seconds",
+            "error",
+        ):
+            if slim.get(key) in ("", None, [], {}):
+                slim.pop(key, None)
         slimmed.append(slim)
     return slimmed
 
@@ -323,7 +333,11 @@ def slim_published_aggregate_rows(rows):
     drop_keys = {"judge_1_grade_id", "judge_2_grade_id", "judge_3_grade_id"}
     slimmed = []
     for row in rows:
-        slimmed.append({key: value for key, value in dict(row).items() if key not in drop_keys})
+        slim = {key: value for key, value in dict(row).items() if key not in drop_keys}
+        for key in ("row_errors", "consensus_error"):
+            if slim.get(key) in ("", None, [], {}):
+                slim.pop(key, None)
+        slimmed.append(slim)
     return slimmed
 
 def merge_by_sample_id(existing_rows, incoming_rows):

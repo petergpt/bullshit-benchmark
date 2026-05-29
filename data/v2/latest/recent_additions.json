@@ -1,16 +1,16 @@
 {
-  "generated_at_utc": "2026-05-26T10:44:41Z",
+  "generated_at_utc": "2026-05-29T09:12:40Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-05-19T10:44:41Z",
+  "window_start_utc": "2026-05-22T09:12:40Z",
   "models": [
-    "google/gemini-3.5-flash@reasoning=minimal",
-    "google/gemini-3.5-flash@reasoning=xhigh",
+    "anthropic/claude-opus-4.8@reasoning=none",
+    "anthropic/claude-opus-4.8@reasoning=xhigh",
     "qwen/qwen3.7-max@reasoning=none",
     "qwen/qwen3.7-max@reasoning=xhigh"
   ],
   "model_bases": [
-    "google/gemini-3.5-flash",
+    "anthropic/claude-opus-4.8",
     "qwen/qwen3.7-max"
   ],
   "model_count": 4,
@@ -32,6 +32,8 @@
     "anthropic/claude-opus-4.6@reasoning=none": "2026-03-01T01:51:28Z",
     "anthropic/claude-opus-4.7@reasoning=max": "2026-04-17T06:28:00Z",
     "anthropic/claude-opus-4.7@reasoning=none": "2026-04-17T06:28:00Z",
+    "anthropic/claude-opus-4.8@reasoning=none": "2026-05-29T09:05:30Z",
+    "anthropic/claude-opus-4.8@reasoning=xhigh": "2026-05-29T09:05:30Z",
     "anthropic/claude-opus-4@reasoning=default": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.5@reasoning=high": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.5@reasoning=none": "2026-03-01T01:51:28Z",
@@ -190,6 +192,7 @@
     "anthropic/claude-opus-4.5": "2026-03-01T01:51:28Z",
     "anthropic/claude-opus-4.6": "2026-03-01T01:51:28Z",
     "anthropic/claude-opus-4.7": "2026-04-17T06:28:00Z",
+    "anthropic/claude-opus-4.8": "2026-05-29T09:05:30Z",
     "anthropic/claude-sonnet-4": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.5": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.6": "2026-03-01T01:51:28Z",
