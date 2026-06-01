@@ -74,6 +74,7 @@
       "qwen/qwen3.7-max",
       "minimax/minimax-m2.5",
       "minimax/minimax-m2.7",
+      "minimax/minimax-m3",
       "mistralai/mistral-small-2603",
       "nvidia/nemotron-3-super-120b-a12b",
       "arcee-ai/trinity-large-thinking"
@@ -284,6 +285,10 @@
         "low",
         "high"
       ],
+      "minimax/minimax-m3": [
+        "none",
+        "xhigh"
+      ],
       "mistralai/mistral-small-2603": [
         "none",
         "high"
@@ -354,6 +359,15 @@
         "provider": {
           "order": [
             "Alibaba"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "minimax/minimax-m3": {
+        "provider": {
+          "order": [
+            "Minimax"
           ],
           "allow_fallbacks": false,
           "require_parameters": true

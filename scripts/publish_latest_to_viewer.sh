@@ -761,7 +761,7 @@ def preferred_org(model: str) -> str:
     return org
 
 with csv_path.open("w", encoding="utf-8", newline="") as handle:
-    writer = csv.DictWriter(handle, fieldnames=fieldnames)
+    writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
     writer.writeheader()
     for idx, row in enumerate(rows, start=1):
         model = str(row.get("model", ""))
@@ -855,7 +855,7 @@ for extra in (
         fieldnames.append(extra)
 
 with output_path.open("w", encoding="utf-8", newline="") as handle:
-    writer = csv.DictWriter(handle, fieldnames=fieldnames)
+    writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
     writer.writeheader()
     for row in board_rows:
         model_text = str(row.get("model", ""))

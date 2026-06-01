@@ -2,6 +2,22 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.18] - 2026-06-01
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `minimax/minimax-m3@reasoning=none`
+  - `minimax/minimax-m3@reasoning=xhigh`
+- Added canonical launch-date metadata and a pending open-weight metadata record for `minimax/minimax-m3`.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the MiniMax M3 rows appear in the viewer datasets, leaderboards, release-date charts, and reasoning-token/cost charts.
+- Pinned MiniMax M3 in the v2 viewer release-date and reasoning scatter defaults.
+- Folded `minimax/minimax-m3` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings and MiniMax provider lock.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated public viewer data.
+- Updated the public v2 leaderboard to include `164` model/reasoning rows.
+- Recorded model-size metadata as pending disclosure so the size scatter charts omit MiniMax M3 until MiniMax publishes the open weights and technical report.
+
 ## [2.0.17] - 2026-05-29
 
 ### Added
