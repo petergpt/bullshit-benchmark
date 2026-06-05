@@ -1027,6 +1027,38 @@
       "run_average_stddev": null
     },
     {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
+      "count": 55,
+      "scored_count": 55,
+      "nonsense_count": 55,
+      "control_count": 0,
+      "score_0": 18,
+      "score_1": 14,
+      "score_2": 23,
+      "score_3": 0,
+      "avg_score": 1.1091,
+      "detection_rate_score_2": 0.4182,
+      "full_engagement_rate_score_0": 0.3273,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing_of_nothing": 0.3333,
+        "causal_chimera": 2.0,
+        "cross_domain_concept_stitching": 1.0,
+        "false_granularity": 0.8333,
+        "inverted_nonexistent_dependency": 1.7143,
+        "misapplied_mechanism": 1.3333,
+        "plausible_nonexistent_framework": 0.8889,
+        "reified_metaphor": 1.2667,
+        "temporal_category_error": 0.7333,
+        "wrong_unit_of_analysis": 0.8333
+      },
+      "run_average_scores": {
+        "1": 1.1091
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "xiaomi/mimo-v2.5-pro@reasoning=xhigh",
       "count": 55,
       "scored_count": 55,
@@ -1788,6 +1820,38 @@
         "reified_metaphor": 0.7333,
         "temporal_category_error": 0.6,
         "wrong_unit_of_analysis": 0.7778
+      },
+      "run_average_scores": {
+        "1": 0.7879
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh",
+      "count": 55,
+      "scored_count": 55,
+      "nonsense_count": 55,
+      "control_count": 0,
+      "score_0": 27,
+      "score_1": 11,
+      "score_2": 17,
+      "score_3": 0,
+      "avg_score": 0.7879,
+      "detection_rate_score_2": 0.3091,
+      "full_engagement_rate_score_0": 0.4909,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing_of_nothing": 0.1111,
+        "causal_chimera": 1.2778,
+        "cross_domain_concept_stitching": 0.7143,
+        "false_granularity": 0.3889,
+        "inverted_nonexistent_dependency": 1.5238,
+        "misapplied_mechanism": 0.75,
+        "plausible_nonexistent_framework": 0.6667,
+        "reified_metaphor": 0.6,
+        "temporal_category_error": 0.6667,
+        "wrong_unit_of_analysis": 0.9444
       },
       "run_average_scores": {
         "1": 0.7879
@@ -4680,29 +4744,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 8027,
-        "agreements": 6279,
-        "agreement_rate": 0.782235
+        "compared_rows": 8137,
+        "agreements": 6366,
+        "agreement_rate": 0.782352
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 8021,
-        "agreements": 6592,
-        "agreement_rate": 0.821843
+        "compared_rows": 8131,
+        "agreements": 6679,
+        "agreement_rate": 0.821424
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 8021,
-        "agreements": 6197,
-        "agreement_rate": 0.772597
+        "compared_rows": 8131,
+        "agreements": 6279,
+        "agreement_rate": 0.77223
       }
     ],
-    "average_pairwise_agreement": 0.792225,
-    "krippendorff_alpha_ordinal": 0.77561
+    "average_pairwise_agreement": 0.792002,
+    "krippendorff_alpha_ordinal": 0.775516
   },
-  "total_records": 8030,
+  "total_records": 8140,
   "total_error_records": 9,
-  "total_scored_records": 8027
+  "total_scored_records": 8137
 }

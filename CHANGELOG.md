@@ -2,6 +2,21 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.19] - 2026-06-05
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `nvidia/nemotron-3-ultra-550b-a55b@reasoning=none`
+  - `nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh`
+- Added canonical launch-date and open-weight metadata for Nemotron 3 Ultra, including 550B total parameters, 55B active parameters, and the OpenMDW-1.1 license.
+
+### Changed
+- Refreshed `data/latest/*` and `data/v2/latest/*` from completed 3-judge panels so the Nemotron 3 Ultra rows appear in the viewer datasets, leaderboards, release-date charts, reasoning-token/cost charts, and model-size charts.
+- Pinned Nemotron 3 Ultra in the v2 viewer release-date and reasoning scatter defaults.
+- Folded `nvidia/nemotron-3-ultra-550b-a55b` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings and DeepInfra provider lock.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated public viewer data.
+- Updated the public v2 leaderboard to include `166` model/reasoning rows.
+
 ## [2.0.18] - 2026-06-01
 
 ### Added

@@ -1718,6 +1718,41 @@
       "run_average_stddev": null
     },
     {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 42,
+      "score_1": 9,
+      "score_2": 49,
+      "score_3": 0,
+      "avg_score": 1.07,
+      "detection_rate_score_2": 0.49,
+      "full_engagement_rate_score_0": 0.42,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.3704,
+        "confident_extrapolation": 0.6667,
+        "cross_domain_stitching": 1.4,
+        "fabricated_authority": 1.2727,
+        "false_granularity": 1.6667,
+        "misapplied_mechanism": 1.4103,
+        "nested_nonsense": 0.7143,
+        "plausible_nonexistent_framework": 0.7708,
+        "reified_metaphor": 1.5556,
+        "specificity_trap": 0.0417,
+        "sunk_cost_framing": 0.6667,
+        "temporal_category_error": 1.4445,
+        "wrong_unit_of_analysis": 1.4
+      },
+      "run_average_scores": {
+        "1": 1.07
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-5.5-pro@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -2379,6 +2414,41 @@
       },
       "run_average_scores": {
         "1": 0.9433
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "score_0": 46,
+      "score_1": 14,
+      "score_2": 40,
+      "score_3": 0,
+      "avg_score": 0.9367,
+      "detection_rate_score_2": 0.4,
+      "full_engagement_rate_score_0": 0.46,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.4815,
+        "confident_extrapolation": 0.9167,
+        "cross_domain_stitching": 0.1333,
+        "fabricated_authority": 1.6364,
+        "false_granularity": 1.4444,
+        "misapplied_mechanism": 0.7436,
+        "nested_nonsense": 0.9524,
+        "plausible_nonexistent_framework": 0.8125,
+        "reified_metaphor": 0.7778,
+        "specificity_trap": 0.0833,
+        "sunk_cost_framing": 0.7619,
+        "temporal_category_error": 1.2778,
+        "wrong_unit_of_analysis": 0.8
+      },
+      "run_average_scores": {
+        "1": 0.9367
       },
       "run_average_stddev": null
     },
@@ -5748,29 +5818,29 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 16400,
-        "agreements": 13306,
-        "agreement_rate": 0.811341
+        "compared_rows": 16600,
+        "agreements": 13483,
+        "agreement_rate": 0.812229
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 16400,
-        "agreements": 13075,
-        "agreement_rate": 0.797256
+        "compared_rows": 16600,
+        "agreements": 13255,
+        "agreement_rate": 0.798494
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 16400,
-        "agreements": 12824,
-        "agreement_rate": 0.781951
+        "compared_rows": 16600,
+        "agreements": 12996,
+        "agreement_rate": 0.782892
       }
     ],
-    "average_pairwise_agreement": 0.796849,
-    "krippendorff_alpha_ordinal": 0.791274
+    "average_pairwise_agreement": 0.797872,
+    "krippendorff_alpha_ordinal": 0.79252
   },
-  "total_records": 16400,
+  "total_records": 16600,
   "total_error_records": 0,
-  "total_scored_records": 16400
+  "total_scored_records": 16600
 }

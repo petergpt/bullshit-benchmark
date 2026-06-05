@@ -1,20 +1,20 @@
 {
-  "generated_at_utc": "2026-06-01T05:53:03Z",
+  "generated_at_utc": "2026-06-05T06:08:14Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-05-25T05:53:03Z",
+  "window_start_utc": "2026-05-29T06:08:14Z",
   "models": [
     "anthropic/claude-opus-4.8@reasoning=none",
     "anthropic/claude-opus-4.8@reasoning=xhigh",
     "minimax/minimax-m3@reasoning=none",
     "minimax/minimax-m3@reasoning=xhigh",
-    "qwen/qwen3.7-max@reasoning=none",
-    "qwen/qwen3.7-max@reasoning=xhigh"
+    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
+    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh"
   ],
   "model_bases": [
     "anthropic/claude-opus-4.8",
     "minimax/minimax-m3",
-    "qwen/qwen3.7-max"
+    "nvidia/nemotron-3-ultra-550b-a55b"
   ],
   "model_count": 6,
   "model_base_count": 3,
@@ -92,6 +92,8 @@
     "nvidia/nemotron-3-nano-30b-a3b:free@reasoning=xhigh": "2026-03-18T07:47:21Z",
     "nvidia/nemotron-3-super-120b-a12b:free@reasoning=none": "2026-03-18T07:47:21Z",
     "nvidia/nemotron-3-super-120b-a12b:free@reasoning=xhigh": "2026-03-18T07:47:21Z",
+    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none": "2026-06-04T23:32:17Z",
+    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh": "2026-06-04T23:32:17Z",
     "nvidia/nemotron-nano-9b-v2:free@reasoning=none": "2026-03-18T07:47:21Z",
     "nvidia/nemotron-nano-9b-v2:free@reasoning=xhigh": "2026-03-18T07:47:21Z",
     "openai/gpt-4.1@reasoning=default": "2026-02-25T20:18:35Z",
@@ -213,6 +215,7 @@
     "moonshotai/kimi-k2.5": "2026-02-24T09:30:47Z",
     "nvidia/nemotron-3-nano-30b-a3b:free": "2026-03-18T07:47:21Z",
     "nvidia/nemotron-3-super-120b-a12b:free": "2026-03-18T07:47:21Z",
+    "nvidia/nemotron-3-ultra-550b-a55b": "2026-06-04T23:32:17Z",
     "nvidia/nemotron-nano-9b-v2:free": "2026-03-18T07:47:21Z",
     "openai/gpt-4.1": "2026-02-25T20:18:35Z",
     "openai/gpt-4o": "2026-02-25T20:18:35Z",

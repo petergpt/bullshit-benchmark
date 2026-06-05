@@ -1872,6 +1872,7 @@ function prettyModel(r) {
   if (rawNorm === "mistral-large-2512") return `Mistral Large 3${suf}`;
   if (rawNorm === "mistral-small-2603") return `Mistral Small 4${suf}`;
   if (rawNorm === "glm-5-turbo") return `GLM 5 Turbo${suf}`;
+  if (rawNorm === "nemotron-3-ultra-550b-a55b") return `Nemotron 3 Ultra 550B A55B${suf}`;
   if (rawNorm === "nemotron-3-super-120b-a12b") return `Nemotron 3 Super 120B A12B${suf}`;
   if (rawNorm === "nemotron-3-super-120b-a12b:free") return `Nemotron 3 Super 120B A12B (Free)${suf}`;
   if (rawNorm === "qwen3-max-thinking") return `Qwen3 Max Thinking${suf}`;
@@ -1901,6 +1902,7 @@ const PREFERRED_LAUNCH_CHART_BASE_MODELS = Object.freeze([
   "openai/gpt-5.5",
   "openai/gpt-5.5-pro",
   "openai/gpt-5.4",
+  "nvidia/nemotron-3-ultra-550b-a55b",
   "minimax/minimax-m3",
   "qwen/qwen3.7-max",
   "google/gemini-3.5-flash",
@@ -1912,6 +1914,7 @@ const PREFERRED_REASONING_SCATTER_BASE_MODELS = Object.freeze([
   "openai/gpt-5.5-pro",
   "openai/gpt-5.4-mini",
   "openai/gpt-5.4-nano",
+  "nvidia/nemotron-3-ultra-550b-a55b",
   "minimax/minimax-m3",
   "qwen/qwen3.7-max",
   "google/gemini-3.5-flash",

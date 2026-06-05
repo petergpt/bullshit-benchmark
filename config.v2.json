@@ -76,6 +76,7 @@
       "minimax/minimax-m2.7",
       "minimax/minimax-m3",
       "mistralai/mistral-small-2603",
+      "nvidia/nemotron-3-ultra-550b-a55b",
       "nvidia/nemotron-3-super-120b-a12b",
       "arcee-ai/trinity-large-thinking"
     ],
@@ -293,6 +294,10 @@
         "none",
         "high"
       ],
+      "nvidia/nemotron-3-ultra-550b-a55b": [
+        "none",
+        "xhigh"
+      ],
       "nvidia/nemotron-3-super-120b-a12b": [
         "none",
         "high"
@@ -368,6 +373,15 @@
         "provider": {
           "order": [
             "Minimax"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "nvidia/nemotron-3-ultra-550b-a55b": {
+        "provider": {
+          "order": [
+            "DeepInfra"
           ],
           "allow_fallbacks": false,
           "require_parameters": true
