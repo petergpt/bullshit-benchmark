@@ -2,6 +2,23 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.20] - 2026-06-09
+
+### Added
+- Added published `v2` benchmark results for:
+  - `anthropic/claude-fable-5@reasoning=low`
+  - `anthropic/claude-fable-5@reasoning=xhigh`
+- Added a first-class `refusal` outcome for provider-enforced refusals, rendered in grey and excluded from normal green/amber/red scoring.
+- Added canonical launch-date and closed-model metadata for Claude Fable 5 using Anthropic's June 9 launch announcement.
+
+### Changed
+- Refreshed `data/v2/latest/*` so Claude Fable 5 appears in the viewer dataset, leaderboard, release-date charts, and reasoning-token/cost charts.
+- Added an `All attempts` / `Exclude refusals` viewer toggle. Excluding refusals renormalizes the scored green/amber/red response mix while preserving refusal rate as context.
+- Normalized Claude Fable 5's lowest supported reasoning level to `low` in collection, stored data, publishing, and display labels.
+- Folded `anthropic/claude-fable-5` into `config.v2.json` with the verified `low`/`xhigh` reasoning settings.
+- Updated the public v2 leaderboard to include `168` model/reasoning rows.
+- Refreshed the README v2 chart screenshots from the updated public viewer data.
+
 ## [2.0.19] - 2026-06-05
 
 ### Added

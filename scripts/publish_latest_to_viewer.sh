@@ -181,7 +181,29 @@ recent_window_days = 7
 path_pattern = re.compile(r"/Users/[^\s\"|]+")
 
 def sanitize_string(value: str) -> str:
-    return path_pattern.sub("[local-path]", value)
+    sanitized = path_pattern.sub("[local-path]", value)
+    sanitized = re.sub(
+        r"\bfable5_v2_(minimal|low|xhigh)(?=__|_panel|\b)",
+        lambda match: (
+            "claude-fable-5-v2-"
+            + ("low" if match.group(1) == "minimal" else match.group(1))
+        ),
+        sanitized,
+    )
+    sanitized = re.sub(
+        r"\bclaude-fable-5_reasoning_(minimal|low|xhigh)\b",
+        lambda match: (
+            "claude-fable-5_reasoning_"
+            + ("low" if match.group(1) == "minimal" else match.group(1))
+        ),
+        sanitized,
+    )
+    sanitized = re.sub(
+        r"\bclaude-fable-5-v2-(low|xhigh)_panel\b",
+        r"claude-fable-5-v2-\1-panel",
+        sanitized,
+    )
+    return sanitized
 
 def sanitize_value(value):
     if isinstance(value, dict):
@@ -218,8 +240,10 @@ def scrub_panel(value):
                 continue
             out.append(scrubbed)
         return out
-    if isinstance(value, str) and "/Users/" in value:
-        return None
+    if isinstance(value, str):
+        if "/Users/" in value:
+            return None
+        return sanitize_string(value)
     return value
 
 def normalize_row(row: dict):
@@ -380,6 +404,8 @@ def collect_model_sets(rows):
 def disagreement_count(rows):
     count = 0
     for row in rows:
+        if str(row.get("response_outcome", "")).strip().lower() == "refusal":
+            continue
         if row.get("judge_1_error") or row.get("judge_2_error"):
             continue
         score_1 = row.get("judge_1_score")
@@ -526,11 +552,56 @@ assert spec.loader is not None
 spec.loader.exec_module(module)
 
 for row in merged_responses:
+    module.normalize_stored_model_reasoning_variant(row)
+    module.annotate_response_outcome(row)
     module.enrich_collect_record_metrics(row)
+
+for row in merged_aggregate_rows:
+    module.normalize_stored_model_reasoning_variant(row)
+
+responses_by_sample = {
+    str(row.get("sample_id", "")).strip(): row
+    for row in merged_responses
+    if str(row.get("sample_id", "")).strip()
+}
+for row in merged_aggregate_rows:
+    response_row = responses_by_sample.get(str(row.get("sample_id", "")).strip())
+    if not response_row:
+        continue
+    row["response_outcome"] = response_row.get("response_outcome", "response")
+    row["response_refusal"] = bool(response_row.get("response_refusal", False))
+    row["response_native_finish_reason"] = response_row.get(
+        "response_native_finish_reason"
+    )
+    if row["response_refusal"]:
+        row["consensus_score"] = None
+        row["consensus_error"] = None
+        row["judge_valid_scores"] = []
 
 merged_responses = slim_published_response_rows(merged_responses)
 merged_aggregate_rows = slim_published_aggregate_rows(merged_aggregate_rows)
 existing_recent = load_stats_if_exists(recent_additions_out)
+for field in ("models",):
+    values = existing_recent.get(field)
+    if isinstance(values, list):
+        existing_recent[field] = [
+            value.replace(
+                "anthropic/claude-fable-5@reasoning=minimal",
+                "anthropic/claude-fable-5@reasoning=low",
+            )
+            if isinstance(value, str)
+            else value
+            for value in values
+        ]
+for field in ("model_first_seen_utc",):
+    values = existing_recent.get(field)
+    if isinstance(values, dict):
+        old_key = "anthropic/claude-fable-5@reasoning=minimal"
+        new_key = "anthropic/claude-fable-5@reasoning=low"
+        if old_key in values:
+            old_value = values.pop(old_key)
+            if new_key not in values or str(old_value) < str(values[new_key]):
+                values[new_key] = old_value
 recent_additions = derive_recent_additions(
     merged_responses,
     existing_recent=existing_recent,
@@ -588,6 +659,11 @@ collection_stats = {
     "elapsed_seconds": elapsed_seconds,
     "total_records": len(merged_responses),
     "error_count": sum(1 for row in merged_responses if row.get("error")),
+    "refusal_count": sum(
+        1
+        for row in merged_responses
+        if str(row.get("response_outcome", "")).strip().lower() == "refusal"
+    ),
     "success_count": sum(1 for row in merged_responses if not row.get("error")),
     "attempt_count": attempt_count,
     "max_attempt_observed": max(
@@ -717,9 +793,12 @@ fieldnames = [
     "avg_score",
     "green_rate",
     "red_rate",
+    "refusal_rate",
     "score_2",
     "score_1",
     "score_0",
+    "refusal_count",
+    "answered_count",
     "nonsense_count",
     "error_count",
 ]
@@ -776,9 +855,12 @@ with csv_path.open("w", encoding="utf-8", newline="") as handle:
                 "avg_score": row.get("avg_score"),
                 "green_rate": row.get("detection_rate_score_2"),
                 "red_rate": row.get("full_engagement_rate_score_0"),
+                "refusal_rate": row.get("refusal_rate"),
                 "score_2": row.get("score_2"),
                 "score_1": row.get("score_1"),
                 "score_0": row.get("score_0"),
+                "refusal_count": row.get("refusal_count"),
+                "answered_count": row.get("answered_count"),
                 "nonsense_count": row.get("nonsense_count"),
                 "error_count": row.get("error_count"),
             }
@@ -834,9 +916,12 @@ fieldnames = list(board_rows[0].keys()) if board_rows else [
     "avg_score",
     "green_rate",
     "red_rate",
+    "refusal_rate",
     "score_2",
     "score_1",
     "score_0",
+    "refusal_count",
+    "answered_count",
     "nonsense_count",
     "error_count",
 ]

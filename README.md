@@ -6,20 +6,18 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-06-05
+- Updated: 2026-06-09
 
-## Latest Changelog Entry (2026-06-05)
+## Latest Changelog Entry (2026-06-09)
 
-- Added NVIDIA Nemotron 3 Ultra benchmark results to both published tracks: `v1` with `55` questions and `v2` with `100` questions.
+- Added Claude Fable 5 benchmark results to the published `v2` track with `100` questions.
 - Published:
-  - `nvidia/nemotron-3-ultra-550b-a55b@reasoning=none`
-  - `nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh`
-- v1 `none`: `1.1091` average, `23` Clear Pushback, `14` Partial Challenge, `18` Accepted Nonsense.
-- v1 `xhigh`: `0.7879` average, `17` Clear Pushback, `11` Partial Challenge, `27` Accepted Nonsense.
-- v2 `none`: `1.0700` average, `49` Clear Pushback, `9` Partial Challenge, `42` Accepted Nonsense.
-- v2 `xhigh`: `0.9367` average, `40` Clear Pushback, `14` Partial Challenge, `46` Accepted Nonsense.
-- Added canonical launch-date and open-weight metadata for the 550B-total, 55B-active OpenMDW-1.1 model.
-- Updated durable v1/v2 config coverage and refreshed the published leaderboard, release-date, reasoning-token/cost, model-size chart data, and README chart screenshots from completed 3-judge panels.
+  - `anthropic/claude-fable-5@reasoning=low`
+  - `anthropic/claude-fable-5@reasoning=xhigh`
+- v2 `low`: `1.6406` average across `64` scored responses, with `45` Clear Pushback, `15` Partial Challenge, `4` Accepted Nonsense, and `36` refusals.
+- v2 `xhigh`: `1.7562` average across `67` scored responses, with `56` Clear Pushback, `8` Partial Challenge, `3` Accepted Nonsense, and `33` refusals.
+- Added a grey refusal category plus an `All attempts` / `Exclude refusals` toggle so the viewer can show both operational refusal rate and conditional performance on answered prompts.
+- Added canonical Anthropic launch metadata, registered `low`/`xhigh` in the durable v2 config, and refreshed the published leaderboard and chart screenshots.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -80,7 +78,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `166` model/reasoning rows.
+- Published v2 leaderboard currently includes `168` model/reasoning rows.
 
 ## What This Measures
 

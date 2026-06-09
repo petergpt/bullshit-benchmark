@@ -2,6 +2,7 @@
   "collect": {
     "questions": "questions.v2.json",
     "models": [
+      "anthropic/claude-fable-5",
       "anthropic/claude-opus-4.8",
       "anthropic/claude-opus-4.7",
       "anthropic/claude-opus-4.6",
@@ -109,6 +110,10 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "anthropic/claude-fable-5": [
+        "low",
+        "xhigh"
+      ],
       "anthropic/claude-opus-4.8": [
         "none",
         "xhigh"

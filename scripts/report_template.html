@@ -19,6 +19,7 @@
       --good: #1f9d72;
       --warn: #d7822d;
       --bad: #c94e42;
+      --refusal: #89928f;
       --info: #1f5f9d;
       --shadow: 0 10px 28px rgba(16, 35, 42, 0.08);
       --radius: 14px;
@@ -156,7 +157,7 @@
 
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      grid-template-columns: repeat(6, minmax(130px, 1fr));
       gap: 10px;
     }
 
@@ -298,6 +299,7 @@
       width: 0;
       background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
     }
+    .ov-fill.refusal { background: var(--refusal); }
 
     .ov-pct {
       height: 100%;
@@ -494,6 +496,7 @@
     .b-good { color: #0f6a4f; background: #ecf9f3; border-color: #bee4d4; }
     .b-warn { color: #8d5416; background: #fff4e8; border-color: #f0d0ad; }
     .b-bad { color: #8b332b; background: #fff1ef; border-color: #efc0bb; }
+    .b-refusal { color: #46504d; background: #eef0ef; border-color: #c9cecc; }
     .b-info { color: #204f80; background: #edf4fc; border-color: #c0d4ea; }
     .b-neutral { color: #4c646d; background: #f1f5f4; border-color: #d8e2df; }
 
@@ -638,6 +641,7 @@
               <option value="agreement">Metric: Agreement</option>
               <option value="missed">Metric: BS Missed</option>
               <option value="partial">Metric: BS Partial</option>
+              <option value="refusal">Metric: Refusal</option>
             </select>
             <select id="ovMinAgree" title="Minimum agreement">
               <option value="0">Agreement: Any</option>
@@ -649,7 +653,7 @@
             <select id="ovReasoning" title="Reasoning"></select>
           </div>
         </div>
-        <p class="panel-note">Green = BS Correct, Amber = BS Partial, Red = BS Missed.</p>
+        <p class="panel-note">Green = BS Correct, Amber = BS Partial, Red = BS Missed, Grey = Refusal.</p>
         <div id="overviewChart" class="overview-chart"></div>
       </div>
 
@@ -784,6 +788,30 @@
       return Math.floor(clamp(numeric, 0, 3) + 0.5);
     }
 
+    function rowIsRefusal(row) {
+      if (!row || typeof row !== "object") return false;
+      const explicit = row.response_refusal;
+      if (explicit === true || String(explicit || "").trim().toLowerCase() === "true") return true;
+      if (String(row.response_outcome || "").trim().toLowerCase() === "refusal") return true;
+      const responseText = String(row.response_text || "").trim();
+      const hasNoAnswer = !responseText || responseText === "[Model returned an empty response.]";
+      if (String(row.response_native_finish_reason || "").trim().toLowerCase() === "refusal" && hasNoAnswer) return true;
+
+      const raw = row.response_raw;
+      if (!raw || typeof raw !== "object") return false;
+      const choice = Array.isArray(raw.choices) ? raw.choices[0] : null;
+      if (choice?.message && String(choice.message.refusal || "").trim()) return true;
+      if (Array.isArray(raw.output)) {
+        const structuredRefusal = raw.output.some(item =>
+          item && Array.isArray(item.content) && item.content.some(content => content?.type === "refusal")
+        );
+        if (structuredRefusal) return true;
+      }
+      return !!choice
+        && String(choice.native_finish_reason || "").trim().toLowerCase() === "refusal"
+        && hasNoAnswer;
+    }
+
     function rowConsensusScore(row) {
       const fromAggregate = toNumberOrNull(row?.consensus_score);
       if (fromAggregate !== null) return fromAggregate;
@@ -809,6 +837,9 @@
     }
 
     function outcomeInfo(row, bucket) {
+      if (rowIsRefusal(row)) {
+        return { key: "refusal", label: "Refusal", cls: "b-refusal" };
+      }
       if (!Number.isInteger(bucket)) {
         return { key: "unscored", label: "Unscored", cls: "b-neutral" };
       }
@@ -826,11 +857,14 @@
     }
 
     function getRowState(row) {
+      const refusal = rowIsRefusal(row);
       const rawConsensus = rowConsensusScore(row);
-      const consensus = consensusBucket(rawConsensus);
+      const consensus = refusal ? null : consensusBucket(rawConsensus);
       const judges = Array.isArray(row?.judges) ? row.judges : [];
-      const judgeScores = judges.map((judge) => (Number.isInteger(judge?.score) && !judge?.error ? judge.score : null));
-      const allPresent = judgeScores.length > 0 && judgeScores.every((score) => Number.isInteger(score));
+      const judgeScores = refusal
+        ? []
+        : judges.map((judge) => (Number.isInteger(judge?.score) && !judge?.error ? judge.score : null));
+      const allPresent = !refusal && judgeScores.length > 0 && judgeScores.every((score) => Number.isInteger(score));
       const allAgree = allPresent && judgeScores.every((score) => score === judgeScores[0]);
       const outcome = outcomeInfo(row, consensus);
       return {
@@ -863,6 +897,8 @@
             partial: 0,
             missed: 0,
             invalid: 0,
+            refusal: 0,
+            controlRefusal: 0,
             controlCorrect: 0,
             controlIncorrect: 0,
             agreeCount: 0,
@@ -889,11 +925,13 @@
 
         if (row.is_control) {
           stats.controlTotal += 1;
-          if (state.consensus === 3) stats.controlCorrect += 1;
+          if (state.outcome.key === "refusal") stats.controlRefusal += 1;
+          else if (state.consensus === 3) stats.controlCorrect += 1;
           else if (state.consensus === 0) stats.controlIncorrect += 1;
         } else {
           stats.nonsenseTotal += 1;
-          if (state.consensus === 2) stats.correct += 1;
+          if (state.outcome.key === "refusal") stats.refusal += 1;
+          else if (state.consensus === 2) stats.correct += 1;
           else if (state.consensus === 1) stats.partial += 1;
           else if (state.consensus === 0) stats.missed += 1;
           else if (state.consensus === 3) stats.invalid += 1;
@@ -915,12 +953,15 @@
           partial: stats.partial,
           missed: stats.missed,
           invalid: stats.invalid,
+          refusal: stats.refusal,
+          controlRefusal: stats.controlRefusal,
           controlCorrect: stats.controlCorrect,
           controlIncorrect: stats.controlIncorrect,
           correctRate: nonsenseTotal > 0 ? stats.correct / nonsenseTotal : null,
           partialRate: nonsenseTotal > 0 ? stats.partial / nonsenseTotal : null,
           missedRate: nonsenseTotal > 0 ? stats.missed / nonsenseTotal : null,
           invalidRate: nonsenseTotal > 0 ? stats.invalid / nonsenseTotal : null,
+          refusalRate: nonsenseTotal > 0 ? stats.refusal / nonsenseTotal : null,
           agreementRate: stats.agreeTotal > 0 ? stats.agreeCount / stats.agreeTotal : null,
           controlCorrectRate: stats.controlTotal > 0 ? stats.controlCorrect / stats.controlTotal : null,
           questionCount: stats.questions.size,
@@ -960,12 +1001,14 @@
       const totalAgreeRows = rows.filter((row) => getRowState(row).allPresent);
       const totalAgree = totalAgreeRows.filter((row) => getRowState(row).allAgree).length;
       const errorCount = rows.filter((row) => String(row.status || "") === "error").length;
+      const refusalCount = rows.filter((row) => rowIsRefusal(row)).length;
 
       byId("kpiGrid").innerHTML = [
         { label: "Models", value: board.length },
         { label: "Rows", value: rows.length },
         { label: "BS Correct", value: nonsenseRows.length ? `${Math.round((totalCorrect / nonsenseRows.length) * 100)}%` : "n/a" },
         { label: "Agreement", value: totalAgreeRows.length ? `${Math.round((totalAgree / totalAgreeRows.length) * 100)}%` : "n/a" },
+        { label: "Refusals", value: refusalCount },
         { label: "Errors", value: errorCount },
       ].map((card) => `
         <div class="kpi-card">
@@ -987,6 +1030,7 @@
           const valueFor = (stats) => {
             if (rankBy === "missed") return stats.missedRate ?? 1;
             if (rankBy === "partial") return stats.partialRate ?? -1;
+            if (rankBy === "refusal") return stats.refusalRate ?? -1;
             if (rankBy === "agreement") return stats.agreementRate ?? -1;
             return stats.correctRate ?? -1;
           };
@@ -1012,6 +1056,8 @@
               ? stats.missedRate
               : rankBy === "partial"
                 ? stats.partialRate
+                : rankBy === "refusal"
+                  ? stats.refusalRate
                 : rankBy === "agreement"
                   ? stats.agreementRate
                   : stats.correctRate;
@@ -1021,6 +1067,8 @@
               ? `missed ${fmtPct(stats.missedRate)}`
               : rankBy === "partial"
                 ? `partial ${fmtPct(stats.partialRate)}`
+                : rankBy === "refusal"
+                  ? `refusal ${fmtPct(stats.refusalRate)}`
                 : rankBy === "agreement"
                   ? `agree ${fmtPct(stats.agreementRate)}`
                   : `correct ${fmtPct(stats.correctRate)}`;
@@ -1041,7 +1089,7 @@
               </div>
               <div class="ov-bar" title="${escapeHtml(metricText)}">
                 <span class="ov-track">
-                  <span class="ov-fill" style="width:${metricPct}%;"></span>
+                  <span class="ov-fill${rankBy === "refusal" ? " refusal" : ""}" style="width:${metricPct}%;"></span>
                 </span>
                 <span class="ov-pct">${escapeHtml(fmtPct(metricRate))}</span>
               </div>
@@ -1119,6 +1167,7 @@
 
     function outcomeMatchesFilter(row, state, outcomeFilter) {
       if (!outcomeFilter) return true;
+      if (outcomeFilter === "refusal") return state.outcome.key === "refusal";
       if (outcomeFilter === "bs_correct") return !row.is_control && state.consensus === 2;
       if (outcomeFilter === "bs_partial") return !row.is_control && state.consensus === 1;
       if (outcomeFilter === "bs_missed") return !row.is_control && state.consensus === 0;
@@ -1211,6 +1260,7 @@
         const correct = states.filter((state, idx) => !group.rows[idx].is_control && state.consensus === 2).length;
         const missed = states.filter((state, idx) => !group.rows[idx].is_control && state.consensus === 0).length;
         const disagree = states.filter((state) => state.allPresent && !state.allAgree).length;
+        const refusals = states.filter((state) => state.outcome.key === "refusal").length;
 
         return `
           <button class="group-item ${group.key === selectedGroupKey ? "active" : ""}" data-group-key="${escapeHtml(group.key)}">
@@ -1222,6 +1272,7 @@
             <div class="group-meta">
               <span>2:${correct}</span>
               <span>0:${missed}</span>
+              <span>refusal:${refusals}</span>
               <span>disagree:${disagree}</span>
             </div>
           </button>
@@ -1264,7 +1315,9 @@
         const state = getRowState(row);
         const judges = Array.isArray(row.judges) ? row.judges : [];
         const selectedClass = row.sample_id === selectedGroupKey ? "selected" : "";
-        const scoreText = Number.isInteger(state.consensus)
+        const scoreText = state.outcome.key === "refusal"
+          ? "not scored"
+          : Number.isInteger(state.consensus)
           ? `score ${state.consensus}`
           : "score n/a";
 
@@ -1392,6 +1445,7 @@
         '<option value="bs_partial">BS Partial</option>',
         '<option value="bs_missed">BS Missed</option>',
         '<option value="bs_invalid">BS Invalid</option>',
+        '<option value="refusal">Refusal</option>',
         '<option value="judges_disagree">Judges Disagree</option>',
         '<option value="judges_incomplete">Judges Incomplete</option>',
         '<option value="errors">Errors</option>',

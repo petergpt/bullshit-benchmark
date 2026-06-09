@@ -961,6 +961,57 @@ def normalize_reasoning_effort(value: Any, *, field_name: str) -> str | None:
     return cleaned
 
 
+ANTHROPIC_NATIVE_LOW_EFFORT_MODELS = {
+    "anthropic/claude-fable-5",
+    "anthropic/claude-5-fable-20260609",
+    "~anthropic/claude-fable-latest",
+}
+
+
+def normalize_reasoning_effort_for_model(
+    model_id: Any,
+    provider: Any,
+    effort: str | None,
+) -> str | None:
+    if effort != "minimal":
+        return effort
+    cleaned_model = str(model_id or "").strip().split("@reasoning=", 1)[0]
+    cleaned_provider = str(provider or "").strip().lower()
+    if (
+        cleaned_provider == "openrouter"
+        and cleaned_model in ANTHROPIC_NATIVE_LOW_EFFORT_MODELS
+    ):
+        return "low"
+    return effort
+
+
+def normalize_stored_model_reasoning_variant(row: dict[str, Any]) -> dict[str, Any]:
+    model_id = (
+        row.get("model_id")
+        or row.get("request_model_id")
+        or str(row.get("model", "")).split("@reasoning=", 1)[0]
+    )
+    provider = row.get("model_provider", "openrouter")
+    stored_effort = row.get("response_reasoning_effort")
+    if stored_effort in ("", None):
+        stored_effort = row.get("model_reasoning_level")
+    normalized = normalize_reasoning_effort_for_model(
+        model_id,
+        provider,
+        str(stored_effort).strip().lower() if stored_effort not in ("", None) else None,
+    )
+    if normalized == stored_effort or normalized is None:
+        return row
+
+    row["model_reasoning_level"] = normalized
+    row["response_reasoning_effort"] = normalized
+    for field in ("model", "model_row", "model_label"):
+        value = row.get(field)
+        if isinstance(value, str):
+            row[field] = value.replace("@reasoning=minimal", "@reasoning=low")
+    return row
+
+
 def parse_model_reasoning_efforts(raw_value: Any) -> dict[str, list[str]]:
     if raw_value in ("", None):
         return {}
@@ -1222,7 +1273,12 @@ def build_model_variants(
         else:
             efforts = [None]
 
-        for effort in efforts:
+        for configured_effort in efforts:
+            effort = normalize_reasoning_effort_for_model(
+                model,
+                provider,
+                configured_effort,
+            )
             reasoning_level = effort if effort is not None else "default"
             if openai_profile and str(openai_profile.get("model_row", "")).strip():
                 model_row = str(openai_profile.get("model_row", "")).strip()
@@ -2074,6 +2130,8 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
         "model_reasoning_level",
         "model_row",
         "response_reasoning_effort",
+        "response_outcome",
+        "response_refusal",
         "run_index",
         "question_id",
         "technique",
@@ -2097,6 +2155,7 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
         "error_retryable",
         "error_retry_after_seconds",
         "response_finish_reason",
+        "response_native_finish_reason",
         "warnings",
         "response_text",
     ]
@@ -2121,6 +2180,8 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
                     "response_reasoning_effort": row.get(
                         "response_reasoning_effort", ""
                     ),
+                    "response_outcome": row.get("response_outcome", ""),
+                    "response_refusal": bool(row.get("response_refusal", False)),
                     "run_index": row.get("run_index", ""),
                     "question_id": row.get("question_id", ""),
                     "technique": row.get("technique", ""),
@@ -2162,6 +2223,9 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
                         "error_retry_after_seconds", ""
                     ),
                     "response_finish_reason": row.get("response_finish_reason", ""),
+                    "response_native_finish_reason": row.get(
+                        "response_native_finish_reason", ""
+                    ),
                     "warnings": "; ".join(str(x) for x in row.get("warnings", [])),
                     "response_text": row.get("response_text", ""),
                 }
@@ -2181,6 +2245,9 @@ def write_grade_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> No
         "model_reasoning_level",
         "model_row",
         "response_reasoning_effort",
+        "response_outcome",
+        "response_refusal",
+        "response_native_finish_reason",
         "run_index",
         "question_id",
         "technique",
@@ -2212,6 +2279,11 @@ def write_grade_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> No
                     "model_row": row.get("model_row", ""),
                     "response_reasoning_effort": row.get(
                         "response_reasoning_effort", ""
+                    ),
+                    "response_outcome": row.get("response_outcome", ""),
+                    "response_refusal": bool(row.get("response_refusal", False)),
+                    "response_native_finish_reason": row.get(
+                        "response_native_finish_reason", ""
                     ),
                     "run_index": row.get("run_index", ""),
                     "question_id": row.get("question_id", ""),
@@ -2638,6 +2710,65 @@ def extract_message_refusal(api_response: dict[str, Any]) -> str:
     return normalize_message_content(message.get("refusal", ""))
 
 
+def extract_native_finish_reason(api_response: dict[str, Any]) -> str | None:
+    choices = api_response.get("choices", [])
+    if not isinstance(choices, list) or not choices:
+        return None
+    first_choice = choices[0]
+    if not isinstance(first_choice, dict):
+        return None
+    native_finish_reason = first_choice.get("native_finish_reason")
+    if native_finish_reason is None:
+        return None
+    text = str(native_finish_reason).strip()
+    return text or None
+
+
+def response_is_refusal(row: dict[str, Any]) -> bool:
+    explicit = row.get("response_refusal")
+    if explicit is True or str(explicit).strip().lower() == "true":
+        return True
+    if str(row.get("response_outcome", "")).strip().lower() == "refusal":
+        return True
+    response_text = str(row.get("response_text", "")).strip()
+    has_no_answer = not response_text or response_text == EMPTY_MODEL_RESPONSE_PLACEHOLDER
+    if (
+        str(row.get("response_native_finish_reason", "")).strip().lower() == "refusal"
+        and has_no_answer
+    ):
+        return True
+
+    raw = row.get("response_raw")
+    if not isinstance(raw, dict):
+        return False
+    if extract_message_refusal(raw).strip():
+        return True
+    return (
+        str(extract_native_finish_reason(raw) or "").lower() == "refusal"
+        and has_no_answer
+    )
+
+
+def annotate_response_outcome(
+    row: dict[str, Any],
+    api_response: dict[str, Any] | None = None,
+) -> None:
+    raw = api_response if isinstance(api_response, dict) else row.get("response_raw")
+    if isinstance(raw, dict):
+        native_finish_reason = extract_native_finish_reason(raw)
+        if native_finish_reason is not None:
+            row["response_native_finish_reason"] = native_finish_reason
+
+    refusal = response_is_refusal(row)
+    row["response_refusal"] = refusal
+    if row.get("error"):
+        row["response_outcome"] = "error"
+    elif refusal:
+        row["response_outcome"] = "refusal"
+    else:
+        row["response_outcome"] = "response"
+
+
 def extract_finish_reason(api_response: dict[str, Any]) -> str | None:
     status = api_response.get("status")
     if status is not None:
@@ -2783,6 +2914,9 @@ def collect_one(
         "response_latency_ms": None,
         "response_created": None,
         "response_finish_reason": None,
+        "response_native_finish_reason": None,
+        "response_refusal": False,
+        "response_outcome": "response",
         "warnings": [],
         "response_raw": None,
         "started_at_utc": started_at,
@@ -2930,12 +3064,14 @@ def collect_one(
         record["response_created"] = payload.get("created", payload.get("created_at"))
         record["response_usage"] = payload.get("usage", {})
         record["response_finish_reason"] = extract_finish_reason(payload)
+        annotate_response_outcome(record, payload)
         if record["response_finish_reason"] in {"length", "max_output_tokens"}:
             record["warnings"].append("response_finish_reason=length (possible truncation)")
         if store_response_raw and record["response_raw"] is None:
             record["response_raw"] = payload
     except Exception as exc:  # pylint: disable=broad-except
         record["error"] = str(exc)
+        annotate_response_outcome(record)
         if isinstance(exc, ProviderAPIError):
             status_code = exc.status_code
             record["error_http_status"] = status_code
@@ -3484,6 +3620,7 @@ def run_collect(args: argparse.Namespace) -> int:
         "elapsed_seconds": elapsed,
         "total_records": len(records),
         "error_count": sum(1 for row in records if row.get("error")),
+        "refusal_count": sum(1 for row in records if response_is_refusal(row)),
         "success_count": sum(1 for row in records if not row.get("error")),
         "attempt_count": attempt_count,
         "max_attempt_observed": max(task_attempts.values(), default=0),
@@ -3664,6 +3801,11 @@ def grade_one(
         "model_reasoning_level": response_row.get("model_reasoning_level", "default"),
         "model_row": response_row.get("model_row", response_row.get("model")),
         "response_reasoning_effort": response_row.get("response_reasoning_effort"),
+        "response_outcome": response_row.get("response_outcome", ""),
+        "response_refusal": response_is_refusal(response_row),
+        "response_native_finish_reason": response_row.get(
+            "response_native_finish_reason"
+        ),
         "question_id": response_row.get("question_id"),
         "technique": response_row.get("technique"),
         "is_control": bool(
@@ -3698,6 +3840,13 @@ def grade_one(
             raise RuntimeError(
                 f"Cannot grade response with source error: {grade_row['source_response_error']}"
             )
+        if grade_row["response_refusal"]:
+            grade_row["response_outcome"] = "refusal"
+            grade_row["judge_justification"] = (
+                "Provider-declared refusal; judge scoring skipped."
+            )
+            grade_row["judge_warnings"].append("grading_skipped=response_refusal")
+            return grade_row
         response_text = str(grade_row["response_text"]).strip()
         if not response_text:
             raise RuntimeError("Cannot grade empty response_text.")
@@ -4350,6 +4499,11 @@ def run_grade(args: argparse.Namespace) -> int:
                             "response_reasoning_effort": source_row.get(
                                 "response_reasoning_effort"
                             ),
+                            "response_outcome": source_row.get("response_outcome", ""),
+                            "response_refusal": response_is_refusal(source_row),
+                            "response_native_finish_reason": source_row.get(
+                                "response_native_finish_reason"
+                            ),
                             "question_id": source_row.get("question_id"),
                             "technique": source_row.get("technique"),
                             "is_control": bool(
@@ -4594,8 +4748,18 @@ def _identify_disagreement_sample_ids(
     disagreements: set[str] = set()
     all_ids = set(first_rows_by_sample.keys()) | set(second_rows_by_sample.keys())
     for sample_id in all_ids:
-        score_a = _valid_judge_score(first_rows_by_sample.get(sample_id))
-        score_b = _valid_judge_score(second_rows_by_sample.get(sample_id))
+        first_row = first_rows_by_sample.get(sample_id)
+        second_row = second_rows_by_sample.get(sample_id)
+        if (
+            isinstance(first_row, dict)
+            and response_is_refusal(first_row)
+        ) or (
+            isinstance(second_row, dict)
+            and response_is_refusal(second_row)
+        ):
+            continue
+        score_a = _valid_judge_score(first_row)
+        score_b = _valid_judge_score(second_row)
         if score_a is None or score_b is None:
             disagreements.add(sample_id)
             continue
@@ -5153,6 +5317,9 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "model_name",
                 "model_reasoning_level",
                 "model_row",
+                "response_outcome",
+                "response_refusal",
+                "response_native_finish_reason",
                 "run_index",
                 "question_id",
                 "response_text",
@@ -5173,6 +5340,11 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "model_reasoning_level": base.get("model_reasoning_level", "default"),
             "model_row": base.get("model_row", base.get("model")),
             "response_reasoning_effort": base.get("response_reasoning_effort"),
+            "response_outcome": base.get("response_outcome", ""),
+            "response_refusal": response_is_refusal(base),
+            "response_native_finish_reason": base.get(
+                "response_native_finish_reason"
+            ),
             "run_index": base.get("run_index"),
             "question_id": base.get("question_id"),
             "technique": base.get("technique"),
@@ -5369,6 +5541,8 @@ def compute_inter_rater_reliability(rows: list[dict[str, Any]], num_judges: int)
             agreements = 0
             total = 0
             for row in rows:
+                if response_is_refusal(row):
+                    continue
                 score_i = row.get(f"judge_{i}_score")
                 score_j = row.get(f"judge_{j}_score")
                 err_i = row.get(f"judge_{i}_error")
@@ -5396,6 +5570,8 @@ def compute_inter_rater_reliability(rows: list[dict[str, Any]], num_judges: int)
 
     units: list[list[int]] = []
     for row in rows:
+        if response_is_refusal(row):
+            continue
         scores: list[int] = []
         for i in range(1, num_judges + 1):
             err = row.get(f"judge_{i}_error")
@@ -5434,8 +5610,11 @@ def summarize_aggregate_rows(
                 "model": model,
                 "count": 0,
                 "scored_count": 0,
+                "answered_count": 0,
                 "nonsense_count": 0,
                 "control_count": 0,
+                "refusal_count": 0,
+                "control_refusal_count": 0,
                 "score_0": 0,
                 "score_1": 0,
                 "score_2": 0,
@@ -5443,6 +5622,7 @@ def summarize_aggregate_rows(
                 "avg_score": None,
                 "detection_rate_score_2": None,
                 "full_engagement_rate_score_0": None,
+                "refusal_rate": None,
                 "control_correct_rate_score_3": None,
                 "error_count": 0,
                 "_nonsense_scores": [],
@@ -5452,6 +5632,19 @@ def summarize_aggregate_rows(
 
         if row.get("status") == "error":
             stats["error_count"] += 1
+
+        is_control = bool(row.get("is_control"))
+        if is_control:
+            stats["control_count"] += 1
+        else:
+            stats["nonsense_count"] += 1
+
+        if response_is_refusal(row):
+            if is_control:
+                stats["control_refusal_count"] += 1
+            else:
+                stats["refusal_count"] += 1
+            continue
 
         score = row.get("consensus_score")
         if is_valid_numeric_score(score):
@@ -5464,12 +5657,11 @@ def summarize_aggregate_rows(
                 by_model_run[model][run_index].append(score_value)
             score_bucket = bucket_consensus_score(score_value)
 
-            if row.get("is_control"):
-                stats["control_count"] += 1
+            if is_control:
                 if score_bucket == 3:
                     stats["score_3"] += 1
             else:
-                stats["nonsense_count"] += 1
+                stats["answered_count"] += 1
                 stats["_nonsense_scores"].append(score_value)
                 if score_bucket == 0:
                     stats["score_0"] += 1
@@ -5483,11 +5675,14 @@ def summarize_aggregate_rows(
     leaderboard: list[dict[str, Any]] = []
     for model, stats in by_model.items():
         nonsense_scores = stats["_nonsense_scores"]
-        nonsense_rows = len(nonsense_scores)
+        answered_rows = len(nonsense_scores)
+        nonsense_rows = stats["nonsense_count"]
+        if answered_rows > 0:
+            stats["avg_score"] = round(sum(nonsense_scores) / answered_rows, 4)
         if nonsense_rows > 0:
-            stats["avg_score"] = round(sum(nonsense_scores) / nonsense_rows, 4)
             stats["detection_rate_score_2"] = round(stats["score_2"] / nonsense_rows, 4)
             stats["full_engagement_rate_score_0"] = round(stats["score_0"] / nonsense_rows, 4)
+            stats["refusal_rate"] = round(stats["refusal_count"] / nonsense_rows, 4)
         if stats["control_count"] > 0:
             stats["control_correct_rate_score_3"] = round(
                 stats["score_3"] / stats["control_count"], 4
@@ -5531,8 +5726,12 @@ def summarize_aggregate_rows(
         "reliability": reliability,
         "total_records": len(rows),
         "total_error_records": sum(1 for row in rows if row.get("status") == "error"),
+        "total_refusal_records": sum(1 for row in rows if response_is_refusal(row)),
         "total_scored_records": sum(
-            1 for row in rows if is_valid_numeric_score(row.get("consensus_score"))
+            1
+            for row in rows
+            if not response_is_refusal(row)
+            and is_valid_numeric_score(row.get("consensus_score"))
         ),
     }
 
@@ -5552,18 +5751,23 @@ def render_aggregate_summary_markdown(meta: dict[str, Any], summary: dict[str, A
     lines.append(f"- Judges: `{summary['num_judges']}`")
     lines.append(f"- Records: `{summary['total_records']}`")
     lines.append(f"- Scored: `{summary['total_scored_records']}`")
+    lines.append(f"- Refusals: `{summary.get('total_refusal_records', 0)}`")
     lines.append(f"- Errors: `{summary['total_error_records']}`")
     lines.append("")
     lines.append(
-        "| Rank | Model | Avg Score | Detected (2) | Fooled (0) | 0/1/2/3 | Errors |"
+        "| Rank | Model | Avg Score | Detected (2) | Fooled (0) | Refusal | 0/1/2/3/R | Errors |"
     )
-    lines.append("|---|---|---:|---:|---:|---|---:|")
+    lines.append("|---|---|---:|---:|---:|---:|---|---:|")
     for idx, row in enumerate(summary["leaderboard"], start=1):
-        counts = f"{row['score_0']}/{row['score_1']}/{row['score_2']}/{row['score_3']}"
+        counts = (
+            f"{row['score_0']}/{row['score_1']}/{row['score_2']}/"
+            f"{row['score_3']}/{row.get('refusal_count', 0)}"
+        )
         lines.append(
             f"| {idx} | `{row['model']}` | {fmt_num(row['avg_score'])} | "
             f"{fmt_num(row['detection_rate_score_2'])} | "
             f"{fmt_num(row['full_engagement_rate_score_0'])} | "
+            f"{fmt_num(row.get('refusal_rate'))} | "
             f"{counts} | {row['error_count']} |"
         )
     lines.append("")
@@ -5637,10 +5841,13 @@ def run_aggregate(args: argparse.Namespace) -> int:
     for row in aligned:
         row_errors = list(row.get("row_errors", []))
         judge_scores: list[int] = []
-        if row.get("row_identity_mismatch"):
+        if response_is_refusal(row):
+            consensus_score, consensus_error = None, None
+        elif row.get("row_identity_mismatch"):
             row_errors.append(
                 "Identity mismatch across judge rows; consensus skipped for this sample."
             )
+            consensus_score, consensus_error = None, "row_identity_mismatch"
         else:
             for idx in range(1, num_judges + 1):
                 score = row.get(f"judge_{idx}_score")
@@ -5654,14 +5861,14 @@ def run_aggregate(args: argparse.Namespace) -> int:
                         f"judge_{idx}_score has invalid type: {type(score).__name__}"
                     )
 
-        if args.consensus_method == "primary_tiebreak":
-            consensus_score, consensus_error = compute_primary_tiebreak_consensus(
-                row, num_judges=num_judges
-            )
-        else:
-            consensus_score, consensus_error = compute_consensus(
-                judge_scores, args.consensus_method
-            )
+            if args.consensus_method == "primary_tiebreak":
+                consensus_score, consensus_error = compute_primary_tiebreak_consensus(
+                    row, num_judges=num_judges
+                )
+            else:
+                consensus_score, consensus_error = compute_consensus(
+                    judge_scores, args.consensus_method
+                )
         if consensus_error:
             row_errors.append(consensus_error)
         row["consensus_score"] = consensus_score
@@ -5927,6 +6134,15 @@ def run_report(args: argparse.Namespace) -> int:
                 "response_text": response_row.get("response_text", ""),
                 "request_messages": response_row.get("request_messages", []),
                 "response_finish_reason": response_row.get("response_finish_reason"),
+                "response_native_finish_reason": response_row.get(
+                    "response_native_finish_reason"
+                ),
+                "response_refusal": response_is_refusal(response_row),
+                "response_outcome": (
+                    "refusal"
+                    if response_is_refusal(response_row)
+                    else response_row.get("response_outcome", "response")
+                ),
                 "warnings": response_row.get("warnings", []),
                 "judges": judges,
                 "consensus_score": consensus_score,
@@ -5958,10 +6174,16 @@ def run_report(args: argparse.Namespace) -> int:
         "errors": errors,
         "reliability": aggregate_summary.get("reliability") if isinstance(aggregate_summary, dict) else None,
     }
-    if data["reliability"] is None and len(grade_sets) >= 2:
+    if len(grade_sets) >= 2:
         rel_rows: list[dict[str, Any]] = []
         for row in rows:
-            rel_row: dict[str, Any] = {}
+            rel_row: dict[str, Any] = {
+                "response_outcome": row.get("response_outcome", ""),
+                "response_refusal": bool(row.get("response_refusal", False)),
+                "response_native_finish_reason": row.get(
+                    "response_native_finish_reason"
+                ),
+            }
             for idx, judge in enumerate(row.get("judges", []), start=1):
                 rel_row[f"judge_{idx}_score"] = judge.get("score")
                 rel_row[f"judge_{idx}_error"] = judge.get("error")
