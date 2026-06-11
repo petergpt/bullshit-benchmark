@@ -67,11 +67,13 @@ MODEL_PROVIDER_ALIASES: dict[str, str] = {
     "openrouter": "openrouter",
     "or": "openrouter",
     "openai": "openai",
+    "mistral": "mistral",
 }
 
 MODEL_PROVIDER_VALUES: tuple[str, ...] = (
     "openrouter",
     "openai",
+    "mistral",
 )
 
 DEFAULT_MODEL_PROVIDER = "openrouter"
@@ -2478,6 +2480,99 @@ class OpenRouterClient:
         raise last_error
 
 
+class MistralClient:
+    """Client for Mistral's OpenAI-compatible chat/completions API."""
+
+    def __init__(self, api_key: str, timeout_seconds: int, base_url: str = "https://api.mistral.ai/v1/chat/completions") -> None:
+        if timeout_seconds < 1:
+            raise ValueError("timeout_seconds must be >= 1")
+        self.api_key = api_key
+        self.timeout_seconds = timeout_seconds
+        self.base_url = base_url
+
+    def chat(
+        self,
+        *,
+        model: str,
+        messages: list[dict[str, str]],
+        temperature: float | None,
+        max_tokens: int,
+        retries: int,
+        extra_payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        # For Mistral, strip the mistralai/ prefix if present
+        model_id = model
+        if model_id.startswith("mistralai/"):
+            model_id = model_id[10:]  # Remove "mistralai/"
+        
+        payload: dict[str, Any] = {
+            "model": model_id,
+            "messages": messages,
+        }
+        if temperature is not None:
+            payload["temperature"] = temperature
+        if max_tokens > 0:
+            payload["max_tokens"] = max_tokens
+        if extra_payload:
+            payload.update(extra_payload)
+        encoded = json.dumps(payload).encode("utf-8")
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        if retries < 1:
+            raise ValueError("retries must be >= 1")
+
+        last_error: Exception | None = None
+        for attempt in range(1, retries + 1):
+            retry_after_header: str | None = None
+            retry_after_seconds: float | None = None
+            request = urllib.request.Request(
+                self.base_url,
+                data=encoded,
+                headers=headers,
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout_seconds) as resp:
+                    raw = resp.read().decode("utf-8")
+                parsed = json.loads(raw)
+                if not isinstance(parsed, dict):
+                    raise RuntimeError("Mistral returned non-object JSON.")
+                return parsed
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="ignore")
+                retry_after_header = exc.headers.get("Retry-After") if exc.headers else None
+                retry_after_seconds = parse_retry_after_seconds(retry_after_header)
+                retryable = is_retryable_http_status(exc.code)
+                last_error = OpenRouterAPIError(
+                    f"HTTP {exc.code} from Mistral (attempt {attempt}/{retries})"
+                    f"{' [retryable]' if retryable else ' [non-retryable]'}: {detail}"
+                    + (
+                        f" (retry_after_seconds={retry_after_seconds})"
+                        if retry_after_seconds is not None
+                        else ""
+                    ),
+                    status_code=exc.code,
+                    retryable=retryable,
+                    retry_after_seconds=retry_after_seconds,
+                )
+                if not retryable:
+                    raise last_error from exc
+            except Exception as exc:  # pylint: disable=broad-except
+                last_error = RuntimeError(
+                    f"Mistral call failed (attempt {attempt}/{retries}): {exc}"
+                )
+
+            if attempt < retries:
+                time.sleep(compute_retry_delay_seconds(attempt, retry_after_header))
+
+        assert last_error is not None
+        raise last_error
+
+
 def _openai_model_id(model: str) -> str:
     cleaned = str(model).strip()
     if cleaned.startswith("openai/"):
@@ -3316,6 +3411,19 @@ def run_collect(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        if "mistral" in providers_in_use:
+            mistral_key = os.getenv("MISTRAL_API_KEY", "").strip()
+            if not mistral_key:
+                raise RuntimeError(
+                    "MISTRAL_API_KEY is required for models routed to mistral "
+                    "unless --dry-run is set."
+                )
+            mistral_base_url = os.getenv("MISTRAL_BASE_URL", "https://api.mistral.ai/v1/chat/completions").strip()
+            clients["mistral"] = MistralClient(
+                api_key=mistral_key,
+                timeout_seconds=args.timeout_seconds,
+                base_url=mistral_base_url,
             )
 
     started = time.perf_counter()
@@ -4428,6 +4536,19 @@ def run_grade(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        elif judge_provider == "mistral":
+            mistral_key = os.getenv("MISTRAL_API_KEY", "").strip()
+            if not mistral_key:
+                raise RuntimeError(
+                    "MISTRAL_API_KEY is required for judge models routed to mistral "
+                    "unless --dry-run is set."
+                )
+            mistral_base_url = os.getenv("MISTRAL_BASE_URL", "https://api.mistral.ai/v1/chat/completions").strip()
+            clients["mistral"] = MistralClient(
+                api_key=mistral_key,
+                timeout_seconds=args.timeout_seconds,
+                base_url=mistral_base_url,
             )
 
     started = time.perf_counter()
