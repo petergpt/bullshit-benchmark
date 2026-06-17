@@ -1334,6 +1334,7 @@
             <label><span>Org</span><select id="filterOrg"></select></label>
             <label><span>Reasoning</span><select id="filterReasoning"></select></label>
             <label><span>Technique</span><select id="filterTechnique"></select></label>
+            <label><span>Access</span><select id="filterOpenStatus"></select></label>
             <select id="filterDifficulty" style="display:none;" aria-hidden="true" tabindex="-1"><option value="all">All</option></select>
             <select id="filterDomainGroup" style="display:none;" aria-hidden="true" tabindex="-1"></select>
           </div>
@@ -2577,6 +2578,8 @@ function refreshFilters() {
     domainSel.value = "all";
   }
   fillSelect(document.getElementById("filterDifficulty"), uniqSorted(S.rows.map(r=>r.difficulty).filter(Boolean)), v=>DIFFICULTY_LABELS[v]||v);
+  const OPEN_STATUS_LABELS = { closed: "Closed (API only)", open_weights: "Open weights", open_source: "Open source" };
+  fillSelect(document.getElementById("filterOpenStatus"), ["closed","open_weights","open_source"], v=>OPEN_STATUS_LABELS[v]||v);
   renderModelToggles();
   refreshTopVariantToggle();
   if (cfg.showDomainGroup) renderDomainBar();
@@ -2588,6 +2591,7 @@ function applyFilters(rows, opts={}) {
   const technique=document.getElementById("filterTechnique").value;
   const domainGroup=document.getElementById("filterDomainGroup").value;
   const difficulty=document.getElementById("filterDifficulty").value;
+  const openStatus=document.getElementById("filterOpenStatus").value;
   const query=document.getElementById("filterQuery").value.trim().toLowerCase();
   const allowedCats=new Set([...document.querySelectorAll('input[name="scoreFilter"]:checked')].map(n=>n.value));
 
@@ -2597,6 +2601,7 @@ function applyFilters(rows, opts={}) {
     if(technique!=="all"&&(r.technique||"")!==technique) return false;
     if(!opts.ignoreDomainGroup && domainGroup!=="all"&&(r.domain_group||"")!==domainGroup) return false;
     if(difficulty!=="all"&&(r.difficulty||"")!==difficulty) return false;
+    if(openStatus!=="all"){const meta=paramsMetaForRow(r);if(String(meta?.open_model_status||"").trim()!==openStatus) return false;}
     if(!allowedCats.has(catKey(r))) return false;
     if(query) {
       const hay=[prettyModel(r),r.model||"",r.question_id||"",r.question||"",r.technique||"",r.domain||"",r.domain_group||""].join(" ").toLowerCase();
@@ -4669,7 +4674,7 @@ function bindEvents() {
   window.addEventListener("resize", updateHeroPinOffset);
 
   // Filters
-  ["filterOrg","filterReasoning","filterTechnique","filterDomainGroup","filterDifficulty","filterQuery","compareQuestion","compareModelA","compareModelB","compareViewMode"].forEach(id=>{
+  ["filterOrg","filterReasoning","filterTechnique","filterDomainGroup","filterDifficulty","filterOpenStatus","filterQuery","compareQuestion","compareModelA","compareModelB","compareViewMode"].forEach(id=>{
     const el=document.getElementById(id);
     el.addEventListener("change", renderAll);
     if(el.tagName==="INPUT") el.addEventListener("input", renderAll);
