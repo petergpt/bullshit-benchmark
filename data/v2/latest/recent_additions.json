@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-06-09T19:19:59Z",
+  "generated_at_utc": "2026-06-12T02:01:14Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-06-02T19:19:59Z",
+  "window_start_utc": "2026-06-05T02:01:14Z",
   "models": [
     "anthropic/claude-fable-5@reasoning=low",
     "anthropic/claude-fable-5@reasoning=xhigh",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh"
+    "mistralai/mistral-medium-3-5@reasoning=high",
+    "mistralai/mistral-medium-3-5@reasoning=none"
   ],
   "model_bases": [
     "anthropic/claude-fable-5",
-    "nvidia/nemotron-3-ultra-550b-a55b"
+    "mistralai/mistral-medium-3-5"
   ],
   "model_count": 4,
   "model_base_count": 2,
@@ -86,6 +86,8 @@
     "minimax/minimax-m3@reasoning=none": "2026-06-01T05:32:08Z",
     "minimax/minimax-m3@reasoning=xhigh": "2026-06-01T05:32:08Z",
     "mistralai/mistral-large-2512@reasoning=default": "2026-03-01T01:51:28Z",
+    "mistralai/mistral-medium-3-5@reasoning=high": "2026-06-11T23:15:05Z",
+    "mistralai/mistral-medium-3-5@reasoning=none": "2026-06-11T23:15:05Z",
     "mistralai/mistral-small-2603@reasoning=high": "2026-04-07T16:18:34Z",
     "mistralai/mistral-small-2603@reasoning=none": "2026-04-07T16:18:34Z",
     "moonshotai/kimi-k2.5@reasoning=high": "2026-03-01T01:51:28Z",
@@ -230,6 +232,7 @@
     "minimax/minimax-m2.7": "2026-04-07T16:18:34Z",
     "minimax/minimax-m3": "2026-06-01T05:32:08Z",
     "mistralai/mistral-large-2512": "2026-03-01T01:51:28Z",
+    "mistralai/mistral-medium-3-5": "2026-06-11T23:15:05Z",
     "mistralai/mistral-small-2603": "2026-04-07T16:18:34Z",
     "moonshotai/kimi-k2": "2026-03-18T18:06:12Z",
     "moonshotai/kimi-k2.5": "2026-03-01T01:51:28Z",

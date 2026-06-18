@@ -2,6 +2,19 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.21] - 2026-06-12
+
+### Added
+- Added published `v2` benchmark results for:
+  - `mistralai/mistral-medium-3-5@reasoning=none`
+  - `mistralai/mistral-medium-3-5@reasoning=high`
+- Added canonical launch-date and open-source metadata for Mistral Medium 3.5.
+
+### Changed
+- Refreshed `data/v2/latest/*` so Mistral Medium 3.5 appears in the viewer dataset, leaderboard, release-date charts, reasoning-token/cost charts, and model-size metadata exports.
+- Folded `mistralai/mistral-medium-3-5` into `config.v2.json` with the verified `none`/`high` reasoning settings.
+- Updated the public v2 leaderboard to include `170` model/reasoning rows.
+
 ## [2.0.20] - 2026-06-09
 
 ### Added
