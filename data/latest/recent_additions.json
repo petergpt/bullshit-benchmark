@@ -1,23 +1,17 @@
 {
-  "generated_at_utc": "2026-06-05T06:08:14Z",
+  "generated_at_utc": "2026-06-18T22:34:10Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-05-29T06:08:14Z",
+  "window_start_utc": "2026-06-11T22:34:10Z",
   "models": [
-    "anthropic/claude-opus-4.8@reasoning=none",
-    "anthropic/claude-opus-4.8@reasoning=xhigh",
-    "minimax/minimax-m3@reasoning=none",
-    "minimax/minimax-m3@reasoning=xhigh",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh"
+    "z-ai/glm-5.2@reasoning=none",
+    "z-ai/glm-5.2@reasoning=xhigh"
   ],
   "model_bases": [
-    "anthropic/claude-opus-4.8",
-    "minimax/minimax-m3",
-    "nvidia/nemotron-3-ultra-550b-a55b"
+    "z-ai/glm-5.2"
   ],
-  "model_count": 6,
-  "model_base_count": 3,
+  "model_count": 2,
+  "model_base_count": 1,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T07:47:21Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-02-26T15:26:33Z",
@@ -165,6 +159,8 @@
     "xiaomi/mimo-v2.5@reasoning=xhigh": "2026-04-26T22:01:07Z",
     "z-ai/glm-4.5@reasoning=none": "2026-03-18T07:47:31Z",
     "z-ai/glm-4.5@reasoning=xhigh": "2026-03-18T07:47:32Z",
+    "z-ai/glm-5.2@reasoning=none": "2026-06-18T22:22:32Z",
+    "z-ai/glm-5.2@reasoning=xhigh": "2026-06-18T22:22:32Z",
     "z-ai/glm-5@reasoning=high": "2026-02-24T09:30:29Z",
     "z-ai/glm-5@reasoning=none": "2026-02-24T09:34:08Z"
   },
@@ -258,7 +254,8 @@
     "xiaomi/mimo-v2.5": "2026-04-26T22:01:07Z",
     "xiaomi/mimo-v2.5-pro": "2026-04-26T22:01:07Z",
     "z-ai/glm-4.5": "2026-03-18T07:47:31Z",
-    "z-ai/glm-5": "2026-02-24T09:30:29Z"
+    "z-ai/glm-5": "2026-02-24T09:30:29Z",
+    "z-ai/glm-5.2": "2026-06-18T22:22:32Z"
   },
   "notes": "Exact model variants first added to this dataset in the last 7 days."
 }

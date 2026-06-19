@@ -6,18 +6,20 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-06-09
+- Updated: 2026-06-19
 
-## Latest Changelog Entry (2026-06-09)
+## Latest Changelog Entry (2026-06-19)
 
-- Added Claude Fable 5 benchmark results to the published `v2` track with `100` questions.
+- Added GLM-5.2 benchmark results to the published `v1` and `v2` tracks.
 - Published:
-  - `anthropic/claude-fable-5@reasoning=low`
-  - `anthropic/claude-fable-5@reasoning=xhigh`
-- v2 `low`: `1.6406` average across `64` scored responses, with `45` Clear Pushback, `15` Partial Challenge, `4` Accepted Nonsense, and `36` refusals.
-- v2 `xhigh`: `1.7562` average across `67` scored responses, with `56` Clear Pushback, `8` Partial Challenge, `3` Accepted Nonsense, and `33` refusals.
-- Added a grey refusal category plus an `All attempts` / `Exclude refusals` toggle so the viewer can show both operational refusal rate and conditional performance on answered prompts.
-- Added canonical Anthropic launch metadata, registered `low`/`xhigh` in the durable v2 config, and refreshed the published leaderboard and chart screenshots.
+  - `z-ai/glm-5.2@reasoning=none`
+  - `z-ai/glm-5.2@reasoning=xhigh`
+- v2 `none`: `0.5600` average, with `17` Clear Pushback, `24` Partial Challenge, and `59` Accepted Nonsense.
+- v2 `xhigh`: `0.7467` average, with `31` Clear Pushback, `13` Partial Challenge, and `56` Accepted Nonsense.
+- Appended `310` response rows and their `310` three-judge aggregate rows across v1 and v2.
+- Added GLM-5.2 to the leaderboard, domain/technique breakdowns, release-date views, reasoning charts, total-parameter chart, and response explorer.
+- Added canonical Z.AI launch and open-source metadata: June 16, 2026, MIT license, and `753B` total parameters. Z.AI does not disclose an active-parameter count, so GLM-5.2 is intentionally absent from that scatter.
+- Registered `none`/`xhigh` in both durable configs with strict Z.AI routing and refreshed the chart screenshots below.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -38,7 +40,7 @@ The screenshots below follow the same flow as `viewer/index.v2.html`, starting w
 
 ### 1. Detection Rate by Model (Main Chart)
 
-Primary leaderboard-style view showing each model's green/amber/red split.
+Primary leaderboard-style view showing each model's green/amber/red split. The screenshot uses the viewer's 30-day new-model filter so recent additions remain legible.
 
 ![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png)
 
@@ -78,7 +80,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `168` model/reasoning rows.
+- Published v2 leaderboard currently includes `170` model/reasoning rows.
 
 ## What This Measures
 

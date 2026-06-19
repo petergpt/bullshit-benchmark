@@ -2,6 +2,22 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.21] - 2026-06-19
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `z-ai/glm-5.2@reasoning=none`
+  - `z-ai/glm-5.2@reasoning=xhigh`
+- Added canonical Z.AI launch and open-source metadata for GLM-5.2: June 16, 2026, 753B total parameters, and the MIT license.
+
+### Changed
+- Appended 110 v1 and 200 v2 response rows plus their three-judge aggregates to the published datasets.
+- Refreshed both published leaderboards, domain and technique breakdowns, release-date views, reasoning-token and cost charts, total-parameter chart, recent-addition data, and response explorer.
+- Pinned GLM-5.2 in the reasoning and total-parameter scatter labels. The active-parameter scatter intentionally omits it because Z.AI has not disclosed an active parameter count.
+- Folded `z-ai/glm-5.2` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings and strict Z.AI provider routing.
+- Updated the public v2 leaderboard to include `170` model/reasoning rows.
+- Refreshed the README v2 chart screenshots in `docs/images/*` from the updated local viewer data.
+
 ## [2.0.20] - 2026-06-09
 
 ### Added

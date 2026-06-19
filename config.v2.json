@@ -71,6 +71,7 @@
       "moonshotai/kimi-k2.5",
       "moonshotai/kimi-k2.6",
       "z-ai/glm-5.1",
+      "z-ai/glm-5.2",
       "qwen/qwen3.6-plus",
       "qwen/qwen3.7-max",
       "minimax/minimax-m2.5",
@@ -319,6 +320,10 @@
         "none",
         "xhigh"
       ],
+      "z-ai/glm-5.2": [
+        "none",
+        "xhigh"
+      ],
       "qwen/qwen3.6-plus": [
         "none",
         "xhigh"
@@ -348,6 +353,15 @@
         }
       },
       "z-ai/glm-5.1": {
+        "provider": {
+          "order": [
+            "Z.AI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "z-ai/glm-5.2": {
         "provider": {
           "order": [
             "Z.AI"

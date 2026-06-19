@@ -1,20 +1,17 @@
 {
-  "generated_at_utc": "2026-06-09T19:19:59Z",
+  "generated_at_utc": "2026-06-18T22:34:17Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-06-02T19:19:59Z",
+  "window_start_utc": "2026-06-11T22:34:17Z",
   "models": [
-    "anthropic/claude-fable-5@reasoning=low",
-    "anthropic/claude-fable-5@reasoning=xhigh",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=none",
-    "nvidia/nemotron-3-ultra-550b-a55b@reasoning=xhigh"
+    "z-ai/glm-5.2@reasoning=none",
+    "z-ai/glm-5.2@reasoning=xhigh"
   ],
   "model_bases": [
-    "anthropic/claude-fable-5",
-    "nvidia/nemotron-3-ultra-550b-a55b"
+    "z-ai/glm-5.2"
   ],
-  "model_count": 4,
-  "model_base_count": 2,
+  "model_count": 2,
+  "model_base_count": 1,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T18:06:12Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-03-01T01:51:28Z",
@@ -182,6 +179,8 @@
     "z-ai/glm-5-turbo@reasoning=none": "2026-04-07T16:18:45Z",
     "z-ai/glm-5.1@reasoning=none": "2026-04-21T11:05:08Z",
     "z-ai/glm-5.1@reasoning=xhigh": "2026-04-21T11:05:08Z",
+    "z-ai/glm-5.2@reasoning=none": "2026-06-18T22:22:31Z",
+    "z-ai/glm-5.2@reasoning=xhigh": "2026-06-18T22:22:31Z",
     "z-ai/glm-5@reasoning=high": "2026-03-01T01:51:34Z",
     "z-ai/glm-5@reasoning=none": "2026-03-01T01:51:35Z"
   },
@@ -283,7 +282,8 @@
     "z-ai/glm-4.5": "2026-03-18T18:06:18Z",
     "z-ai/glm-5": "2026-03-01T01:51:34Z",
     "z-ai/glm-5-turbo": "2026-04-07T16:18:42Z",
-    "z-ai/glm-5.1": "2026-04-21T11:05:08Z"
+    "z-ai/glm-5.1": "2026-04-21T11:05:08Z",
+    "z-ai/glm-5.2": "2026-06-18T22:22:31Z"
   },
   "notes": "Exact model variants first added to this dataset in the last 7 days."
 }

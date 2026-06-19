@@ -81,3 +81,4 @@ xiaomi/mimo-v2-flash,xiaomi,true,true,true,3,xiaomi/mimo-v2-flash@reasoning=defa
 z-ai/glm-4.5,z-ai,true,false,true,3,z-ai/glm-4.5@reasoning=default;z-ai/glm-4.5@reasoning=none;z-ai/glm-4.5@reasoning=xhigh
 z-ai/glm-5,z-ai,true,true,true,3,z-ai/glm-5@reasoning=default;z-ai/glm-5@reasoning=high;z-ai/glm-5@reasoning=none
 z-ai/glm-5.1,z-ai,true,true,true,2,z-ai/glm-5.1@reasoning=none;z-ai/glm-5.1@reasoning=xhigh
+z-ai/glm-5.2,z-ai,true,true,true,2,z-ai/glm-5.2@reasoning=none;z-ai/glm-5.2@reasoning=xhigh
