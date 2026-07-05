@@ -2365,31 +2365,95 @@ function loadEmbeddedDataset(cfg) {
 }
 
 async function loadDatasetCandidate(source) {
-  const respText = await fetchTextRequired(`${source.basePath}/responses.jsonl`);
-  const stats = await fetchJsonRequired(`${source.basePath}/collection_stats.json`);
-  const manifest = source.supportsManifest === false ? null : await fetchJsonOptional(`${source.basePath}/manifest.json`);
-  const aggText = source.supportsAggregate === false ? "" : await fetchTextOptional(`${source.basePath}/aggregate.jsonl`);
-  const panel = source.supportsPanelSummary === false ? null : await fetchJsonOptional(`${source.basePath}/panel_summary.json`);
-  const summary = source.supportsAggregate === false ? null : await fetchJsonOptional(`${source.basePath}/aggregate_summary.json`);
-  const recentAdditions = await fetchJsonOptional(`${source.basePath}/recent_additions.json`);
-  const launchText = source.supportsLaunchMetadata === false ? "" : await fetchTextOptional(`${source.basePath}/model_launch_dates.csv`);
-  const paramsText = source.supportsModelParams === false ? "" : await fetchTextOptional(`${source.basePath}/model_params.csv`);
-  const gradeText = source.gradePath ? await fetchTextOptional(source.gradePath) : "";
+  // Stream responses.jsonl (the largest file) in parallel with everything else, but keep it
+  // off the await chain so first paint only blocks on the smaller metadata. Hydrate later.
+  const responsesPromise = fetchTextRequired(`${source.basePath}/responses.jsonl`).then(parseJsonl);
+  // A consumer attaches the real handler only after the Promise.all below resolves (or, in the
+  // no-aggregate branch, awaits it); guard the gap so a fast responses.jsonl failure can't
+  // surface as an unhandledrejection. Every consumer still observes the rejection independently.
+  responsesPromise.catch(() => {});
+  const [stats, manifest, aggText, panel, summary, recentAdditions, launchText, paramsText, gradeText] = await Promise.all([
+    fetchJsonRequired(`${source.basePath}/collection_stats.json`),
+    source.supportsManifest === false ? Promise.resolve(null) : fetchJsonOptional(`${source.basePath}/manifest.json`),
+    source.supportsAggregate === false ? Promise.resolve("") : fetchTextOptional(`${source.basePath}/aggregate.jsonl`),
+    source.supportsPanelSummary === false ? Promise.resolve(null) : fetchJsonOptional(`${source.basePath}/panel_summary.json`),
+    source.supportsAggregate === false ? Promise.resolve(null) : fetchJsonOptional(`${source.basePath}/aggregate_summary.json`),
+    fetchJsonOptional(`${source.basePath}/recent_additions.json`),
+    source.supportsLaunchMetadata === false ? Promise.resolve("") : fetchTextOptional(`${source.basePath}/model_launch_dates.csv`),
+    source.supportsModelParams === false ? Promise.resolve("") : fetchTextOptional(`${source.basePath}/model_params.csv`),
+    source.gradePath ? fetchTextOptional(source.gradePath) : Promise.resolve(""),
+  ]);
 
-  const responses = parseJsonl(respText);
   let aggregateRows = aggText ? parseJsonl(aggText) : [];
   let mode = "aggregate";
+  let responses = [];
+  let deferredResponses = null;
 
-  if (!aggregateRows.length && gradeText) {
-    aggregateRows = parseJsonl(gradeText).map(fromJudgeGradeRow);
-    mode = "single_judge_grades";
-  }
-  if (!aggregateRows.length) {
-    aggregateRows = responses.map(fromResponseRow);
-    mode = "responses_only";
+  if (aggregateRows.length) {
+    // Aggregate carries the judge scores that drive first paint, so defer responses.jsonl
+    // (usage/latency/refusal enrichment) until after the initial render.
+    deferredResponses = responsesPromise;
+  } else {
+    // No aggregate: responses.jsonl is the only row source, so await it now — and let a fetch
+    // failure propagate so loadData falls back to the next source (unchanged from before).
+    responses = await responsesPromise;
+    if (gradeText) {
+      aggregateRows = parseJsonl(gradeText).map(fromJudgeGradeRow);
+      mode = "single_judge_grades";
+    } else {
+      aggregateRows = responses.map(fromResponseRow);
+      mode = "responses_only";
+    }
   }
 
-  return { source, responses, stats, panel, summary, recentAdditions, manifest, launchText, paramsText, aggregateRows, mode };
+  return { source, responses, responsesPromise: deferredResponses, stats, panel, summary, recentAdditions, manifest, launchText, paramsText, aggregateRows, mode };
+}
+
+// Build S.rows (aggregate judge scores + response usage/latency enrichment) and the per-model
+// usage aggregates from S.responses. Extracted so it can run once for the aggregate-only first
+// paint and again once responses.jsonl finishes streaming in lazily.
+function rebuildRowsAndUsageFromResponses() {
+  const responseMap = new Map();
+  S.responses.forEach(r => { if (r.sample_id) responseMap.set(r.sample_id, r); });
+
+  S.rows = S.aggregateRows.map(agg => {
+    const resp = responseMap.get(agg.sample_id) || {};
+    const qm = questionMeta(agg.question_id);
+    const responseRefusal = rowIsRefusal(agg) || rowIsRefusal(resp);
+    return {
+      ...agg,
+      response_text: agg.response_text || resp.response_text || "",
+      response_outcome: responseRefusal ? "refusal" : (agg.response_outcome || resp.response_outcome || ""),
+      response_refusal: responseRefusal,
+      response_native_finish_reason: agg.response_native_finish_reason || resp.response_native_finish_reason || "",
+      response_raw: resp.response_raw || null,
+      question: agg.question || resp.question || "",
+      nonsensical_element: agg.nonsensical_element || resp.nonsensical_element || "",
+      response_usage: resp.response_usage || null,
+      response_latency_ms: resp.response_latency_ms || null,
+      domain_group: qm.domain_group || "",
+      difficulty: qm.difficulty || "",
+      difficulty_label: qm.difficulty_label || "",
+    };
+  });
+
+  const modelUsage = new Map();
+  S.rows.forEach(r => {
+    const mk = modelKey(r);
+    if (!modelUsage.has(mk)) modelUsage.set(mk, { total:0, prompt:0, completion:0, reasoning:0, cost:0, count:0, latency:0 });
+    const u = modelUsage.get(mk);
+    const usage = r.response_usage;
+    if (usage) {
+      u.prompt += responsePromptTokens(r);
+      u.completion += responseCompletionTokens(r);
+      u.total += responseTotalTokens(r);
+      u.reasoning += responseReasoningTokens(r);
+      u.cost += responseCostUsd(r);
+      u.latency += (r.response_latency_ms||0);
+      u.count++;
+    }
+  });
+  S.usageByModel = modelUsage;
 }
 
 // ====== DATA LOADING ======
@@ -2456,57 +2520,7 @@ async function loadData() {
       });
     });
 
-    // Build usage map: sample_id -> usage object
-    const usageBySample = new Map();
-    S.responses.forEach(r => {
-      if (r.sample_id && r.response_usage) {
-        usageBySample.set(r.sample_id, r.response_usage);
-      }
-    });
-
-    // Build merged rows from aggregate (which has judge scores) + response usage
-    const responseMap = new Map();
-    S.responses.forEach(r => { if(r.sample_id) responseMap.set(r.sample_id, r); });
-
-    S.rows = S.aggregateRows.map(agg => {
-      const resp = responseMap.get(agg.sample_id) || {};
-      const qm = questionMeta(agg.question_id);
-      const responseRefusal = rowIsRefusal(agg) || rowIsRefusal(resp);
-      return {
-        ...agg,
-        response_text: agg.response_text || resp.response_text || "",
-        response_outcome: responseRefusal ? "refusal" : (agg.response_outcome || resp.response_outcome || ""),
-        response_refusal: responseRefusal,
-        response_native_finish_reason: agg.response_native_finish_reason || resp.response_native_finish_reason || "",
-        response_raw: resp.response_raw || null,
-        question: agg.question || resp.question || "",
-        nonsensical_element: agg.nonsensical_element || resp.nonsensical_element || "",
-        response_usage: resp.response_usage || null,
-        response_latency_ms: resp.response_latency_ms || null,
-        domain_group: qm.domain_group || "",
-        difficulty: qm.difficulty || "",
-        difficulty_label: qm.difficulty_label || "",
-      };
-    });
-
-    // Build per-model usage aggregates
-    const modelUsage = new Map();
-    S.rows.forEach(r => {
-      const mk = modelKey(r);
-      if (!modelUsage.has(mk)) modelUsage.set(mk, { total:0, prompt:0, completion:0, reasoning:0, cost:0, count:0, latency:0 });
-      const u = modelUsage.get(mk);
-      const usage = r.response_usage;
-      if (usage) {
-        u.prompt += responsePromptTokens(r);
-        u.completion += responseCompletionTokens(r);
-        u.total += responseTotalTokens(r);
-        u.reasoning += responseReasoningTokens(r);
-        u.cost += responseCostUsd(r);
-        u.latency += (r.response_latency_ms||0);
-        u.count++;
-      }
-    });
-    S.usageByModel = modelUsage;
+    rebuildRowsAndUsageFromResponses();
 
     // Load launch date metadata.
     // Merge embedded launch rows with CSV launch metadata so local file updates
@@ -2543,6 +2557,23 @@ async function loadData() {
     refreshFilters();
     renderAll();
     randomGreenRed();
+
+    // responses.jsonl was deferred past first paint; once it arrives, re-merge the
+    // usage/latency/refusal enrichment + response-derived launch dates and re-render.
+    if (loaded.responsesPromise) {
+      loaded.responsesPromise.then(rawResponses => {
+        S.responses = rawResponses.filter(chatgpt4oFilter);
+        rebuildRowsAndUsageFromResponses();
+        mergeLaunchRowsIntoMap(S.launchByModel, inferLaunchRowsFromResponses(S.responses, S.launchByModel));
+        mergeLaunchRowsIntoMap(S.launchByModel, LOCAL_LAUNCH_OVERRIDES);
+        renderAll();
+      }).catch(err => {
+        // Leaderboard (judge scores from aggregate) already painted; surface the degraded
+        // state visibly instead of silently leaving usage/latency/cost columns blank.
+        console.error("responses.jsonl failed to load after first paint; usage/latency/cost columns unavailable", err);
+        el.textContent = `Loaded ${S.rows.length} rows from ${loaded.source.name} · ⚠ usage/latency/cost unavailable (responses.jsonl failed to load)`;
+      });
+    }
   } catch(e) {
     el.textContent = `Error loading data: ${e.message}`;
     console.error(e);
