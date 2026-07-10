@@ -6,20 +6,22 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-06-19
+- Updated: 2026-07-10
 
-## Latest Changelog Entry (2026-06-19)
+## Latest Changelog Entry (2026-07-10)
 
-- Added GLM-5.2 benchmark results to the published `v1` and `v2` tracks.
+- Added GPT-5.6 Sol, Terra, and Luna benchmark results to the published `v1` and `v2` tracks.
 - Published:
-  - `z-ai/glm-5.2@reasoning=none`
-  - `z-ai/glm-5.2@reasoning=xhigh`
-- v2 `none`: `0.5600` average, with `17` Clear Pushback, `24` Partial Challenge, and `59` Accepted Nonsense.
-- v2 `xhigh`: `0.7467` average, with `31` Clear Pushback, `13` Partial Challenge, and `56` Accepted Nonsense.
-- Appended `310` response rows and their `310` three-judge aggregate rows across v1 and v2.
-- Added GLM-5.2 to the leaderboard, domain/technique breakdowns, release-date views, reasoning charts, total-parameter chart, and response explorer.
-- Added canonical Z.AI launch and open-source metadata: June 16, 2026, MIT license, and `753B` total parameters. Z.AI does not disclose an active-parameter count, so GLM-5.2 is intentionally absent from that scatter.
-- Registered `none`/`xhigh` in both durable configs with strict Z.AI routing and refreshed the chart screenshots below.
+  - `openai/gpt-5.6-sol@reasoning=low|max`
+  - `openai/gpt-5.6-terra@reasoning=low|max`
+  - `openai/gpt-5.6-luna@reasoning=low|max`
+- v2 Terra `max` led the family at `1.3700`; Sol `low` and `max` scored `1.2933` and `1.2867`.
+- v2 Terra `low` scored `1.1967`; Luna `max` and `low` scored `1.1900` and `1.0567`.
+- This push also includes the previously prepared Claude Sonnet 5 results: v2 `low` reached `80%` green and v2 `max` reached `78%` green; both averaged `1.7172` with one provider-declared refusal.
+- Appended `930` response rows and their `930` three-judge aggregate rows across v1 and v2, with no collection errors or refusals.
+- Added July 9, 2026 OpenRouter launch metadata and closed-model metadata for all three variants.
+- Registered `low`/`max` in both durable configs and pinned the GPT-5.6 family in the viewer's release-date and reasoning scatter defaults.
+- Refreshed all six chart screenshots below from the updated v2 dataset.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -80,7 +82,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `170` model/reasoning rows.
+- Published v2 leaderboard currently includes `178` model/reasoning rows.
 
 ## What This Measures
 

@@ -2,6 +2,34 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.23] - 2026-07-10
+
+### Added
+- Added published `v1` and `v2` benchmark results for GPT-5.6 Sol, Terra, and Luna at `low` and `max` reasoning.
+- Added OpenRouter launch-date and closed-model metadata for all three GPT-5.6 variants.
+
+### Changed
+- Appended 330 v1 and 600 v2 response rows plus their three-judge aggregates to the published datasets.
+- Included the previously prepared `2.0.22` Claude Sonnet 5 publication in this GitHub push; its v2 `low` and `max` rows average `1.7172` with `80%` and `78%` green rates respectively.
+- Folded all three model IDs and their verified `low`/`max` reasoning variants into `config.json` and `config.v2.json`.
+- Added GPT-5.6 display labels and pinned the family in the viewer release-date and reasoning scatter defaults.
+- Refreshed all six README chart screenshots from the updated v2 dataset.
+- Updated the public v2 leaderboard to include `178` model/reasoning rows.
+
+## [2.0.22] - 2026-07-01
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `anthropic/claude-sonnet-5@reasoning=low`
+  - `anthropic/claude-sonnet-5@reasoning=max`
+- Added canonical Anthropic launch-date and closed-model metadata for Claude Sonnet 5.
+
+### Changed
+- Appended 110 v1 and 200 v2 response rows plus their three-judge aggregates to the published datasets.
+- Folded `anthropic/claude-sonnet-5` into `config.json` and `config.v2.json` with the verified `low`/`max` reasoning settings.
+- Pinned Claude Sonnet 5 in the v2 viewer release-date and reasoning scatter defaults.
+- Updated the public v2 leaderboard to include `172` model/reasoning rows.
+
 ## [2.0.21] - 2026-06-19
 
 ### Added

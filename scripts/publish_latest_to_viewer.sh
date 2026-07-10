@@ -339,6 +339,19 @@ def slim_published_response_rows(rows):
                 slim["response_model_snapshot"] = raw_model
         slim.pop("response_raw", None)
         slim.pop("request_messages", None)
+        # These values are either duplicated inside response_usage or are
+        # provider diagnostics that the published viewer does not consume.
+        # Keeping them in run artifacts while omitting them here prevents the
+        # cumulative public JSONL dataset from crossing GitHub's blob limit.
+        for key in (
+            "response_upstream_inference_cost_usd",
+            "response_upstream_inference_prompt_cost_usd",
+            "response_upstream_inference_completions_cost_usd",
+            "response_id",
+            "response_created",
+            "response_char_count",
+        ):
+            slim.pop(key, None)
         for key in (
             "warnings",
             "error_kind",
@@ -353,14 +366,34 @@ def slim_published_response_rows(rows):
     return slimmed
 
 def slim_published_aggregate_rows(rows):
-    # Grade IDs are internal provenance links; published aggregate rows keep judge names and scores.
-    drop_keys = {"judge_1_grade_id", "judge_2_grade_id", "judge_3_grade_id"}
+    # Per-row grade IDs are internal provenance links. Judge model names are
+    # canonical at panel scope in panel_summary.json, while scores and
+    # justifications remain on every published aggregate row.
+    drop_keys = {
+        "judge_1_grade_id",
+        "judge_2_grade_id",
+        "judge_3_grade_id",
+        "judge_1_model",
+        "judge_2_model",
+        "judge_3_model",
+    }
     slimmed = []
     for row in rows:
         slim = {key: value for key, value in dict(row).items() if key not in drop_keys}
-        for key in ("row_errors", "consensus_error"):
+        for key in (
+            "row_errors",
+            "consensus_error",
+            "judge_1_error",
+            "judge_2_error",
+            "judge_3_error",
+        ):
             if slim.get(key) in ("", None, [], {}):
                 slim.pop(key, None)
+        for key in ("judge_1_status", "judge_2_status", "judge_3_status"):
+            if str(slim.get(key, "")).strip().lower() == "ok":
+                slim.pop(key, None)
+        if slim.get("row_identity_mismatch") is False:
+            slim.pop("row_identity_mismatch", None)
         slimmed.append(slim)
     return slimmed
 

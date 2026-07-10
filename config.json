@@ -2,6 +2,7 @@
   "collect": {
     "questions": "questions.json",
     "models": [
+      "anthropic/claude-sonnet-5",
       "anthropic/claude-opus-4.8",
       "anthropic/claude-opus-4.7",
       "anthropic/claude-opus-4.6",
@@ -42,6 +43,9 @@
       "openai/gpt-5.2",
       "openai/gpt-5.4",
       "openai/gpt-5.5",
+      "openai/gpt-5.6-sol",
+      "openai/gpt-5.6-terra",
+      "openai/gpt-5.6-luna",
       "openai/gpt-5.4-mini",
       "openai/gpt-5.4-nano",
       "openai/gpt-5.5-chat",
@@ -168,6 +172,10 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "anthropic/claude-sonnet-5": ["low", "max"],
+      "openai/gpt-5.6-sol": ["low", "max"],
+      "openai/gpt-5.6-terra": ["low", "max"],
+      "openai/gpt-5.6-luna": ["low", "max"],
       "anthropic/claude-opus-4.8": ["none", "xhigh"],
       "anthropic/claude-opus-4.7": ["none", "max"],
       "anthropic/claude-opus-4.6": ["none", "high"],
