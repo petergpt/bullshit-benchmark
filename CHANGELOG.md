@@ -2,6 +2,23 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.24] - 2026-07-12
+
+### Added
+- Added published `v1` and `v2` benchmark results for `x-ai/grok-4.5` at the verified `low` and `high` reasoning levels.
+- Added OpenRouter launch-date and closed-model metadata for Grok 4.5.
+
+### Changed
+- Appended 110 v1 and 200 v2 response rows plus their three-judge aggregates to the published datasets.
+- Folded `x-ai/grok-4.5` into `config.json` and `config.v2.json` with strict xAI provider routing, and removed it from the candidate catch-up configs.
+- Added the Grok 4.5 viewer display label and refreshed the published leaderboards, metadata exports, recent additions, charts, and response explorer.
+- Refreshed all six README chart screenshots from the three-judge v2 consensus, including Grok 4.5 in the main and reasoning charts.
+- Added compressed chart-first viewer assets and deferred response-text loading until the response sections approach the viewport. The v2 startup dataset falls from about 210 MB to 1.0 MB, while retaining the legacy JSONL fallback.
+- Removed duplicated question annotations from published response rows and duplicated response/question text from aggregate rows; the viewer rehydrates them from their canonical files. This keeps both legacy JSONL blobs comfortably below GitHub's per-file limit.
+- Fixed judge-toggle initialization so published panel metadata keeps all three judges selected when compact aggregate rows omit per-row judge model names.
+- Corrected the release-date chart description to match its Anthropic, OpenAI, and Google scope.
+- Updated the public v2 leaderboard to include `180` model/reasoning rows.
+
 ## [2.0.23] - 2026-07-10
 
 ### Added

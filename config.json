@@ -29,6 +29,7 @@
       "mistralai/mistral-large-2512",
       "x-ai/grok-4.1-fast",
       "x-ai/grok-4.3",
+      "x-ai/grok-4.5",
       "bytedance-seed/seed-1.6",
       "xiaomi/mimo-v2-flash",
       "xiaomi/mimo-v2.5",
@@ -91,6 +92,15 @@
     },
     "model_request_overrides": {
       "x-ai/grok-4.3": {
+        "provider": {
+          "order": [
+            "xAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "x-ai/grok-4.5": {
         "provider": {
           "order": [
             "xAI"
@@ -191,6 +201,7 @@
       "google/gemini-3-flash-preview": ["none", "high"],
       "x-ai/grok-4.1-fast": ["none", "high"],
       "x-ai/grok-4.3": ["minimal", "xhigh"],
+      "x-ai/grok-4.5": ["low", "high"],
       "bytedance-seed/seed-1.6": ["none", "high"],
       "xiaomi/mimo-v2-flash": ["none", "high"],
       "xiaomi/mimo-v2.5": ["none", "xhigh"],

@@ -1441,7 +1441,7 @@
     <!-- Release Date vs Green Score: All Orgs -->
     <section class="panel">
       <h2 data-bench-heading="Detection Rate Over Time">BullshitBench: Detection Rate Over Time</h2>
-      <p class="subtle">Release date vs. green rate (clear pushback %) for all organizations. Best model per release date shown.</p>
+      <p class="subtle">Release date vs. green rate (clear pushback %) for Anthropic, OpenAI, and Google. Best model per release date shown.</p>
       <div class="launch-controls">
         <label class="launch-toggle">
           <input type="checkbox" id="launchBestOnlyToggle" checked>
@@ -1765,6 +1765,7 @@ const S = {
   datasetGeneratedAtUtc: "",
   questionMap: new Map(), usageByModel: new Map(), paramsByModel: new Map(),
   recentAdditionModels: new Set(), recentAdditionBases: new Set(), recentAdditionMeta: null,
+  responseDetailsUrl: "", responseDetailsLoaded: false, responseDetailsPromise: null,
   hiddenModels: new Set(), selectedMainChartModels: new Set(), selectedJudges: new Set([1,2,3]),
   selectedScatterPoints: {},
   modelChartFocusOrg: "all",
@@ -1873,6 +1874,7 @@ const MODEL_DISPLAY_ALIAS = Object.freeze({
   "mistral-large-2512": "Mistral Large 3",
   "mistral-small-2603": "Mistral Small 4",
   "grok-4.3": "Grok 4.3",
+  "grok-4.5": "Grok 4.5",
   "grok-4.20": "Grok 4.20",
   "grok-4.20-beta": "Grok 4.20",
   "grok-4.20-multi-agent": "Grok 4.20 Multi-Agent",
@@ -2241,6 +2243,19 @@ async function fetchJsonOptional(url) {
   try { return JSON.parse(text); } catch (_err) { return null; }
 }
 
+async function fetchGzipJsonOptional(url) {
+  if (typeof DecompressionStream !== "function") return null;
+  try {
+    const res = await fetch(url, { cache: "default" });
+    if (!res.ok || !res.body) return null;
+    const stream = res.body.pipeThrough(new DecompressionStream("gzip"));
+    const text = await new Response(stream).text();
+    return JSON.parse(text);
+  } catch (_err) {
+    return null;
+  }
+}
+
 function fromJudgeGradeRow(row) {
   const scoreNum = Number(row.judge_score);
   const score = Number.isNaN(scoreNum) ? null : scoreNum;
@@ -2377,16 +2392,41 @@ function loadEmbeddedDataset(cfg) {
 }
 
 async function loadDatasetCandidate(source) {
-  const respText = await fetchTextRequired(`${source.basePath}/responses.jsonl`);
-  const stats = await fetchJsonRequired(`${source.basePath}/collection_stats.json`);
   const manifest = source.supportsManifest === false ? null : await fetchJsonOptional(`${source.basePath}/manifest.json`);
-  const aggText = source.supportsAggregate === false ? "" : await fetchTextOptional(`${source.basePath}/aggregate.jsonl`);
-  const panel = source.supportsPanelSummary === false ? null : await fetchJsonOptional(`${source.basePath}/panel_summary.json`);
-  const summary = source.supportsAggregate === false ? null : await fetchJsonOptional(`${source.basePath}/aggregate_summary.json`);
-  const recentAdditions = await fetchJsonOptional(`${source.basePath}/recent_additions.json`);
-  const launchText = source.supportsLaunchMetadata === false ? "" : await fetchTextOptional(`${source.basePath}/model_launch_dates.csv`);
-  const paramsText = source.supportsModelParams === false ? "" : await fetchTextOptional(`${source.basePath}/model_params.csv`);
-  const gradeText = source.gradePath ? await fetchTextOptional(source.gradePath) : "";
+  const cacheKey = String(manifest?.generated_at_utc || "").trim();
+  const cacheSuffix = cacheKey ? `?v=${encodeURIComponent(cacheKey)}` : "";
+  const compactRows = await fetchGzipJsonOptional(`${source.basePath}/viewer_rows.json.gz${cacheSuffix}`);
+  const [stats, panel, summary, recentAdditions, launchText, paramsText] = await Promise.all([
+    fetchJsonRequired(`${source.basePath}/collection_stats.json`),
+    source.supportsPanelSummary === false ? null : fetchJsonOptional(`${source.basePath}/panel_summary.json`),
+    source.supportsAggregate === false ? null : fetchJsonOptional(`${source.basePath}/aggregate_summary.json`),
+    fetchJsonOptional(`${source.basePath}/recent_additions.json`),
+    source.supportsLaunchMetadata === false ? "" : fetchTextOptional(`${source.basePath}/model_launch_dates.csv`),
+    source.supportsModelParams === false ? "" : fetchTextOptional(`${source.basePath}/model_params.csv`),
+  ]);
+
+  if (Array.isArray(compactRows) && compactRows.length) {
+    return {
+      source,
+      responses: compactRows,
+      stats,
+      panel,
+      summary,
+      recentAdditions,
+      manifest,
+      launchText,
+      paramsText,
+      aggregateRows: compactRows,
+      mode: "compact_viewer_rows",
+      responseDetailsUrl: `${source.basePath}/viewer_details.json.gz${cacheSuffix}`,
+    };
+  }
+
+  const [respText, aggText, gradeText] = await Promise.all([
+    fetchTextRequired(`${source.basePath}/responses.jsonl`),
+    source.supportsAggregate === false ? "" : fetchTextOptional(`${source.basePath}/aggregate.jsonl`),
+    source.gradePath ? fetchTextOptional(source.gradePath) : "",
+  ]);
 
   const responses = parseJsonl(respText);
   let aggregateRows = aggText ? parseJsonl(aggText) : [];
@@ -2401,7 +2441,54 @@ async function loadDatasetCandidate(source) {
     mode = "responses_only";
   }
 
-  return { source, responses, stats, panel, summary, recentAdditions, manifest, launchText, paramsText, aggregateRows, mode };
+  return { source, responses, stats, panel, summary, recentAdditions, manifest, launchText, paramsText, aggregateRows, mode, responseDetailsUrl: "" };
+}
+
+async function loadResponseDetails() {
+  if (S.responseDetailsLoaded || !S.responseDetailsUrl) return;
+  if (S.responseDetailsPromise) return S.responseDetailsPromise;
+  S.responseDetailsPromise = (async () => {
+    const details = await fetchGzipJsonOptional(S.responseDetailsUrl);
+    if (!Array.isArray(details) || !details.length) return;
+    const textBySample = new Map(
+      details.map(row => [String(row?.sample_id || ""), String(row?.response_text || "")])
+    );
+    S.rows.forEach(row => {
+      const responseText = textBySample.get(String(row.sample_id || ""));
+      if (responseText !== undefined) row.response_text = responseText;
+    });
+    S.responses.forEach(row => {
+      const responseText = textBySample.get(String(row.sample_id || ""));
+      if (responseText !== undefined) row.response_text = responseText;
+    });
+    S.responseDetailsLoaded = true;
+    if (currentBenchmarkConfig().showDomainInsights) renderDomainInsights();
+    renderDifficultyBreakdown(S.filteredRows.length ? S.filteredRows : S.rows);
+    renderCompare(S.filteredRows.length ? S.filteredRows : S.rows);
+  })().finally(() => {
+    S.responseDetailsPromise = null;
+  });
+  return S.responseDetailsPromise;
+}
+
+function scheduleResponseDetailsLoad() {
+  if (!S.responseDetailsUrl || S.responseDetailsLoaded) return;
+  const targets = ["techniqueSection", "response-viewer"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const start = () => { void loadResponseDetails(); };
+  targets.forEach(target => {
+    target.addEventListener("pointerdown", start, { once: true });
+    target.addEventListener("focusin", start, { once: true });
+  });
+  if (typeof IntersectionObserver === "function" && targets.length) {
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      observer.disconnect();
+      start();
+    }, { rootMargin: "600px 0px" });
+    targets.forEach(target => observer.observe(target));
+  }
 }
 
 // ====== DATA LOADING ======
@@ -2412,7 +2499,9 @@ async function loadData() {
   el.textContent = `Loading ${cfg.loadingLabel} data...`;
   try {
     const embedded = loadEmbeddedDataset(cfg);
-    const questText = embedded?.questions || await loadQuestions(cfg.questionsPaths);
+    const questionsPromise = embedded?.questions
+      ? Promise.resolve(embedded.questions)
+      : loadQuestions(cfg.questionsPaths);
     const failures = [];
     let loaded = embedded;
 
@@ -2429,6 +2518,7 @@ async function loadData() {
     if (!loaded) {
       throw new Error(`No dataset candidate loaded (${failures.join(" | ")})`);
     }
+    const questText = await questionsPromise;
 
     // Filter out chatgpt-4o models (not properly tested)
     const chatgpt4oFilter = r => !/chatgpt.4o/i.test(r.model || "");
@@ -2437,6 +2527,9 @@ async function loadData() {
 
     S.responses = loaded.responses;
     S.aggregateRows = loaded.aggregateRows;
+    S.responseDetailsUrl = String(loaded.responseDetailsUrl || "");
+    S.responseDetailsLoaded = !S.responseDetailsUrl;
+    S.responseDetailsPromise = null;
     S.collectionStats = loaded.stats;
     S.panelSummary = loaded.panel || {};
     S.aggregateSummary = loaded.summary || {};
@@ -2464,6 +2557,8 @@ async function loadData() {
           difficulty_label: q.difficulty_label || "",
           technique: q.technique || t.technique || "",
           domain: q.domain || "",
+          question: q.question || "",
+          nonsensical_element: q.nonsensical_element || "",
         });
       });
     });
@@ -2491,8 +2586,9 @@ async function loadData() {
         response_refusal: responseRefusal,
         response_native_finish_reason: agg.response_native_finish_reason || resp.response_native_finish_reason || "",
         response_raw: resp.response_raw || null,
-        question: agg.question || resp.question || "",
-        nonsensical_element: agg.nonsensical_element || resp.nonsensical_element || "",
+        question: agg.question || resp.question || qm.question || "",
+        nonsensical_element: agg.nonsensical_element || resp.nonsensical_element || qm.nonsensical_element || "",
+        domain: agg.domain || resp.domain || qm.domain || "",
         response_usage: resp.response_usage || null,
         response_latency_ms: resp.response_latency_ms || null,
         domain_group: qm.domain_group || "",
@@ -2508,7 +2604,11 @@ async function loadData() {
       if (!modelUsage.has(mk)) modelUsage.set(mk, { total:0, prompt:0, completion:0, reasoning:0, cost:0, count:0, latency:0 });
       const u = modelUsage.get(mk);
       const usage = r.response_usage;
-      if (usage) {
+      const hasUsage = !!usage
+        || responseTotalTokens(r) > 0
+        || responseCostUsd(r) > 0
+        || Number(r.response_latency_ms || 0) > 0;
+      if (hasUsage) {
         u.prompt += responsePromptTokens(r);
         u.completion += responseCompletionTokens(r);
         u.total += responseTotalTokens(r);
@@ -2555,6 +2655,7 @@ async function loadData() {
     refreshFilters();
     renderAll();
     randomGreenRed();
+    scheduleResponseDetailsLoad();
   } catch(e) {
     el.textContent = `Error loading data: ${e.message}`;
     console.error(e);
@@ -2658,11 +2759,19 @@ function renderDomainBar() {
 
 // ====== JUDGE FILTERS ======
 function refreshJudgeLabels() {
+  const panelJudges = Array.isArray(S.panelSummary?.judge_models)
+    ? S.panelSummary.judge_models
+    : [];
   [1,2,3].forEach(i => {
     const toggle=document.getElementById(`judge${i}Toggle`);
     const label=document.getElementById(`judge${i}Label`);
-    const model = S.rows.find(r=>r[`judge_${i}_model`]);
-    if(model) { label.textContent=model[`judge_${i}_model`].split("/").pop(); toggle.disabled=false; }
+    const rowWithModel = S.rows.find(r=>r[`judge_${i}_model`]);
+    const judgeModel = String(panelJudges[i-1] || rowWithModel?.[`judge_${i}_model`] || "").trim();
+    const hasScores = S.rows.some(r => r[`judge_${i}_score`] !== undefined && r[`judge_${i}_score`] !== null);
+    if(hasScores) {
+      label.textContent = judgeModel ? judgeModel.split("/").pop() : `Judge ${i}`;
+      toggle.disabled=false;
+    }
     else { label.textContent="N/A"; toggle.checked=false; toggle.disabled=true; }
   });
   syncJudges();

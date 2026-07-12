@@ -77,6 +77,7 @@ x-ai/grok-4.1-fast,x-ai,collector_frontier_other,frontier_other
 x-ai/grok-4.20-beta,x-ai,collector_frontier_other,frontier_other
 x-ai/grok-4.20-multi-agent-beta,x-ai,collector_frontier_other,frontier_other
 x-ai/grok-4.3,x-ai,collector_frontier_other,frontier_other
+x-ai/grok-4.5,x-ai,collector_frontier_other,frontier_other
 xiaomi/mimo-v2-flash,xiaomi,collector_apac_longtail,apac_longtail
 z-ai/glm-4.5,z-ai,collector_apac_longtail,apac_longtail
 z-ai/glm-5,z-ai,collector_apac_longtail,apac_longtail

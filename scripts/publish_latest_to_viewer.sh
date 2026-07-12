@@ -149,6 +149,7 @@ python3 - <<'PY' \
   "${MODEL_PARAMS_CANONICAL}" \
   "${MODEL_PARAMS_HEADERS}"
 import datetime as dt
+import gzip
 import importlib.util
 import json
 import pathlib
@@ -174,6 +175,8 @@ collection_stats_out = output_dir / "collection_stats.json"
 panel_summary_out = output_dir / "panel_summary.json"
 aggregate_summary_out = output_dir / "aggregate_summary.json"
 recent_additions_out = output_dir / "recent_additions.json"
+viewer_rows_out = output_dir / "viewer_rows.json.gz"
+viewer_details_out = output_dir / "viewer_details.json.gz"
 model_launch_out = output_dir / "model_launch_dates.csv"
 model_params_out = output_dir / "model_params.csv"
 recent_window_days = 7
@@ -328,6 +331,10 @@ def write_jsonl(path: pathlib.Path, rows):
         encoding="utf-8",
     )
 
+def write_gzip_json(path: pathlib.Path, payload):
+    raw = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    path.write_bytes(gzip.compress(raw, compresslevel=9, mtime=0))
+
 def slim_published_response_rows(rows):
     slimmed = []
     for row in rows:
@@ -352,6 +359,10 @@ def slim_published_response_rows(rows):
             "response_char_count",
         ):
             slim.pop(key, None)
+        # Question text and annotations are canonical in questions.json / questions.v2.json
+        # and are rehydrated by the viewer via question_id.
+        for key in ("question", "nonsensical_element", "domain"):
+            slim.pop(key, None)
         for key in (
             "warnings",
             "error_kind",
@@ -367,8 +378,9 @@ def slim_published_response_rows(rows):
 
 def slim_published_aggregate_rows(rows):
     # Per-row grade IDs are internal provenance links. Judge model names are
-    # canonical at panel scope in panel_summary.json, while scores and
-    # justifications remain on every published aggregate row.
+    # canonical at panel scope in panel_summary.json. Response text is canonical
+    # in responses.jsonl, question annotations are canonical in the question
+    # files, and scores plus justifications remain on every aggregate row.
     drop_keys = {
         "judge_1_grade_id",
         "judge_2_grade_id",
@@ -376,6 +388,10 @@ def slim_published_aggregate_rows(rows):
         "judge_1_model",
         "judge_2_model",
         "judge_3_model",
+        "response_text",
+        "question",
+        "nonsensical_element",
+        "domain",
     }
     slimmed = []
     for row in rows:
@@ -396,6 +412,58 @@ def slim_published_aggregate_rows(rows):
             slim.pop("row_identity_mismatch", None)
         slimmed.append(slim)
     return slimmed
+
+def build_viewer_assets(response_rows, aggregate_rows):
+    responses_by_sample = {
+        str(row.get("sample_id", "")).strip(): row
+        for row in response_rows
+        if str(row.get("sample_id", "")).strip()
+    }
+    summary_drop_keys = {
+        "response_text",
+        "question",
+        "domain",
+        "nonsensical_element",
+        "judge_1_justification",
+        "judge_2_justification",
+        "judge_3_justification",
+        "judge_valid_scores",
+    }
+    response_metric_keys = (
+        "response_prompt_tokens",
+        "response_completion_tokens",
+        "response_total_tokens",
+        "response_reasoning_tokens",
+        "response_cached_prompt_tokens",
+        "response_cache_write_tokens",
+        "response_cost_usd",
+        "response_latency_ms",
+        "response_tokens_per_second",
+        "started_at_utc",
+        "finished_at_utc",
+    )
+    viewer_rows = []
+    viewer_details = []
+    for aggregate_row in aggregate_rows:
+        sample_id = str(aggregate_row.get("sample_id", "")).strip()
+        response_row = responses_by_sample.get(sample_id, {})
+        summary_row = {
+            key: value
+            for key, value in aggregate_row.items()
+            if key not in summary_drop_keys
+        }
+        for key in response_metric_keys:
+            if key in response_row:
+                summary_row[key] = response_row[key]
+        viewer_rows.append(summary_row)
+        viewer_details.append(
+            {
+                "sample_id": sample_id,
+                "response_text": aggregate_row.get("response_text")
+                or response_row.get("response_text", ""),
+            }
+        )
+    return viewer_rows, viewer_details
 
 def merge_by_sample_id(existing_rows, incoming_rows):
     merged = []
@@ -613,6 +681,10 @@ for row in merged_aggregate_rows:
 
 merged_responses = slim_published_response_rows(merged_responses)
 merged_aggregate_rows = slim_published_aggregate_rows(merged_aggregate_rows)
+viewer_rows, viewer_details = build_viewer_assets(
+    merged_responses,
+    merged_aggregate_rows,
+)
 existing_recent = load_stats_if_exists(recent_additions_out)
 for field in ("models",):
     values = existing_recent.get(field)
@@ -773,6 +845,8 @@ write_json(panel_summary_out, panel_summary)
 write_json(aggregate_summary_out, aggregate_summary)
 write_jsonl(aggregate_out, merged_aggregate_rows)
 write_json(recent_additions_out, recent_additions)
+write_gzip_json(viewer_rows_out, viewer_rows)
+write_gzip_json(viewer_details_out, viewer_details)
 
 if model_launch_canonical.exists():
     model_launch_out.write_text(model_launch_canonical.read_text(encoding="utf-8"), encoding="utf-8")
@@ -1059,10 +1133,14 @@ manifest = {
         "aggregate_summary_file": f"{output_dir}/aggregate_summary.json",
         "aggregate_rows_file": f"{output_dir}/aggregate.jsonl",
         "recent_additions_file": f"{output_dir}/recent_additions.json",
+        "viewer_rows_file": f"{output_dir}/viewer_rows.json.gz",
+        "viewer_details_file": f"{output_dir}/viewer_details.json.gz",
     },
     "counts": {
         "responses_rows": responses_rows,
         "aggregate_rows": aggregate_rows,
+        "viewer_rows_bytes": (output_dir / "viewer_rows.json.gz").stat().st_size,
+        "viewer_details_bytes": (output_dir / "viewer_details.json.gz").stat().st_size,
     },
     "coverage": {
         "responses": jsonl_coverage(output_dir / "responses.jsonl"),
