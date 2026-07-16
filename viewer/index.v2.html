@@ -1875,6 +1875,7 @@ const MODEL_DISPLAY_ALIAS = Object.freeze({
   "mistral-small-2603": "Mistral Small 4",
   "grok-4.3": "Grok 4.3",
   "grok-4.5": "Grok 4.5",
+  "kimi-k3": "Kimi K3",
   "grok-4.20": "Grok 4.20",
   "grok-4.20-beta": "Grok 4.20",
   "grok-4.20-multi-agent": "Grok 4.20 Multi-Agent",
@@ -1947,6 +1948,7 @@ const PREFERRED_LAUNCH_CHART_BASE_MODELS = Object.freeze([
   "google/gemini-3.1-pro-preview",
 ]);
 const PREFERRED_REASONING_SCATTER_BASE_MODELS = Object.freeze([
+  "moonshotai/kimi-k3",
   "openai/gpt-5.6-sol",
   "openai/gpt-5.6-terra",
   "openai/gpt-5.6-luna",
@@ -3791,7 +3793,7 @@ function renderAllModelsScatter(filtered) {
 
   // Dots + selective standout labels
   points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(p.greenRate); });
-  primeDefaultScatterSelections("allModelsScatter", points, ["z-ai/glm-5.2"]);
+  primeDefaultScatterSelections("allModelsScatter", points, ["z-ai/glm-5.2", "moonshotai/kimi-k3"]);
   annotateScatterPoints("allModelsScatter", points);
   const dots = points.map(p => renderScatterCircle(p, "allModelsScatter", { strokeOpacity: 0.2 })).join("");
   const labelCandidates = mergePinnedScatterLabelPoints(points, selectReleaseScatterLabelPoints(points, 10));

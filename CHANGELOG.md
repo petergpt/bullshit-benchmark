@@ -2,6 +2,20 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.25] - 2026-07-16
+
+### Added
+- Added published `v1` and `v2` benchmark results for `moonshotai/kimi-k3@reasoning=xhigh`, the endpoint's required reasoning mode.
+- Added OpenRouter launch-date metadata and closed/not-disclosed model metadata for Kimi K3.
+
+### Changed
+- Appended 55 v1 and 100 v2 response rows plus their three-judge aggregates to the published datasets.
+- Folded `moonshotai/kimi-k3` into `config.json` and `config.v2.json` with strict Moonshot AI provider routing, and removed it from the candidate catch-up configs.
+- Added the Kimi K3 viewer display label and pinned it in the release-date and reasoning scatter defaults.
+- Refreshed the published leaderboards, metadata exports, recent additions, data-driven charts, and response explorer.
+- Kimi K3 ranked 33rd in v1 with an average score of `1.2000`; it ranked 15th in v2 with an average score of `1.6600`, a `73%` clear-detection rate, and no refusals or errors.
+- Updated the public v2 leaderboard to include `181` model/reasoning rows.
+
 ## [2.0.24] - 2026-07-12
 
 ### Added

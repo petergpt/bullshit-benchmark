@@ -75,6 +75,7 @@
       "qwen/qwen3-max-thinking",
       "moonshotai/kimi-k2.5",
       "moonshotai/kimi-k2.6",
+      "moonshotai/kimi-k3",
       "z-ai/glm-5.1",
       "z-ai/glm-5.2",
       "qwen/qwen3.6-plus",
@@ -350,6 +351,9 @@
         "none",
         "xhigh"
       ],
+      "moonshotai/kimi-k3": [
+        "xhigh"
+      ],
       "z-ai/glm-5.1": [
         "none",
         "xhigh"
@@ -378,6 +382,15 @@
     "checkpoint_fsync_every": 10,
     "model_request_overrides": {
       "moonshotai/kimi-k2.6": {
+        "provider": {
+          "order": [
+            "Moonshot AI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "moonshotai/kimi-k3": {
         "provider": {
           "order": [
             "Moonshot AI"

@@ -1,9 +1,10 @@
 {
-  "generated_at_utc": "2026-07-12T09:34:35Z",
+  "generated_at_utc": "2026-07-16T18:05:22Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-07-05T09:34:35Z",
+  "window_start_utc": "2026-07-09T18:05:22Z",
   "models": [
+    "moonshotai/kimi-k3@reasoning=xhigh",
     "openai/gpt-5.6-luna@reasoning=low",
     "openai/gpt-5.6-luna@reasoning=max",
     "openai/gpt-5.6-sol@reasoning=low",
@@ -14,13 +15,14 @@
     "x-ai/grok-4.5@reasoning=low"
   ],
   "model_bases": [
+    "moonshotai/kimi-k3",
     "openai/gpt-5.6-luna",
     "openai/gpt-5.6-sol",
     "openai/gpt-5.6-terra",
     "x-ai/grok-4.5"
   ],
-  "model_count": 8,
-  "model_base_count": 4,
+  "model_count": 9,
+  "model_base_count": 5,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T18:06:12Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-03-01T01:51:28Z",
@@ -101,6 +103,7 @@
     "moonshotai/kimi-k2.6@reasoning=none": "2026-04-21T11:05:08Z",
     "moonshotai/kimi-k2.6@reasoning=xhigh": "2026-04-21T11:05:08Z",
     "moonshotai/kimi-k2@reasoning=default": "2026-03-18T18:06:12Z",
+    "moonshotai/kimi-k3@reasoning=xhigh": "2026-07-16T17:07:03Z",
     "nvidia/nemotron-3-nano-30b-a3b:free@reasoning=none": "2026-03-18T18:06:12Z",
     "nvidia/nemotron-3-nano-30b-a3b:free@reasoning=xhigh": "2026-03-18T18:06:12Z",
     "nvidia/nemotron-3-super-120b-a12b:free@reasoning=none": "2026-03-18T18:06:12Z",
@@ -253,6 +256,7 @@
     "moonshotai/kimi-k2": "2026-03-18T18:06:12Z",
     "moonshotai/kimi-k2.5": "2026-03-01T01:51:28Z",
     "moonshotai/kimi-k2.6": "2026-04-21T11:05:08Z",
+    "moonshotai/kimi-k3": "2026-07-16T17:07:03Z",
     "nvidia/nemotron-3-nano-30b-a3b:free": "2026-03-18T18:06:12Z",
     "nvidia/nemotron-3-super-120b-a12b": "2026-04-07T16:18:34Z",
     "nvidia/nemotron-3-super-120b-a12b:free": "2026-03-18T18:06:12Z",

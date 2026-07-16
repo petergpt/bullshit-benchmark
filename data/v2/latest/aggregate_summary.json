@@ -317,29 +317,29 @@
     {
       "model": "anthropic/claude-fable-5@reasoning=xhigh",
       "count": 100,
-      "scored_count": 67,
-      "answered_count": 67,
+      "scored_count": 65,
+      "answered_count": 65,
       "nonsense_count": 100,
       "control_count": 0,
-      "refusal_count": 33,
+      "refusal_count": 35,
       "control_refusal_count": 0,
       "score_0": 3,
       "score_1": 8,
-      "score_2": 56,
+      "score_2": 54,
       "score_3": 0,
-      "avg_score": 1.7562,
-      "detection_rate_score_2": 0.56,
+      "avg_score": 1.7487,
+      "detection_rate_score_2": 0.54,
       "full_engagement_rate_score_0": 0.03,
-      "refusal_rate": 0.33,
+      "refusal_rate": 0.35,
       "control_correct_rate_score_3": null,
       "error_count": 0,
       "technique_breakdown": {
         "authoritative_framing": 1.8333,
         "confident_extrapolation": 2.0,
         "cross_domain_stitching": 1.0,
-        "fabricated_authority": 1.9524,
+        "fabricated_authority": 1.9445,
         "false_granularity": 1.8889,
-        "misapplied_mechanism": 1.5333,
+        "misapplied_mechanism": 1.4815,
         "nested_nonsense": 1.7333,
         "plausible_nonexistent_framework": 1.7,
         "reified_metaphor": 2.0,
@@ -349,7 +349,7 @@
         "wrong_unit_of_analysis": 2.0
       },
       "run_average_scores": {
-        "1": 1.7562
+        "1": 1.7487
       },
       "run_average_stddev": null
     },
@@ -549,41 +549,41 @@
       "run_average_stddev": null
     },
     {
-      "model": "anthropic/claude-fable-5@reasoning=low",
+      "model": "moonshotai/kimi-k3@reasoning=xhigh",
       "count": 100,
-      "scored_count": 64,
-      "answered_count": 64,
+      "scored_count": 100,
+      "answered_count": 100,
       "nonsense_count": 100,
       "control_count": 0,
-      "refusal_count": 36,
+      "refusal_count": 0,
       "control_refusal_count": 0,
-      "score_0": 4,
-      "score_1": 15,
-      "score_2": 45,
+      "score_0": 6,
+      "score_1": 21,
+      "score_2": 73,
       "score_3": 0,
-      "avg_score": 1.6406,
-      "detection_rate_score_2": 0.45,
-      "full_engagement_rate_score_0": 0.04,
-      "refusal_rate": 0.36,
+      "avg_score": 1.66,
+      "detection_rate_score_2": 0.73,
+      "full_engagement_rate_score_0": 0.06,
+      "refusal_rate": 0.0,
       "control_correct_rate_score_3": null,
       "error_count": 0,
       "technique_breakdown": {
-        "authoritative_framing": 1.8571,
+        "authoritative_framing": 1.6667,
         "confident_extrapolation": 2.0,
-        "cross_domain_stitching": 0.9167,
-        "fabricated_authority": 1.8889,
-        "false_granularity": 1.75,
-        "misapplied_mechanism": 1.1852,
-        "nested_nonsense": 1.6,
-        "plausible_nonexistent_framework": 1.7778,
-        "reified_metaphor": 2.0,
-        "specificity_trap": 1.2,
-        "sunk_cost_framing": 2.0,
-        "temporal_category_error": 1.8333,
-        "wrong_unit_of_analysis": 2.0
+        "cross_domain_stitching": 1.4,
+        "fabricated_authority": 1.9091,
+        "false_granularity": 1.7222,
+        "misapplied_mechanism": 1.4359,
+        "nested_nonsense": 1.4762,
+        "plausible_nonexistent_framework": 1.7708,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 1.5,
+        "sunk_cost_framing": 1.5238,
+        "temporal_category_error": 1.6666,
+        "wrong_unit_of_analysis": 1.8
       },
       "run_average_scores": {
-        "1": 1.6406
+        "1": 1.66
       },
       "run_average_stddev": null
     },
@@ -623,6 +623,45 @@
       },
       "run_average_scores": {
         "1": 1.64
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "anthropic/claude-fable-5@reasoning=low",
+      "count": 100,
+      "scored_count": 63,
+      "answered_count": 63,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 37,
+      "control_refusal_count": 0,
+      "score_0": 4,
+      "score_1": 15,
+      "score_2": 44,
+      "score_3": 0,
+      "avg_score": 1.6349,
+      "detection_rate_score_2": 0.44,
+      "full_engagement_rate_score_0": 0.04,
+      "refusal_rate": 0.37,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.8333,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 0.9167,
+        "fabricated_authority": 1.8889,
+        "false_granularity": 1.75,
+        "misapplied_mechanism": 1.1852,
+        "nested_nonsense": 1.6,
+        "plausible_nonexistent_framework": 1.7778,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 1.2,
+        "sunk_cost_framing": 2.0,
+        "temporal_category_error": 1.8333,
+        "wrong_unit_of_analysis": 2.0
+      },
+      "run_average_scores": {
+        "1": 1.6349
       },
       "run_average_stddev": null
     },
@@ -7028,30 +7067,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 17929,
-        "agreements": 14482,
-        "agreement_rate": 0.807742
+        "compared_rows": 18026,
+        "agreements": 14560,
+        "agreement_rate": 0.807722
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 17929,
-        "agreements": 14249,
-        "agreement_rate": 0.794746
+        "compared_rows": 18026,
+        "agreements": 14321,
+        "agreement_rate": 0.794464
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 17929,
-        "agreements": 13957,
-        "agreement_rate": 0.778459
+        "compared_rows": 18026,
+        "agreements": 14037,
+        "agreement_rate": 0.778709
       }
     ],
-    "average_pairwise_agreement": 0.793649,
-    "krippendorff_alpha_ordinal": 0.789559
+    "average_pairwise_agreement": 0.793632,
+    "krippendorff_alpha_ordinal": 0.789935
   },
-  "total_records": 18000,
+  "total_records": 18100,
   "total_error_records": 0,
-  "total_refusal_records": 71,
-  "total_scored_records": 17929
+  "total_refusal_records": 74,
+  "total_scored_records": 18026
 }
