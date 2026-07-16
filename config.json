@@ -239,7 +239,7 @@
       "qwen/qwen3-max-thinking": ["none", "high"],
       "qwen/qwen3.7-max": ["none", "xhigh"],
       "moonshotai/kimi-k2.5": ["none", "high"],
-      "moonshotai/kimi-k3": ["xhigh"],
+      "moonshotai/kimi-k3": ["minimal", "xhigh"],
       "minimax/minimax-m2.5": ["low", "high"],
       "minimax/minimax-m2.7": ["low", "high"],
       "minimax/minimax-m3": ["none", "xhigh"],

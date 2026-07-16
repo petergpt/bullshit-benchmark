@@ -10,10 +10,10 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 ## Latest Changelog Entry (2026-07-16)
 
-- Added Kimi K3 benchmark results to the published `v1` and `v2` tracks at its required `xhigh` reasoning level.
-- Published `moonshotai/kimi-k3@reasoning=xhigh`.
-- Kimi K3 scored `1.2000` in v1 and `1.6600` in v2, where it clearly detected nonsense on `73%` of prompts with no refusals.
-- Appended `155` response rows and their three-judge aggregate rows across v1 and v2, with no collection, grading, or refusal errors.
+- Added Kimi K3 benchmark results to the published `v1` and `v2` tracks at its verified lowest and highest reasoning levels, `minimal` and `xhigh`.
+- Published `moonshotai/kimi-k3@reasoning=minimal` and `moonshotai/kimi-k3@reasoning=xhigh`.
+- In v1, `minimal` scored `1.3152` versus `1.2000` for `xhigh`; in v2, `xhigh` narrowly led at `1.6600` versus `1.6367` for `minimal`. Neither level produced refusals.
+- Appended `310` response rows and their three-judge aggregate rows across v1 and v2, with no collection, grading, or refusal errors.
 - Added July 16, 2026 OpenRouter launch metadata, closed/not-disclosed model metadata, durable config coverage, and the Kimi K3 viewer label.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
@@ -37,37 +37,37 @@ The screenshots below follow the same flow as `viewer/index.v2.html`, starting w
 
 Primary leaderboard-style view showing each model's green/amber/red split. The screenshot uses the viewer's 30-day new-model filter so recent additions remain legible.
 
-![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260716-kimik3)
+![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260716-kimik3-minimal)
 
 ### 2. Domain Landscape
 
 Detection mix by domain to compare overall performance vs each domain at a glance.
 
-![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260716-kimik3)
+![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260716-kimik3-minimal)
 
 ### 3. Detection Rate Over Time
 
 Release-date trend view focused on Anthropic, OpenAI, and Google.
 
-![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260716-kimik3)
+![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260716-kimik3-minimal)
 
 ### 4. Do Newer Models Perform Better?
 
 All-model scatter by release date vs. green rate.
 
-![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260716-kimik3)
+![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260716-kimik3-minimal)
 
 ### 5. Does Thinking Harder Help?
 
 Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
 
-![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260716-kimik3)
+![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260716-kimik3-minimal)
 
 ### 6. Model Size and Weights
 
 Total and active parameter scatter views for models with public size metadata.
 
-![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260716-kimik3)
+![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260716-kimik3-minimal)
 
 ## Benchmark Scope (v2)
 
@@ -75,7 +75,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `181` model/reasoning rows.
+- Published v2 leaderboard currently includes `182` model/reasoning rows.
 
 ## What This Measures
 

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-16T18:05:26Z",
+  "generated_at_utc": "2026-07-16T21:22:37Z",
   "sources": {
     "responses_file": "data/v2/latest/responses.jsonl",
     "collection_stats_file": "data/v2/latest/collection_stats.json",
@@ -11,23 +11,23 @@
     "viewer_details_file": "data/v2/latest/viewer_details.json.gz"
   },
   "counts": {
-    "responses_rows": 18100,
-    "aggregate_rows": 18100,
-    "viewer_rows_bytes": 1053139,
-    "viewer_details_bytes": 23933287
+    "responses_rows": 18200,
+    "aggregate_rows": 18200,
+    "viewer_rows_bytes": 1058939,
+    "viewer_details_bytes": 24029986
   },
   "coverage": {
     "responses": {
-      "rows": 18100,
-      "rows_with_model_reasoning_level": 18100,
-      "rows_with_response_reasoning_effort": 18100,
-      "rows_with_response_usage": 18100,
-      "rows_with_response_reasoning_tokens": 18100
+      "rows": 18200,
+      "rows_with_model_reasoning_level": 18200,
+      "rows_with_response_reasoning_effort": 18200,
+      "rows_with_response_usage": 18200,
+      "rows_with_response_reasoning_tokens": 18200
     },
     "aggregate": {
-      "rows": 18100,
-      "rows_with_model_reasoning_level": 18100,
-      "rows_with_response_reasoning_effort": 18100,
+      "rows": 18200,
+      "rows_with_model_reasoning_level": 18200,
+      "rows_with_response_reasoning_effort": 18200,
       "rows_with_response_usage": 0,
       "rows_with_response_reasoning_tokens": 0
     }
