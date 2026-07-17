@@ -1311,12 +1311,12 @@
       </div>
     </header>
 
-    <!-- Sticky Domain Scope -->
+    <!-- Sticky scope and filter bar -->
     <section class="domain-bar" id="domainBar">
       <div class="domain-bar-top">
-        <span class="domain-bar-label">Domain Scope</span>
+        <span class="domain-bar-label" id="domainBarLabel">Domain Scope</span>
         <div class="domain-bar-pills" id="domainBarPills"></div>
-        <span class="domain-bar-sep"></span>
+        <span class="domain-bar-sep" id="domainBarSep"></span>
         <span class="filter-count" id="domainBarSummary">Overall</span>
         <button type="button" id="domainBarFilterToggle" class="domain-bar-filter-toggle alt" aria-controls="filtersCollapsible" aria-expanded="false">Show Filters</button>
         <button type="button" id="domainBarPinToggle" class="domain-bar-pin-toggle" aria-pressed="false" aria-label="Pin Domain Scope banner to top" title="Pin Domain Scope banner to top">
@@ -1332,6 +1332,12 @@
           <div class="filters-grid">
             <label><span>Search</span><input id="filterQuery" type="text" placeholder="Model, question id, prompt..."></label>
             <label><span>Org</span><select id="filterOrg"></select></label>
+            <label><span>Model access</span><select id="filterModelAccess">
+              <option value="all">All models</option>
+              <option value="open">Open-source / open-weight</option>
+              <option value="proprietary">Proprietary</option>
+              <option value="pending">Pending / unknown</option>
+            </select></label>
             <label><span>Reasoning</span><select id="filterReasoning"></select></label>
             <label><span>Technique</span><select id="filterTechnique"></select></label>
             <select id="filterDifficulty" style="display:none;" aria-hidden="true" tabindex="-1"><option value="all">All</option></select>
@@ -2120,9 +2126,15 @@ function applyBenchmarkPresentation() {
     el.textContent = suffix ? `${headingPrefix}: ${suffix}` : headingPrefix;
   });
   const domainBar = document.getElementById("domainBar");
+  const domainBarLabel = document.getElementById("domainBarLabel");
+  const domainBarPills = document.getElementById("domainBarPills");
+  const domainBarSep = document.getElementById("domainBarSep");
   const domainSection = document.getElementById("domainHeatmapSection");
   const domainInsightsSection = document.getElementById("domainInsightsSection");
-  if (domainBar) domainBar.classList.toggle("hidden-block", !cfg.showDomainGroup);
+  if (domainBar) domainBar.classList.remove("hidden-block");
+  if (domainBarLabel) domainBarLabel.textContent = cfg.showDomainGroup ? "Domain Scope" : "Chart Filters";
+  if (domainBarPills) domainBarPills.classList.toggle("hidden-block", !cfg.showDomainGroup);
+  if (domainBarSep) domainBarSep.classList.toggle("hidden-block", !cfg.showDomainGroup);
   if (domainSection) domainSection.classList.toggle("hidden-block", !cfg.showDomainHeatmap);
   if (domainInsightsSection) domainInsightsSection.classList.toggle("hidden-block", !cfg.showDomainInsights);
   syncHeroPinState();
@@ -2158,7 +2170,8 @@ function syncDomainPinState() {
   if (toggle) {
     toggle.classList.toggle("is-active", !!S.domainPinned);
     toggle.setAttribute("aria-pressed", S.domainPinned ? "true" : "false");
-    const nextLabel = S.domainPinned ? "Unpin Domain Scope banner from top" : "Pin Domain Scope banner to top";
+    const bannerLabel = currentBenchmarkConfig().showDomainGroup ? "Domain Scope" : "Chart Filters";
+    const nextLabel = S.domainPinned ? `Unpin ${bannerLabel} banner from top` : `Pin ${bannerLabel} banner to top`;
     toggle.setAttribute("title", nextLabel);
     toggle.setAttribute("aria-label", nextLabel);
   }
@@ -2698,8 +2711,16 @@ function refreshFilters() {
   if (cfg.showDomainGroup) renderDomainBar();
 }
 
+function modelAccessGroup(row) {
+  const status = String(paramsMetaForRow(row)?.open_model_status || "").trim().toLowerCase();
+  if (status === "open_source" || status === "open_weights") return "open";
+  if (status === "closed") return "proprietary";
+  return "pending";
+}
+
 function applyFilters(rows, opts={}) {
   const org=document.getElementById("filterOrg").value;
+  const modelAccess=document.getElementById("filterModelAccess").value;
   const reasoning=document.getElementById("filterReasoning").value;
   const technique=document.getElementById("filterTechnique").value;
   const domainGroup=document.getElementById("filterDomainGroup").value;
@@ -2709,6 +2730,7 @@ function applyFilters(rows, opts={}) {
 
   const scoped = rows.filter(r => {
     if(org!=="all"&&modelOrg(r)!==org) return false;
+    if(modelAccess!=="all"&&modelAccessGroup(r)!==modelAccess) return false;
     if(reasoning!=="all"&&normReasoning(r.model_reasoning_level)!==reasoning) return false;
     if(technique!=="all"&&(r.technique||"")!==technique) return false;
     if(!opts.ignoreDomainGroup && domainGroup!=="all"&&(r.domain_group||"")!==domainGroup) return false;
@@ -4699,10 +4721,20 @@ function renderAll() {
   const modelChartRows = modelChartRowsForFocus(recentModelRows);
   S.filteredRows = filtered;
   if (cfg.showDomainGroup) renderDomainBar();
+  else {
+    const summary = document.getElementById("domainBarSummary");
+    const accessSelect = document.getElementById("filterModelAccess");
+    const accessLabel = accessSelect?.options[accessSelect.selectedIndex]?.text || "All models";
+    if (summary) summary.textContent = `${accessLabel} · ${fmtNum(filtered.length)} rows`;
+  }
   const el = document.getElementById("dataState");
   const variantNote = S.topVariantsOnly ? " · top variants only" : "";
+  const accessSelect = document.getElementById("filterModelAccess");
+  const accessNote = accessSelect?.value && accessSelect.value !== "all"
+    ? ` · ${accessSelect.options[accessSelect.selectedIndex]?.text || "access filtered"}`
+    : "";
   const refusalModeNote = ratesIncludeRefusals() ? "rates use all attempts" : "rates exclude refusal rows";
-  el.textContent = `Showing ${filtered.length} of ${S.rows.length} rows${variantNote} · ${refusalModeNote}.`;
+  el.textContent = `Showing ${filtered.length} of ${S.rows.length} rows${accessNote}${variantNote} · ${refusalModeNote}.`;
   refreshTopVariantToggle();
   renderKpis(filtered);
   renderOrgGuide(recentModelRows);
@@ -4800,7 +4832,7 @@ function bindEvents() {
   window.addEventListener("resize", updateHeroPinOffset);
 
   // Filters
-  ["filterOrg","filterReasoning","filterTechnique","filterDomainGroup","filterDifficulty","filterQuery","compareQuestion","compareModelA","compareModelB","compareViewMode"].forEach(id=>{
+  ["filterOrg","filterModelAccess","filterReasoning","filterTechnique","filterDomainGroup","filterDifficulty","filterQuery","compareQuestion","compareModelA","compareModelB","compareViewMode"].forEach(id=>{
     const el=document.getElementById(id);
     el.addEventListener("change", renderAll);
     if(el.tagName==="INPUT") el.addEventListener("input", renderAll);
@@ -4931,6 +4963,7 @@ function bindEvents() {
   });
   document.getElementById("clearFiltersBtn").addEventListener("click",()=>{
     document.getElementById("filterOrg").value="all";
+    document.getElementById("filterModelAccess").value="all";
     document.getElementById("filterReasoning").value="all";
     document.getElementById("filterTechnique").value="all";
     document.getElementById("filterDomainGroup").value="all";
