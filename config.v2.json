@@ -21,7 +21,9 @@
       "anthropic/claude-opus-4",
       "google/gemini-3-pro-preview",
       "google/gemini-3.1-pro-preview",
+      "google/gemini-3.6-flash",
       "google/gemini-3.5-flash",
+      "google/gemini-3.5-flash-lite",
       "google/gemini-3.1-flash-lite-preview",
       "google/gemini-3-flash-preview",
       "google/gemini-2.5-flash",
@@ -80,6 +82,7 @@
       "z-ai/glm-5.2",
       "qwen/qwen3.6-plus",
       "qwen/qwen3.7-max",
+      "poolside/laguna-s-2.1",
       "minimax/minimax-m2.5",
       "minimax/minimax-m2.7",
       "minimax/minimax-m3",
@@ -190,7 +193,15 @@
         "low",
         "high"
       ],
+      "google/gemini-3.6-flash": [
+        "minimal",
+        "xhigh"
+      ],
       "google/gemini-3.5-flash": [
+        "minimal",
+        "xhigh"
+      ],
+      "google/gemini-3.5-flash-lite": [
         "minimal",
         "xhigh"
       ],
@@ -370,6 +381,10 @@
       "qwen/qwen3.7-max": [
         "none",
         "xhigh"
+      ],
+      "poolside/laguna-s-2.1": [
+        "none",
+        "xhigh"
       ]
     },
     "shuffle_tasks": true,
@@ -431,6 +446,33 @@
         "provider": {
           "order": [
             "Alibaba"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "poolside/laguna-s-2.1": {
+        "provider": {
+          "order": [
+            "Poolside"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-3.6-flash": {
+        "provider": {
+          "order": [
+            "Google"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-3.5-flash-lite": {
+        "provider": {
+          "order": [
+            "Google"
           ],
           "allow_fallbacks": false,
           "require_parameters": true

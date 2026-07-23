@@ -2,6 +2,26 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.26] - 2026-07-23
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `poolside/laguna-s-2.1@reasoning=none`
+  - `poolside/laguna-s-2.1@reasoning=xhigh`
+  - `google/gemini-3.6-flash@reasoning=minimal`
+  - `google/gemini-3.6-flash@reasoning=xhigh`
+  - `google/gemini-3.5-flash-lite@reasoning=minimal`
+  - `google/gemini-3.5-flash-lite@reasoning=xhigh`
+- Added OpenRouter launch-date metadata for all three models, reported 118B-total/8B-active parameter metadata for Laguna S 2.1, and closed/not-disclosed parameter metadata for both Gemini models.
+
+### Changed
+- Appended 330 v1 and 600 v2 response rows plus their three-judge aggregates to the published datasets.
+- Folded all three model IDs and their verified reasoning variants into `config.json` and `config.v2.json` with strict Poolside or Google provider routing, while restoring the candidate catch-up configs to their prior pending-model set.
+- Added explicit viewer display labels and pinned the new models in the relevant release-date and reasoning scatter defaults.
+- Refreshed the published leaderboards, metadata exports, recent additions, data-driven charts, response explorer, and all six README chart screenshots.
+- Gemini 3.5 Flash Lite `minimal` led the new rows at rank 24 in v1 with an average score of `1.3333`, and rank 25 in v2 with `1.5133` and a `65%` clear-pushback rate. All six variants completed without refusals or errors.
+- Updated the public v2 leaderboard to include `188` model/reasoning rows.
+
 ## [2.0.25] - 2026-07-16
 
 ### Added

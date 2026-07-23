@@ -20,7 +20,9 @@
       "anthropic/claude-opus-4",
       "google/gemini-3-pro-preview",
       "google/gemini-3.1-pro-preview",
+      "google/gemini-3.6-flash",
       "google/gemini-3.5-flash",
+      "google/gemini-3.5-flash-lite",
       "google/gemini-3.1-flash-lite-preview",
       "google/gemini-3-flash-preview",
       "google/gemini-2.5-flash",
@@ -73,6 +75,7 @@
       "qwen/qwen3.5-397b-a17b",
       "qwen/qwen3-max-thinking",
       "qwen/qwen3.7-max",
+      "poolside/laguna-s-2.1",
       "moonshotai/kimi-k2.5",
       "moonshotai/kimi-k3",
       "minimax/minimax-m2.5",
@@ -105,6 +108,33 @@
         "provider": {
           "order": [
             "xAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "poolside/laguna-s-2.1": {
+        "provider": {
+          "order": [
+            "Poolside"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-3.6-flash": {
+        "provider": {
+          "order": [
+            "Google"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-3.5-flash-lite": {
+        "provider": {
+          "order": [
+            "Google"
           ],
           "allow_fallbacks": false,
           "require_parameters": true
@@ -207,7 +237,9 @@
       "anthropic/claude-haiku-4.5": ["none", "high"],
       "google/gemini-3-pro-preview": ["low", "high"],
       "google/gemini-3.1-pro-preview": ["low", "high"],
+      "google/gemini-3.6-flash": ["minimal", "xhigh"],
       "google/gemini-3.5-flash": ["minimal", "xhigh"],
+      "google/gemini-3.5-flash-lite": ["minimal", "xhigh"],
       "google/gemini-3-flash-preview": ["none", "high"],
       "x-ai/grok-4.1-fast": ["none", "high"],
       "x-ai/grok-4.3": ["minimal", "xhigh"],
@@ -238,6 +270,7 @@
       "qwen/qwen3.5-397b-a17b": ["none", "high"],
       "qwen/qwen3-max-thinking": ["none", "high"],
       "qwen/qwen3.7-max": ["none", "xhigh"],
+      "poolside/laguna-s-2.1": ["none", "xhigh"],
       "moonshotai/kimi-k2.5": ["none", "high"],
       "moonshotai/kimi-k3": ["minimal", "xhigh"],
       "minimax/minimax-m2.5": ["low", "high"],

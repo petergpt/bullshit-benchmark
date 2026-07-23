@@ -1,6 +1,6 @@
 {
   "panel_id": "panel_merged_all_models_20260226_173526",
-  "timestamp_utc": "2026-07-16T21:22:22.250770+00:00",
+  "timestamp_utc": "2026-07-23T17:23:30.104757+00:00",
   "primary_judges": [
     "anthropic/claude-sonnet-4.6",
     "openai/gpt-5.2"
@@ -9,8 +9,8 @@
   "resumed": false,
   "parallelism": 12,
   "primary_judges_max_inflight": 24,
-  "disagreement_count": 1965,
-  "disagreement_rate": 0.2205,
+  "disagreement_count": 2043,
+  "disagreement_rate": 0.2211,
   "consensus_method": "mean",
   "execution_mode": "manual_merge_append_latest",
   "source_panels": [
@@ -41,9 +41,10 @@
     "gpt56_v1_low_max_20260710_panel",
     "grok45_v1_low_high_20260712_panel",
     "kimi-k3-20260716-v1-panel",
-    "kimi-k3-minimal-20260716-v1-panel"
+    "kimi-k3-minimal-20260716-v1-panel",
+    "laguna_gemini_20260723_v1_panel"
   ],
-  "notes": "Appended new OpenAI GPT-5/5.1 family panel into existing merged latest snapshot without replacing prior model rows. Supplemental publish appended panel run_v1_gpt53chat_gemini31flashlite_20260303_224524_panel. Supplemental publish appended panel run_v1_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v1_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v1. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v1. Supplemental publish appended panel v1_gpt54mini_nano_20260317_175505_panel. Supplemental publish appended panel new_models_v1_20260318_panel. Supplemental publish appended panel missing_models_extremes_v1_20260407_panel. Supplemental publish appended panel opus47_v1_none_max_20260417_panel. Supplemental publish appended panel recent_openrouter_v1_20260426_panel. Supplemental publish appended panel grok43_v1_20260504_panel. Supplemental publish appended panel gpt55_none_v1_20260505_panel. Supplemental publish appended panel gpt55_chat_v1_20260507_panel. Supplemental publish appended panel gemini35_flash_v1_20260520_finish_panel. Supplemental publish appended panel qwen37_max_v1_20260526_panel. Supplemental publish appended panel opus48_v1_none_xhigh_20260529_panel. Supplemental publish appended panel minimax_m3_v1_panel. Supplemental publish appended panel nemotron_ultra_openrouter_v1_panel_20260605. Supplemental publish appended panel glm52_v1_none_xhigh_20260618_panel. Supplemental publish appended panel sonnet5_v1_low_max_20260701_panel. Supplemental publish appended panel gpt56_v1_low_max_20260710_panel. Supplemental publish appended panel grok45_v1_low_high_20260712_panel. Supplemental publish appended panel kimi-k3-20260716-v1-panel. Supplemental publish appended panel kimi-k3-minimal-20260716-v1-panel.",
+  "notes": "Appended new OpenAI GPT-5/5.1 family panel into existing merged latest snapshot without replacing prior model rows. Supplemental publish appended panel run_v1_gpt53chat_gemini31flashlite_20260303_224524_panel. Supplemental publish appended panel run_v1_gpt54_openrouter_20260305_panel. Supplemental publish appended panel run_v1_meta_trio_20260307_195222_panel. Supplemental publish appended panel run_grok420_full155_20260312_144856b_panel_openai3__v1. Supplemental publish appended panel hunter_healer_full155_none_xhigh_20260313_panel_openai3__v1. Supplemental publish appended panel v1_gpt54mini_nano_20260317_175505_panel. Supplemental publish appended panel new_models_v1_20260318_panel. Supplemental publish appended panel missing_models_extremes_v1_20260407_panel. Supplemental publish appended panel opus47_v1_none_max_20260417_panel. Supplemental publish appended panel recent_openrouter_v1_20260426_panel. Supplemental publish appended panel grok43_v1_20260504_panel. Supplemental publish appended panel gpt55_none_v1_20260505_panel. Supplemental publish appended panel gpt55_chat_v1_20260507_panel. Supplemental publish appended panel gemini35_flash_v1_20260520_finish_panel. Supplemental publish appended panel qwen37_max_v1_20260526_panel. Supplemental publish appended panel opus48_v1_none_xhigh_20260529_panel. Supplemental publish appended panel minimax_m3_v1_panel. Supplemental publish appended panel nemotron_ultra_openrouter_v1_panel_20260605. Supplemental publish appended panel glm52_v1_none_xhigh_20260618_panel. Supplemental publish appended panel sonnet5_v1_low_max_20260701_panel. Supplemental publish appended panel gpt56_v1_low_max_20260710_panel. Supplemental publish appended panel grok45_v1_low_high_20260712_panel. Supplemental publish appended panel kimi-k3-20260716-v1-panel. Supplemental publish appended panel kimi-k3-minimal-20260716-v1-panel. Supplemental publish appended panel laguna_gemini_20260723_v1_panel.",
   "panel_mode": "full",
   "judge_models": [
     "anthropic/claude-sonnet-4.6",
