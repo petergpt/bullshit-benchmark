@@ -1,24 +1,26 @@
 {
-  "generated_at_utc": "2026-07-23T17:37:10Z",
+  "generated_at_utc": "2026-07-24T23:57:45Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-07-16T17:37:10Z",
+  "window_start_utc": "2026-07-17T23:57:45Z",
   "models": [
+    "anthropic/claude-opus-5@reasoning=low",
+    "anthropic/claude-opus-5@reasoning=xhigh",
     "google/gemini-3.5-flash-lite@reasoning=minimal",
     "google/gemini-3.5-flash-lite@reasoning=xhigh",
     "google/gemini-3.6-flash@reasoning=minimal",
     "google/gemini-3.6-flash@reasoning=xhigh",
-    "moonshotai/kimi-k3@reasoning=minimal",
     "poolside/laguna-s-2.1@reasoning=none",
     "poolside/laguna-s-2.1@reasoning=xhigh"
   ],
   "model_bases": [
+    "anthropic/claude-opus-5",
     "google/gemini-3.5-flash-lite",
     "google/gemini-3.6-flash",
     "poolside/laguna-s-2.1"
   ],
-  "model_count": 7,
-  "model_base_count": 3,
+  "model_count": 8,
+  "model_base_count": 4,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T18:06:12Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-03-01T01:51:28Z",
@@ -41,6 +43,8 @@
     "anthropic/claude-opus-4.8@reasoning=none": "2026-05-29T09:05:30Z",
     "anthropic/claude-opus-4.8@reasoning=xhigh": "2026-05-29T09:05:30Z",
     "anthropic/claude-opus-4@reasoning=default": "2026-03-01T01:51:28Z",
+    "anthropic/claude-opus-5@reasoning=low": "2026-07-24T23:44:49Z",
+    "anthropic/claude-opus-5@reasoning=xhigh": "2026-07-24T23:44:49Z",
     "anthropic/claude-sonnet-4.5@reasoning=high": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.5@reasoning=none": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.6@reasoning=high": "2026-03-01T01:51:28Z",
@@ -224,6 +228,7 @@
     "anthropic/claude-opus-4.6": "2026-03-01T01:51:28Z",
     "anthropic/claude-opus-4.7": "2026-04-17T06:28:00Z",
     "anthropic/claude-opus-4.8": "2026-05-29T09:05:30Z",
+    "anthropic/claude-opus-5": "2026-07-24T23:44:49Z",
     "anthropic/claude-sonnet-4": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.5": "2026-03-01T01:51:28Z",
     "anthropic/claude-sonnet-4.6": "2026-03-01T01:51:28Z",

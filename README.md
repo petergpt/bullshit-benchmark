@@ -6,15 +6,14 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-07-23
+- Updated: 2026-07-25
 
-## Latest Changelog Entry (2026-07-23)
+## Latest Changelog Entry (2026-07-25)
 
-- Added Laguna S 2.1, Gemini 3.6 Flash, and Gemini 3.5 Flash Lite benchmark results to the published `v1` and `v2` tracks at their verified reasoning extremes.
-- Published six model/reasoning variants per track: Laguna at `none`/`xhigh`, plus both Gemini models at `minimal`/`xhigh`.
-- Gemini 3.5 Flash Lite `minimal` led the new rows with `1.3333` in v1 and `1.5133` in v2; its v2 clear-pushback rate was `65%`.
-- Appended `930` response rows and their three-judge aggregate rows across v1 and v2, with no collection, grading, or refusal errors.
-- Added July 21, 2026 launch metadata, model-size/access metadata, durable config coverage, and viewer labels for all three models.
+- Added Claude Opus 5 benchmark results to the published `v1` and `v2` tracks at its verified lowest reasoning level (`low`) and the requested `xhigh` level.
+- In v1, `low` scored `1.4182` versus `1.3515` for `xhigh`; in v2, `xhigh` scored `1.7191` versus `1.7106` for `low`.
+- Appended `310` response rows and their canonical three-judge aggregate rows. Collection and grading completed without errors; v2 recorded 9 low-effort and 11 xhigh provider refusals.
+- Added July 24, 2026 launch metadata, closed-model metadata, durable config coverage, strict Anthropic routing, and viewer labels/defaults.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -75,7 +74,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `188` model/reasoning rows.
+- Published v2 leaderboard currently includes `190` model/reasoning rows.
 
 ## What This Measures
 

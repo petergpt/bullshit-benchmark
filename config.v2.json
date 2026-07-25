@@ -2,6 +2,7 @@
   "collect": {
     "questions": "questions.v2.json",
     "models": [
+      "anthropic/claude-opus-5",
       "anthropic/claude-sonnet-5",
       "anthropic/claude-fable-5",
       "anthropic/claude-opus-4.8",
@@ -129,6 +130,10 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "anthropic/claude-opus-5": [
+        "low",
+        "xhigh"
+      ],
       "anthropic/claude-sonnet-5": [
         "low",
         "max"
@@ -397,6 +402,15 @@
     "rate_limit_max_attempts": 20,
     "checkpoint_fsync_every": 10,
     "model_request_overrides": {
+      "anthropic/claude-opus-5": {
+        "provider": {
+          "order": [
+            "Anthropic"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
       "moonshotai/kimi-k2.6": {
         "provider": {
           "order": [

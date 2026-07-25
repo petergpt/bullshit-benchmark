@@ -2,6 +2,21 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.27] - 2026-07-25
+
+### Added
+- Added published `v1` and `v2` benchmark results for:
+  - `anthropic/claude-opus-5@reasoning=low`
+  - `anthropic/claude-opus-5@reasoning=xhigh`
+- Added July 24, 2026 launch-date metadata and closed/not-disclosed parameter metadata for Claude Opus 5.
+
+### Changed
+- Appended 110 v1 and 200 v2 response rows plus their canonical three-judge aggregates to the published datasets.
+- Folded `anthropic/claude-opus-5` into `config.json` and `config.v2.json` with the verified `low`/`xhigh` reasoning settings and strict Anthropic routing, then removed it from the candidate catch-up configs.
+- Added the Claude Opus 5 viewer label and pinned it in the release-date and reasoning scatter defaults.
+- In v1, `low` scored `1.4182` versus `1.3515` for `xhigh`, with no refusals. In v2, `xhigh` scored `1.7191` versus `1.7106` for `low`, with refusal rates of `11%` and `9%` respectively.
+- Updated the public v2 leaderboard to include `190` model/reasoning rows.
+
 ## [2.0.26] - 2026-07-23
 
 ### Added

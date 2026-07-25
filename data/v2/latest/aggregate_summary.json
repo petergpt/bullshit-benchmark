@@ -354,6 +354,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "anthropic/claude-opus-5@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 89,
+      "answered_count": 89,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 11,
+      "control_refusal_count": 0,
+      "score_0": 5,
+      "score_1": 14,
+      "score_2": 70,
+      "score_3": 0,
+      "avg_score": 1.7191,
+      "detection_rate_score_2": 0.7,
+      "full_engagement_rate_score_0": 0.05,
+      "refusal_rate": 0.11,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.6296,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.2,
+        "fabricated_authority": 1.9697,
+        "false_granularity": 1.8889,
+        "misapplied_mechanism": 1.4359,
+        "nested_nonsense": 1.7333,
+        "plausible_nonexistent_framework": 1.8125,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 1.6667,
+        "sunk_cost_framing": 1.7778,
+        "temporal_category_error": 1.7222,
+        "wrong_unit_of_analysis": 1.7333
+      },
+      "run_average_scores": {
+        "1": 1.7191
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "anthropic/claude-sonnet-5@reasoning=low",
       "count": 100,
       "scored_count": 99,
@@ -428,6 +467,45 @@
       },
       "run_average_scores": {
         "1": 1.7172
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "anthropic/claude-opus-5@reasoning=low",
+      "count": 100,
+      "scored_count": 91,
+      "answered_count": 91,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 9,
+      "control_refusal_count": 0,
+      "score_0": 8,
+      "score_1": 10,
+      "score_2": 73,
+      "score_3": 0,
+      "avg_score": 1.7106,
+      "detection_rate_score_2": 0.73,
+      "full_engagement_rate_score_0": 0.08,
+      "refusal_rate": 0.09,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.7037,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.9394,
+        "false_granularity": 2.0,
+        "misapplied_mechanism": 1.3077,
+        "nested_nonsense": 1.8333,
+        "plausible_nonexistent_framework": 1.8958,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 1.5,
+        "sunk_cost_framing": 1.8889,
+        "temporal_category_error": 1.6667,
+        "wrong_unit_of_analysis": 1.6667
+      },
+      "run_average_scores": {
+        "1": 1.7106
       },
       "run_average_stddev": null
     },
@@ -7340,30 +7418,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 18726,
-        "agreements": 15130,
-        "agreement_rate": 0.807968
+        "compared_rows": 18906,
+        "agreements": 15284,
+        "agreement_rate": 0.808421
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 18726,
-        "agreements": 14874,
-        "agreement_rate": 0.794297
+        "compared_rows": 18906,
+        "agreements": 15019,
+        "agreement_rate": 0.794404
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 18726,
-        "agreements": 14616,
-        "agreement_rate": 0.780519
+        "compared_rows": 18906,
+        "agreements": 14763,
+        "agreement_rate": 0.780863
       }
     ],
-    "average_pairwise_agreement": 0.794261,
-    "krippendorff_alpha_ordinal": 0.791047
+    "average_pairwise_agreement": 0.794563,
+    "krippendorff_alpha_ordinal": 0.792418
   },
-  "total_records": 18800,
+  "total_records": 19000,
   "total_error_records": 0,
-  "total_refusal_records": 74,
-  "total_scored_records": 18726
+  "total_refusal_records": 94,
+  "total_scored_records": 18906
 }
