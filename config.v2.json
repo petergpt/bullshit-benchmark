@@ -40,6 +40,7 @@
       "xiaomi/mimo-v2.5-pro",
       "deepseek/deepseek-v3.2",
       "deepseek/deepseek-v4-flash",
+      "deepseek/deepseek-v4-flash-0731",
       "deepseek/deepseek-v4-pro",
       "tencent/hy3-preview:free",
       "openai/gpt-4.1",
@@ -250,6 +251,10 @@
         "none",
         "xhigh"
       ],
+      "deepseek/deepseek-v4-flash-0731": [
+        "none",
+        "xhigh"
+      ],
       "deepseek/deepseek-v4-pro": [
         "none",
         "xhigh"
@@ -409,6 +414,13 @@
           ],
           "allow_fallbacks": false,
           "require_parameters": true
+        }
+      },
+      "deepseek/deepseek-v4-flash-0731": {
+        "provider": {
+          "allow_fallbacks": false,
+          "require_parameters": true,
+          "data_collection": "allow"
         }
       },
       "moonshotai/kimi-k2.6": {

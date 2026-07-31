@@ -1447,7 +1447,7 @@
     <!-- Release Date vs Green Score: All Orgs -->
     <section class="panel">
       <h2 data-bench-heading="Detection Rate Over Time">BullshitBench: Detection Rate Over Time</h2>
-      <p class="subtle">Release date vs. green rate (clear pushback %) for Anthropic, OpenAI, and Google. Best model per release date shown.</p>
+      <p class="subtle">Release date vs. green rate (clear pushback %) for Anthropic, OpenAI, Google, and DeepSeek. Best model per release date shown.</p>
       <div class="launch-controls">
         <label class="launch-toggle">
           <input type="checkbox" id="launchBestOnlyToggle" checked>
@@ -1870,6 +1870,7 @@ function normReasoning(v) { const r=String(v||"none").toLowerCase(); return r===
 
 const WORD_ALIAS = { gpt:"GPT", oss:"OSS", ai:"AI", it:"IT", glm:"GLM" };
 const MODEL_DISPLAY_ALIAS = Object.freeze({
+  "deepseek-v4-flash-0731": "DeepSeek V4 Flash 0731",
   "claude-opus-5": "Claude Opus 5",
   "gpt-5.6-sol": "GPT-5.6 Sol",
   "gpt-5.6-terra": "GPT-5.6 Terra",
@@ -1942,6 +1943,7 @@ const OPENAI_RESPONSE_PRICING_USD_PER_MILLION = Object.freeze({
   "openai/gpt-5.4-nano": Object.freeze({ input: 0.2, cachedInput: 0.02, output: 1.25 }),
 });
 const PREFERRED_LAUNCH_CHART_BASE_MODELS = Object.freeze([
+  "deepseek/deepseek-v4-flash-0731",
   "anthropic/claude-opus-5",
   "google/gemini-3.6-flash",
   "google/gemini-3.5-flash-lite",
@@ -1961,6 +1963,7 @@ const PREFERRED_LAUNCH_CHART_BASE_MODELS = Object.freeze([
   "google/gemini-3.1-pro-preview",
 ]);
 const PREFERRED_REASONING_SCATTER_BASE_MODELS = Object.freeze([
+  "deepseek/deepseek-v4-flash-0731",
   "anthropic/claude-opus-5",
   "google/gemini-3.5-flash-lite",
   "google/gemini-3.6-flash",
@@ -3827,6 +3830,7 @@ function renderAllModelsScatter(filtered) {
   // Dots + selective standout labels
   points.forEach(p => { p._cx = xFor(p.launchDate.getTime()); p._cy = yFor(p.greenRate); });
   primeDefaultScatterSelections("allModelsScatter", points, [
+    "deepseek/deepseek-v4-flash-0731",
     "anthropic/claude-opus-5",
     "z-ai/glm-5.2",
     "moonshotai/kimi-k3",
@@ -3875,7 +3879,7 @@ function renderLaunchAllOrgs(filtered) {
   const rawPoints = [...byModel2.entries()].map(([mk, modelRows]) => {
     const sample = modelRows[0] || {};
     const org = normOrg(modelOrg(sample));
-    const targetOrgs = new Set(["anthropic", "openai", "google"]);
+    const targetOrgs = new Set(["anthropic", "openai", "google", "deepseek"]);
     if (!targetOrgs.has(org)) return null;
     const launch = launchMetaForRow(sample);
     if (!launch) return null;
@@ -3886,7 +3890,7 @@ function renderLaunchAllOrgs(filtered) {
   }).filter(Boolean);
 
   if (!rawPoints.length) {
-    svg.innerHTML = `<text x="50%" y="52%" text-anchor="middle" fill="#5d726b" font-size="16">No launch-date data found for Anthropic, OpenAI, or Google.</text>`;
+    svg.innerHTML = `<text x="50%" y="52%" text-anchor="middle" fill="#5d726b" font-size="16">No launch-date data found for Anthropic, OpenAI, Google, or DeepSeek.</text>`;
     if (metaEl) metaEl.textContent = "";
     return;
   }
@@ -3954,7 +3958,7 @@ function renderLaunchAllOrgs(filtered) {
     return `<line x1="${x.toFixed(1)}" y1="${mt}" x2="${x.toFixed(1)}" y2="${H-mb}" stroke="#edf2ef" stroke-width="1"/><text x="${x.toFixed(1)}" y="${H-mb+18}" text-anchor="${anchor}" fill="#586d66" font-size="12">${esc(qLabel(t))}</text>`;
   }).join("");
 
-  // Org trend lines (already filtered to anthropic/openai/google)
+  // Org trend lines (already filtered to anthropic/openai/google/deepseek)
   const allLineSegs = []; // collect for label avoidance
   const lineData = [...byOrg3.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([org, orgPts]) => {
     const color = orgColor(org);
@@ -4390,7 +4394,7 @@ function renderSizeScatters(filtered) {
     tooltipLabel: "Total parameters",
     emptyText: "No total-parameter metadata is available for the current filters.",
     metaLabel: "total",
-    preferredModels: ["z-ai/glm-5.2"],
+    preferredModels: ["deepseek/deepseek-v4-flash-0731", "z-ai/glm-5.2"],
   });
   renderSizeScatterChart(filtered, {
     svgId: "sizeScatterActive",
@@ -4401,6 +4405,7 @@ function renderSizeScatters(filtered) {
     tooltipLabel: "Active parameters",
     emptyText: "No active-parameter metadata is available for the current filters.",
     metaLabel: "active",
+    preferredModels: ["deepseek/deepseek-v4-flash-0731"],
   });
 }
 

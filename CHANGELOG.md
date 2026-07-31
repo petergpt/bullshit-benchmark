@@ -2,6 +2,22 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.28] - 2026-07-31
+
+### Added
+- Added published `v1` and `v2` benchmark results for the July 31 re-post-trained DeepSeek V4 Flash revision:
+  - `deepseek/deepseek-v4-flash-0731@reasoning=none`
+  - `deepseek/deepseek-v4-flash-0731@reasoning=xhigh`
+- Added July 31, 2026 launch-date metadata and 284B-total/13B-active MIT open-weight metadata for the exact `0731` route.
+
+### Changed
+- Appended 110 v1 and 200 v2 response rows plus their canonical three-judge aggregates to the published datasets.
+- Folded `deepseek/deepseek-v4-flash-0731` into `config.json` and `config.v2.json` with the verified `none`/`xhigh` reasoning settings and the required per-request data-collection allowance, then removed it from the candidate catch-up configs.
+- Added the distinct `DeepSeek V4 Flash 0731` viewer label, expanded the focused release-date chart to include DeepSeek, and pinned the revision in the release-date, reasoning, and model-size scatter defaults without replacing the April DeepSeek V4 Flash preview.
+- Refreshed the published leaderboards, metadata exports, recent additions, data-driven charts, response explorer, and all six README chart screenshots.
+- In v1, `xhigh` scored `0.9212` versus `0.5939` for `none`; in v2, `xhigh` scored `1.0700` versus `0.6600` for `none`. All variants completed without refusals or errors.
+- Updated the public v2 leaderboard to include `192` model/reasoning rows.
+
 ## [2.0.27] - 2026-07-25
 
 ### Added

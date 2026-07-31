@@ -2616,6 +2616,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "deepseek/deepseek-v4-flash-0731@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 32,
+      "score_1": 30,
+      "score_2": 38,
+      "score_3": 0,
+      "avg_score": 1.07,
+      "detection_rate_score_2": 0.38,
+      "full_engagement_rate_score_0": 0.32,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.7407,
+        "confident_extrapolation": 1.5,
+        "cross_domain_stitching": 0.5333,
+        "fabricated_authority": 1.3333,
+        "false_granularity": 1.1667,
+        "misapplied_mechanism": 0.9231,
+        "nested_nonsense": 1.2857,
+        "plausible_nonexistent_framework": 0.6458,
+        "reified_metaphor": 1.5555,
+        "specificity_trap": 0.5417,
+        "sunk_cost_framing": 0.9048,
+        "temporal_category_error": 1.5555,
+        "wrong_unit_of_analysis": 1.0
+      },
+      "run_average_scores": {
+        "1": 1.07
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-5.5-pro@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -4406,6 +4445,45 @@
       },
       "run_average_scores": {
         "1": 0.6633
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "deepseek/deepseek-v4-flash-0731@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 57,
+      "score_1": 23,
+      "score_2": 20,
+      "score_3": 0,
+      "avg_score": 0.66,
+      "detection_rate_score_2": 0.2,
+      "full_engagement_rate_score_0": 0.57,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.8148,
+        "confident_extrapolation": 1.3333,
+        "cross_domain_stitching": 0.3333,
+        "fabricated_authority": 0.7273,
+        "false_granularity": 1.1667,
+        "misapplied_mechanism": 0.7179,
+        "nested_nonsense": 1.0476,
+        "plausible_nonexistent_framework": 0.3125,
+        "reified_metaphor": 0.5555,
+        "specificity_trap": 0.0417,
+        "sunk_cost_framing": 0.5238,
+        "temporal_category_error": 1.2222,
+        "wrong_unit_of_analysis": 0.4
+      },
+      "run_average_scores": {
+        "1": 0.66
       },
       "run_average_stddev": null
     },
@@ -7418,30 +7496,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 18906,
-        "agreements": 15284,
-        "agreement_rate": 0.808421
+        "compared_rows": 19106,
+        "agreements": 15444,
+        "agreement_rate": 0.808332
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 18906,
-        "agreements": 15019,
-        "agreement_rate": 0.794404
+        "compared_rows": 19106,
+        "agreements": 15180,
+        "agreement_rate": 0.794515
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 18906,
-        "agreements": 14763,
-        "agreement_rate": 0.780863
+        "compared_rows": 19106,
+        "agreements": 14909,
+        "agreement_rate": 0.780331
       }
     ],
-    "average_pairwise_agreement": 0.794563,
-    "krippendorff_alpha_ordinal": 0.792418
+    "average_pairwise_agreement": 0.794393,
+    "krippendorff_alpha_ordinal": 0.792087
   },
-  "total_records": 19000,
+  "total_records": 19200,
   "total_error_records": 0,
   "total_refusal_records": 94,
-  "total_scored_records": 18906
+  "total_scored_records": 19106
 }

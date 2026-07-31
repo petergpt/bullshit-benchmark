@@ -1,26 +1,20 @@
 {
-  "generated_at_utc": "2026-07-24T23:57:41Z",
+  "generated_at_utc": "2026-07-31T22:07:07Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-07-17T23:57:41Z",
+  "window_start_utc": "2026-07-24T22:07:07Z",
   "models": [
     "anthropic/claude-opus-5@reasoning=low",
     "anthropic/claude-opus-5@reasoning=xhigh",
-    "google/gemini-3.5-flash-lite@reasoning=minimal",
-    "google/gemini-3.5-flash-lite@reasoning=xhigh",
-    "google/gemini-3.6-flash@reasoning=minimal",
-    "google/gemini-3.6-flash@reasoning=xhigh",
-    "poolside/laguna-s-2.1@reasoning=none",
-    "poolside/laguna-s-2.1@reasoning=xhigh"
+    "deepseek/deepseek-v4-flash-0731@reasoning=none",
+    "deepseek/deepseek-v4-flash-0731@reasoning=xhigh"
   ],
   "model_bases": [
     "anthropic/claude-opus-5",
-    "google/gemini-3.5-flash-lite",
-    "google/gemini-3.6-flash",
-    "poolside/laguna-s-2.1"
+    "deepseek/deepseek-v4-flash-0731"
   ],
-  "model_count": 8,
-  "model_base_count": 4,
+  "model_count": 4,
+  "model_base_count": 2,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T07:47:21Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-02-26T15:26:33Z",
@@ -63,6 +57,8 @@
     "deepseek/deepseek-r1@reasoning=xhigh": "2026-03-18T07:47:21Z",
     "deepseek/deepseek-v3.2@reasoning=high": "2026-02-24T09:34:29Z",
     "deepseek/deepseek-v3.2@reasoning=none": "2026-02-24T09:30:29Z",
+    "deepseek/deepseek-v4-flash-0731@reasoning=none": "2026-07-31T18:34:49Z",
+    "deepseek/deepseek-v4-flash-0731@reasoning=xhigh": "2026-07-31T18:34:49Z",
     "deepseek/deepseek-v4-flash@reasoning=none": "2026-04-26T22:01:07Z",
     "deepseek/deepseek-v4-flash@reasoning=xhigh": "2026-04-26T22:01:07Z",
     "deepseek/deepseek-v4-pro@reasoning=none": "2026-04-26T22:01:07Z",
@@ -220,6 +216,7 @@
     "deepseek/deepseek-r1": "2026-03-18T07:47:21Z",
     "deepseek/deepseek-v3.2": "2026-02-24T09:30:29Z",
     "deepseek/deepseek-v4-flash": "2026-04-26T22:01:07Z",
+    "deepseek/deepseek-v4-flash-0731": "2026-07-31T18:34:49Z",
     "deepseek/deepseek-v4-pro": "2026-04-26T22:01:07Z",
     "google/gemini-2.0-flash-001": "2026-02-26T15:26:33Z",
     "google/gemini-2.5-flash": "2026-02-26T15:26:33Z",

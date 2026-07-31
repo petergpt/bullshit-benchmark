@@ -6,14 +6,14 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-07-25
+- Updated: 2026-07-31
 
-## Latest Changelog Entry (2026-07-25)
+## Latest Changelog Entry (2026-07-31)
 
-- Added Claude Opus 5 benchmark results to the published `v1` and `v2` tracks at its verified lowest reasoning level (`low`) and the requested `xhigh` level.
-- In v1, `low` scored `1.4182` versus `1.3515` for `xhigh`; in v2, `xhigh` scored `1.7191` versus `1.7106` for `low`.
-- Appended `310` response rows and their canonical three-judge aggregate rows. Collection and grading completed without errors; v2 recorded 9 low-effort and 11 xhigh provider refusals.
-- Added July 24, 2026 launch metadata, closed-model metadata, durable config coverage, strict Anthropic routing, and viewer labels/defaults.
+- Added the July 31 re-post-trained `deepseek/deepseek-v4-flash-0731` revision to both published benchmark tracks at `none` and `xhigh` reasoning.
+- In v1, `xhigh` scored `0.9212` versus `0.5939` for `none`; in v2, `xhigh` scored `1.0700` versus `0.6600` for `none`.
+- Appended `310` response rows and their canonical three-judge aggregate rows with no collection, grading, consensus, refusal, or identity errors.
+- Added July 31 launch metadata, 284B-total/13B-active open-weight metadata, durable config coverage, and viewer labels/defaults.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -36,37 +36,37 @@ The screenshots below follow the same flow as `viewer/index.v2.html`, starting w
 
 Primary leaderboard-style view showing each model's green/amber/red split. The screenshot uses the viewer's 30-day new-model filter so recent additions remain legible.
 
-![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260731-deepseek-v4-flash-0731)
 
 ### 2. Domain Landscape
 
 Detection mix by domain to compare overall performance vs each domain at a glance.
 
-![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260731-deepseek-v4-flash-0731)
 
 ### 3. Detection Rate Over Time
 
-Release-date trend view focused on Anthropic, OpenAI, and Google.
+Release-date trend view focused on Anthropic, OpenAI, Google, and DeepSeek.
 
-![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260731-deepseek-v4-flash-0731)
 
 ### 4. Do Newer Models Perform Better?
 
 All-model scatter by release date vs. green rate.
 
-![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260731-deepseek-v4-flash-0731)
 
 ### 5. Does Thinking Harder Help?
 
 Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
 
-![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260731-deepseek-v4-flash-0731)
 
 ### 6. Model Size and Weights
 
 Total and active parameter scatter views for models with public size metadata.
 
-![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260723-laguna-gemini)
+![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260731-deepseek-v4-flash-0731)
 
 ## Benchmark Scope (v2)
 
@@ -74,7 +74,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `190` model/reasoning rows.
+- Published v2 leaderboard currently includes `192` model/reasoning rows.
 
 ## What This Measures
 
