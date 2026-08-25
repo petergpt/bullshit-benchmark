@@ -2,6 +2,28 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.0.29] - 2026-08-25
+
+### Added
+- Added published `v1` and `v2` benchmark results for eight August model releases, each evaluated at its verified reasoning extremes:
+  - `stealth/ox-alpha@reasoning=low` and `@reasoning=max`
+  - `z-ai/glm-5.3@reasoning=minimal` and `@reasoning=max`
+  - `qwen/qwen3.8-27b@reasoning=none` and `@reasoning=max`
+  - `google/gemini-3.7-flash@reasoning=minimal` and `@reasoning=max`
+  - `x-ai/grok-4.6@reasoning=minimal` and `@reasoning=max`
+  - `deepseek/deepseek-v4-pro-0813@reasoning=low` and `@reasoning=max`
+  - `meta/muse-spark-1.2@reasoning=minimal` and `@reasoning=xhigh`
+  - `qwen/qwen3.8-max@reasoning=minimal` and `@reasoning=max`
+- Added verified August launch-date metadata for all eight models, Apache-2.0 open-weight metadata for the dense 27B Qwen 3.8 27B model, and MIT open-weight metadata for DeepSeek V4 Pro 0813 with 1.6T total and 49B active parameters.
+
+### Changed
+- Appended 880 v1 and 1,600 v2 response rows plus their canonical three-judge aggregates, totaling 7,440 judge evaluations with zero new collection errors or refusals.
+- Folded all eight model IDs, verified reasoning variants, and provider-routing overrides into `config.json` and `config.v2.json`.
+- Refreshed both published leaderboards, metadata exports, recent additions, compressed viewer datasets, model aliases, domain views, release-date charts, reasoning-token/cost charts, model-size charts, response explorer, and all six README chart screenshots.
+- Qwen 3.8 Max `minimal` reached rank 8 in v1 with a score of `1.8424`, and rank 3 in v2 with a score of `1.9133` and a `94%` clear-pushback rate. Its v2 clear-pushback rate fell to `26%` at maximum reasoning; Qwen 3.8 27B similarly fell from `78%` with reasoning disabled to `28%` at maximum reasoning.
+- Ox Alpha scored `64%` and `53%` clear pushback in v2 at `low` and `max` reasoning; Meta Muse Spark 1.2 scored `50%` and `49%` at `minimal` and `xhigh` reasoning.
+- Updated the published leaderboards to include `188` v1 and `208` v2 model/reasoning rows.
+
 ## [2.0.28] - 2026-07-31
 
 ### Added

@@ -2,25 +2,31 @@
   "collect": {
     "questions": "questions.json",
     "models": [
-      "moonshotai/kimi-k2.6",
-      "z-ai/glm-5.1",
-      "qwen/qwen3.6-plus"
+      "stealth/ox-alpha",
+      "z-ai/glm-5.3",
+      "qwen/qwen3.8-27b",
+      "google/gemini-3.7-flash",
+      "x-ai/grok-4.6",
+      "deepseek/deepseek-v4-pro-0813",
+      "meta/muse-spark-1.2",
+      "qwen/qwen3.8-max"
     ],
     "models_file": "",
     "model_providers": {
       "*": "openrouter"
     },
     "model_request_overrides": {
-      "moonshotai/kimi-k2.6": {
+      "stealth/ox-alpha": {
         "provider": {
           "order": [
-            "Moonshot AI"
+            "Stealth"
           ],
           "allow_fallbacks": false,
-          "require_parameters": true
+          "require_parameters": true,
+          "data_collection": "allow"
         }
       },
-      "z-ai/glm-5.1": {
+      "z-ai/glm-5.3": {
         "provider": {
           "order": [
             "Z.AI"
@@ -29,7 +35,53 @@
           "require_parameters": true
         }
       },
-      "qwen/qwen3.6-plus": {
+      "qwen/qwen3.8-27b": {
+        "provider": {
+          "order": [
+            "Alibaba"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-3.7-flash": {
+        "provider": {
+          "order": [
+            "Google"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "x-ai/grok-4.6": {
+        "provider": {
+          "order": [
+            "xAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "deepseek/deepseek-v4-pro-0813": {
+        "provider": {
+          "order": [
+            "Alibaba"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true,
+          "data_collection": "allow"
+        }
+      },
+      "meta/muse-spark-1.2": {
+        "provider": {
+          "order": [
+            "Meta"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen3.8-max": {
         "provider": {
           "order": [
             "Alibaba"
@@ -40,8 +92,8 @@
       }
     },
     "num_runs": 1,
-    "parallelism": 16,
-    "max_inflight_per_model": 1,
+    "parallelism": 48,
+    "max_inflight_per_model": 3,
     "techniques": "cross_domain_concept_stitching,inverted_nonexistent_dependency,false_granularity,misapplied_mechanism,reified_metaphor,plausible_nonexistent_framework,wrong_unit_of_analysis,temporal_category_error,causal_chimera,authoritative_framing_of_nothing",
     "temperature": null,
     "omit_response_system_prompt": true,
@@ -49,17 +101,37 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
-      "moonshotai/kimi-k2.6": [
+      "stealth/ox-alpha": [
+        "low",
+        "max"
+      ],
+      "z-ai/glm-5.3": [
+        "minimal",
+        "max"
+      ],
+      "qwen/qwen3.8-27b": [
         "none",
+        "max"
+      ],
+      "google/gemini-3.7-flash": [
+        "minimal",
+        "max"
+      ],
+      "x-ai/grok-4.6": [
+        "minimal",
+        "max"
+      ],
+      "deepseek/deepseek-v4-pro-0813": [
+        "low",
+        "max"
+      ],
+      "meta/muse-spark-1.2": [
+        "minimal",
         "xhigh"
       ],
-      "z-ai/glm-5.1": [
-        "none",
-        "xhigh"
-      ],
-      "qwen/qwen3.6-plus": [
-        "none",
-        "xhigh"
+      "qwen/qwen3.8-max": [
+        "minimal",
+        "max"
       ]
     },
     "shuffle_tasks": true,
@@ -81,7 +153,7 @@
       "openai/gpt-5.2",
       "google/gemini-3.1-pro-preview"
     ],
-    "parallelism": 16,
+    "parallelism": 20,
     "judge_temperature": null,
     "judge_reasoning_effort": "medium",
     "judge_max_tokens": 0,
@@ -98,6 +170,6 @@
     "consensus_method": "mean",
     "parallel_primary_judges": true,
     "tiebreaker_model": "",
-    "parallelism": 16
+    "parallelism": 20
   }
 }

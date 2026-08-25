@@ -359,6 +359,15 @@ def slim_published_response_rows(rows):
             "response_char_count",
         ):
             slim.pop(key, None)
+        usage = slim.get("response_usage")
+        if isinstance(usage, dict) and "cost_details" in usage:
+            # Aggregate cost and token accounting are retained; upstream cost
+            # breakdowns are provider diagnostics unused by the public viewer.
+            slim["response_usage"] = {
+                key: value for key, value in usage.items() if key != "cost_details"
+            }
+        if slim.get("response_usage_is_byok") is False or slim.get("response_usage_is_byok") is None:
+            slim.pop("response_usage_is_byok", None)
         # Question text and annotations are canonical in questions.json / questions.v2.json
         # and are rehydrated by the viewer via question_id.
         for key in ("question", "nonsensical_element", "domain"):

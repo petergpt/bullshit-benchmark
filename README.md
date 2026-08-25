@@ -6,14 +6,14 @@
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
 - Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-07-31
+- Updated: 2026-08-25
 
-## Latest Changelog Entry (2026-07-31)
+## Latest Changelog Entry (2026-08-25)
 
-- Added the July 31 re-post-trained `deepseek/deepseek-v4-flash-0731` revision to both published benchmark tracks at `none` and `xhigh` reasoning.
-- In v1, `xhigh` scored `0.9212` versus `0.5939` for `none`; in v2, `xhigh` scored `1.0700` versus `0.6600` for `none`.
-- Appended `310` response rows and their canonical three-judge aggregate rows with no collection, grading, consensus, refusal, or identity errors.
-- Added July 31 launch metadata, 284B-total/13B-active open-weight metadata, durable config coverage, and viewer labels/defaults.
+- Added Ox Alpha, GLM 5.3, Qwen 3.8 27B, Gemini 3.7 Flash, Grok 4.6, DeepSeek V4 Pro 0813, Meta Muse Spark 1.2, and Qwen 3.8 Max to both benchmark tracks, each at its lowest and highest supported reasoning settings.
+- Qwen 3.8 Max reaches rank `#3` in v2 at minimal reasoning with a `94%` clear-pushback rate, compared with `26%` at maximum reasoning; Qwen 3.8 27B falls from `78%` with reasoning disabled to `28%` at maximum reasoning.
+- Meta Muse Spark 1.2 scores `50%` and `49%` clear pushback in v2 at `minimal` and `xhigh` reasoning, respectively; Ox Alpha scores `64%` at low reasoning and `53%` at maximum reasoning.
+- Appended `880` v1 and `1,600` v2 response rows with `7,440` canonical judge evaluations, zero new errors or refusals, refreshed chart screenshots, and complete launch-date/model-size metadata.
 - Full details: [CHANGELOG.md](CHANGELOG.md)
 
 ## v2 Changelog Highlights
@@ -36,37 +36,37 @@ The screenshots below follow the same flow as `viewer/index.v2.html`, starting w
 
 Primary leaderboard-style view showing each model's green/amber/red split. The screenshot uses the viewer's 30-day new-model filter so recent additions remain legible.
 
-![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260825-selected-eight)
 
 ### 2. Domain Landscape
 
 Detection mix by domain to compare overall performance vs each domain at a glance.
 
-![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260825-selected-eight)
 
 ### 3. Detection Rate Over Time
 
-Release-date trend view focused on Anthropic, OpenAI, Google, and DeepSeek.
+Release-date trend view across Anthropic, OpenAI, Google, DeepSeek, Stealth, Z.AI, Qwen, xAI, and Meta.
 
-![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260825-selected-eight)
 
 ### 4. Do Newer Models Perform Better?
 
 All-model scatter by release date vs. green rate.
 
-![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260825-selected-eight)
 
 ### 5. Does Thinking Harder Help?
 
 Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
 
-![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260825-selected-eight)
 
 ### 6. Model Size and Weights
 
 Total and active parameter scatter views for models with public size metadata.
 
-![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260731-deepseek-v4-flash-0731)
+![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260825-selected-eight)
 
 ## Benchmark Scope (v2)
 
@@ -74,7 +74,7 @@ Total and active parameter scatter views for models with public size metadata.
 - `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
 - `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
 - `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `192` model/reasoning rows.
+- Published v2 leaderboard currently includes `208` model/reasoning rows.
 
 ## What This Measures
 
@@ -156,7 +156,7 @@ MIT. See [LICENSE](LICENSE).
 ## Star History 
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&theme=dark&cachebust=20260731" />
-  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&cachebust=20260731" />
-  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&cachebust=20260731" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&theme=dark&cachebust=20260825" />
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&cachebust=20260825" />
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&cachebust=20260825" />
 </picture>
