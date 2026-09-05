@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Two-step benchmark runner for OpenRouter/OpenAI providers.
+"""Two-step benchmark runner for OpenRouter, OpenAI, and Atlas Cloud providers.
 
 Step 1 (collect):
   Query each model independently for each question, with completely stateless
@@ -67,11 +67,16 @@ MODEL_PROVIDER_ALIASES: dict[str, str] = {
     "openrouter": "openrouter",
     "or": "openrouter",
     "openai": "openai",
+    "atlas": "atlascloud",
+    "atlas-cloud": "atlascloud",
+    "atlas_cloud": "atlascloud",
+    "atlascloud": "atlascloud",
 }
 
 MODEL_PROVIDER_VALUES: tuple[str, ...] = (
     "openrouter",
     "openai",
+    "atlascloud",
 )
 
 DEFAULT_MODEL_PROVIDER = "openrouter"
@@ -452,7 +457,8 @@ def parse_args() -> argparse.Namespace:
         default="",
         help=(
             "Optional JSON object mapping model IDs (or wildcard patterns like "
-            "'*' and 'openai/*') to provider names (openrouter/openai)."
+            "'*' and 'openai/*') to provider names "
+            "(openrouter/openai/atlascloud)."
         ),
     )
     collect.add_argument(
@@ -637,7 +643,8 @@ def parse_args() -> argparse.Namespace:
         default="",
         help=(
             "Optional JSON object mapping model IDs (or wildcard patterns like "
-            "'*' and 'openai/*') to provider names (openrouter/openai). "
+            "'*' and 'openai/*') to provider names "
+            "(openrouter/openai/atlascloud). "
             "Used for judge routing."
         ),
     )
@@ -757,7 +764,8 @@ def parse_args() -> argparse.Namespace:
         default="",
         help=(
             "Optional JSON object mapping model IDs (or wildcard patterns like "
-            "'*' and 'openai/*') to provider names (openrouter/openai). "
+            "'*' and 'openai/*') to provider names "
+            "(openrouter/openai/atlascloud). "
             "Used for judge routing."
         ),
     )
@@ -2387,6 +2395,10 @@ class OpenAIAPIError(ProviderAPIError):
     """Errors from OpenAI Responses API calls."""
 
 
+class AtlasCloudAPIError(ProviderAPIError):
+    """Errors from Atlas Cloud chat/completions calls."""
+
+
 class OpenRouterClient:
     def __init__(self, api_key: str, timeout_seconds: int) -> None:
         if timeout_seconds < 1:
@@ -2469,6 +2481,97 @@ class OpenRouterClient:
             except Exception as exc:  # pylint: disable=broad-except
                 last_error = RuntimeError(
                     f"OpenRouter call failed (attempt {attempt}/{retries}): {exc}"
+                )
+
+            if attempt < retries:
+                time.sleep(compute_retry_delay_seconds(attempt, retry_after_header))
+
+        assert last_error is not None
+        raise last_error
+
+
+class AtlasCloudClient:
+    def __init__(self, api_key: str, timeout_seconds: int) -> None:
+        if timeout_seconds < 1:
+            raise ValueError("timeout_seconds must be >= 1")
+        self.api_key = api_key
+        self.timeout_seconds = timeout_seconds
+        base_url = os.getenv("ATLASCLOUD_BASE_URL", "https://api.atlascloud.ai/v1")
+        self.base_url = base_url.rstrip("/")
+        if not self.base_url.endswith("/chat/completions"):
+            self.base_url += "/chat/completions"
+
+    def chat(
+        self,
+        *,
+        model: str,
+        messages: list[dict[str, str]],
+        temperature: float | None,
+        max_tokens: int,
+        retries: int,
+        extra_payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "model": model,
+            "messages": messages,
+        }
+        if temperature is not None:
+            payload["temperature"] = temperature
+        if max_tokens > 0:
+            payload["max_tokens"] = max_tokens
+        if extra_payload:
+            payload.update(extra_payload)
+
+        encoded = json.dumps(payload).encode("utf-8")
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": os.getenv(
+                "ATLASCLOUD_USER_AGENT", "BullshitBench/1.0"
+            ),
+        }
+        if retries < 1:
+            raise ValueError("retries must be >= 1")
+
+        last_error: Exception | None = None
+        for attempt in range(1, retries + 1):
+            retry_after_header: str | None = None
+            retry_after_seconds: float | None = None
+            request = urllib.request.Request(
+                self.base_url,
+                data=encoded,
+                headers=headers,
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout_seconds) as resp:
+                    raw = resp.read().decode("utf-8")
+                parsed = json.loads(raw)
+                if not isinstance(parsed, dict):
+                    raise RuntimeError("Atlas Cloud returned non-object JSON.")
+                return parsed
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="ignore")
+                retry_after_header = exc.headers.get("Retry-After") if exc.headers else None
+                retry_after_seconds = parse_retry_after_seconds(retry_after_header)
+                retryable = is_retryable_http_status(exc.code)
+                last_error = AtlasCloudAPIError(
+                    f"HTTP {exc.code} from Atlas Cloud (attempt {attempt}/{retries})"
+                    f"{' [retryable]' if retryable else ' [non-retryable]'}: {detail}"
+                    + (
+                        f" (retry_after_seconds={retry_after_seconds})"
+                        if retry_after_seconds is not None
+                        else ""
+                    ),
+                    status_code=exc.code,
+                    retryable=retryable,
+                    retry_after_seconds=retry_after_seconds,
+                )
+                if not retryable:
+                    raise last_error from exc
+            except Exception as exc:  # pylint: disable=broad-except
+                last_error = RuntimeError(
+                    f"Atlas Cloud call failed (attempt {attempt}/{retries}): {exc}"
                 )
 
             if attempt < retries:
@@ -3316,6 +3419,17 @@ def run_collect(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        if "atlascloud" in providers_in_use:
+            atlascloud_key = os.getenv("ATLASCLOUD_API_KEY", "").strip()
+            if not atlascloud_key:
+                raise RuntimeError(
+                    "ATLASCLOUD_API_KEY is required for models routed to atlascloud "
+                    "unless --dry-run is set."
+                )
+            clients["atlascloud"] = AtlasCloudClient(
+                api_key=atlascloud_key,
+                timeout_seconds=args.timeout_seconds,
             )
 
     started = time.perf_counter()
@@ -4428,6 +4542,17 @@ def run_grade(args: argparse.Namespace) -> int:
                 timeout_seconds=args.timeout_seconds,
                 project_id=openai_project_id,
                 organization_id=openai_organization_id,
+            )
+        elif judge_provider == "atlascloud":
+            atlascloud_key = os.getenv("ATLASCLOUD_API_KEY", "").strip()
+            if not atlascloud_key:
+                raise RuntimeError(
+                    "ATLASCLOUD_API_KEY is required for judge models routed to atlascloud "
+                    "unless --dry-run is set."
+                )
+            clients["atlascloud"] = AtlasCloudClient(
+                api_key=atlascloud_key,
+                timeout_seconds=args.timeout_seconds,
             )
 
     started = time.perf_counter()

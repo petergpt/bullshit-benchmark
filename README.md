@@ -89,13 +89,19 @@ Total and active parameter scatter views for models with public size metadata.
 ```bash
 export OPENROUTER_API_KEY=your_key_here
 export OPENAI_API_KEY=your_openai_key_here  # required only for models routed to OpenAI
+export ATLASCLOUD_API_KEY=your_atlascloud_key_here  # required only for Atlas Cloud routes
 export OPENAI_PROJECT=proj_xxx              # optional: force OpenAI requests to a specific project
 export OPENAI_ORGANIZATION=org_xxx          # optional: force organization context
 ```
 
 Provider routing is configured per model via `collect.model_providers` and
 `grade.model_providers` in config (default is OpenRouter), for example:
-`{"*":"openrouter","gpt-5.3":"openai"}`.
+`{"*":"openrouter","openai/gpt-5.3":"openai","qwen/*":"atlascloud"}`.
+
+Atlas Cloud uses its OpenAI-compatible chat completions API. Model IDs are sent
+unchanged, so IDs such as `qwen/qwen3.8-max` can be routed directly. Set
+`ATLASCLOUD_BASE_URL` only when a custom compatible endpoint is required; it
+defaults to `https://api.atlascloud.ai/v1`.
 
 2. Run collection + primary judge (Claude by default):
 
