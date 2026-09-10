@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Public entry point: serialize writers and validate a staging copy first.
+if [[ "${BULLSHITBENCH_PUBLISH_STAGE:-}" != "1" ]]; then
+  exec python3 "$(dirname "${BASH_SOURCE[0]}")/publication.py" publish "$@"
+fi
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -10,6 +15,7 @@ Usage:
     --panel-summary <path/to/panel_summary.json> \
     --aggregate-summary <path/to/aggregate_summary.json> \
     --aggregate-rows <path/to/aggregate.jsonl> \
+    [--questions-file <original/questions.json>] \
     [--output-dir data/latest] \
     [--publish-mode auto|supplemental|replace]
 
@@ -23,7 +29,11 @@ Copies the selected run artifacts into a stable viewer dataset directory:
   leaderboard_with_launch.csv
   model_launch_dates.csv
   model_params.csv
+  questions.json
   manifest.json
+
+Question text is frozen from questions_snapshot.json beside the response file,
+or from an explicit --questions-file. Existing releases keep their snapshot.
 
 Publish modes:
   auto (default): supplemental merge when output dataset already exists, else replace.
@@ -169,6 +179,11 @@ model_launch_headers = str(sys.argv[10] or "").strip()
 model_params_canonical = pathlib.Path(sys.argv[11]).resolve()
 model_params_headers = str(sys.argv[12] or "").strip()
 
+# publication.py validates and stages the exact source before rows are slimmed.
+questions_out = output_dir / "questions.json"
+if not questions_out.is_file():
+    raise ValueError("The publication stage is missing its verified questions.json snapshot")
+
 responses_out = output_dir / "responses.jsonl"
 aggregate_out = output_dir / "aggregate.jsonl"
 collection_stats_out = output_dir / "collection_stats.json"
@@ -257,59 +272,16 @@ def normalize_row(row: dict):
 
 def parse_json_objects(text: str):
     rows = []
-    buf = []
-    depth = 0
-    in_string = False
-    escape = False
-
-    for ch in text:
-        if depth == 0:
-            if ch.isspace():
-                continue
-            if ch != "{":
-                continue
-            buf = ["{"]
-            depth = 1
-            in_string = False
-            escape = False
+    for number, line in enumerate(text.split("\n"), 1):
+        if not line.strip():
             continue
-
-        if in_string:
-            if escape:
-                buf.append(ch)
-                escape = False
-                continue
-            if ch == "\\":
-                buf.append(ch)
-                escape = True
-                continue
-            if ch == '"':
-                buf.append(ch)
-                in_string = False
-                continue
-            if ch == "\n":
-                buf.append("\\n")
-                continue
-            if ch == "\r":
-                buf.append("\\r")
-                continue
-            buf.append(ch)
-            continue
-
-        if ch == '"':
-            buf.append(ch)
-            in_string = True
-        elif ch == "{":
-            buf.append(ch)
-            depth += 1
-        elif ch == "}":
-            buf.append(ch)
-            depth -= 1
-            if depth == 0:
-                rows.append(json.loads("".join(buf)))
-                buf = []
-        else:
-            buf.append(ch)
+        try:
+            row = json.loads(line, parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f"Invalid JSONL record on line {number}") from exc
+        if not isinstance(row, dict):
+            raise ValueError(f"JSONL record on line {number} is not an object")
+        rows.append(row)
     return rows
 
 def load_json(path: pathlib.Path):
@@ -368,8 +340,8 @@ def slim_published_response_rows(rows):
             }
         if slim.get("response_usage_is_byok") is False or slim.get("response_usage_is_byok") is None:
             slim.pop("response_usage_is_byok", None)
-        # Question text and annotations are canonical in questions.json / questions.v2.json
-        # and are rehydrated by the viewer via question_id.
+        # Question text and annotations are frozen with this publication and
+        # rehydrated by question_id through manifest.files['questions.json'].
         for key in ("question", "nonsensical_element", "domain"):
             slim.pop(key, None)
         for key in (
@@ -388,8 +360,8 @@ def slim_published_response_rows(rows):
 def slim_published_aggregate_rows(rows):
     # Per-row grade IDs are internal provenance links. Judge model names are
     # canonical at panel scope in panel_summary.json. Response text is canonical
-    # in responses.jsonl, question annotations are canonical in the question
-    # files, and scores plus justifications remain on every aggregate row.
+    # in responses.jsonl, question annotations are in the frozen question
+    # snapshot, and scores plus justifications remain on every aggregate row.
     drop_keys = {
         "judge_1_grade_id",
         "judge_2_grade_id",
@@ -635,6 +607,11 @@ else:
 
 incoming_responses = load_jsonl(responses_in)
 incoming_aggregate_rows = load_jsonl(aggregate_rows_in)
+incoming_panel = load_json(panel_summary_in)
+incoming_panel_id_for_rows = str(incoming_panel.get("panel_id", "")).strip()
+if incoming_panel_id_for_rows:
+    for row in incoming_aggregate_rows:
+        row.setdefault("judge_panel_id", incoming_panel_id_for_rows)
 
 if mode == "supplemental":
     existing_responses = load_jsonl(responses_out)
@@ -805,9 +782,23 @@ panel_summary = incoming_panel_summary if mode == "replace" or not existing_pane
 panel_summary = dict(panel_summary)
 panel_summary["timestamp_utc"] = dt.datetime.now(dt.UTC).isoformat()
 panel_summary["publish_mode"] = mode
+panels = dict(panel_summary.get("panels", {}))
+if incoming_panel_id_for_rows:
+    panels[incoming_panel_id_for_rows] = {
+        "judge_models": incoming_panel.get("judge_models", []),
+        "panel_mode": incoming_panel.get("panel_mode", "full"),
+        "consensus_method": incoming_aggregate_summary.get("consensus_method", "mean"),
+    }
+panel_summary["panels"] = panels
 panel_summary["disagreement_count"] = disagreement_count(merged_aggregate_rows)
 panel_summary["disagreement_rate"] = round(
     panel_summary["disagreement_count"] / max(1, len(merged_aggregate_rows)), 4
+)
+panel_summary["judge_failure_policy"] = "retry_then_two_valid"
+panel_summary["minimum_valid_judges"] = 2
+panel_summary["fallback_response_count"] = sum(
+    row.get("judge_failure_policy") == "retry_then_two_valid"
+    for row in merged_aggregate_rows
 )
 if "grade_dirs_for_aggregate" in panel_summary:
     panel_summary["grade_dirs_for_aggregate"] = []
@@ -842,10 +833,14 @@ num_judges = (
 consensus_method = str(panel_summary.get("consensus_method", "")).strip() or str(
     incoming_aggregate_summary.get("consensus_method", "") or "mean"
 )
+sys.path.insert(0, str(root_dir / "scripts"))
+from publication import get_legacy_error_sample_ids
+
 aggregate_summary = module.summarize_aggregate_rows(
     merged_aggregate_rows,
     consensus_method=consensus_method,
     num_judges=max(1, num_judges),
+    legacy_error_sample_ids=get_legacy_error_sample_ids(existing_aggregate_rows),
 )
 
 write_jsonl(responses_out, merged_responses)
@@ -1133,7 +1128,12 @@ def jsonl_coverage(path: pathlib.Path) -> dict[str, int]:
 responses_rows = sum(1 for line in (output_dir / "responses.jsonl").open("r", encoding="utf-8") if line.strip())
 aggregate_rows = sum(1 for line in (output_dir / "aggregate.jsonl").open("r", encoding="utf-8") if line.strip())
 
+manifest_path = output_dir / "manifest.json"
+previous_metadata = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
 manifest = {
+    # Keep release provenance, including reviewed correction receipts, while
+    # rebuilding all generated counts, paths and coverage below.
+    **previous_metadata,
     "generated_at_utc": generated_at_utc,
     "sources": {
         "responses_file": f"{output_dir}/responses.jsonl",
@@ -1144,6 +1144,7 @@ manifest = {
         "recent_additions_file": f"{output_dir}/recent_additions.json",
         "viewer_rows_file": f"{output_dir}/viewer_rows.json.gz",
         "viewer_details_file": f"{output_dir}/viewer_details.json.gz",
+        "questions_file": f"{output_dir}/questions.json",
     },
     "counts": {
         "responses_rows": responses_rows,

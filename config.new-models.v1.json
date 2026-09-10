@@ -1,96 +1,12 @@
 {
   "collect": {
     "questions": "questions.json",
-    "models": [
-      "stealth/ox-alpha",
-      "z-ai/glm-5.3",
-      "qwen/qwen3.8-27b",
-      "google/gemini-3.7-flash",
-      "x-ai/grok-4.6",
-      "deepseek/deepseek-v4-pro-0813",
-      "meta/muse-spark-1.2",
-      "qwen/qwen3.8-max"
-    ],
+    "models": [],
     "models_file": "",
     "model_providers": {
       "*": "openrouter"
     },
-    "model_request_overrides": {
-      "stealth/ox-alpha": {
-        "provider": {
-          "order": [
-            "Stealth"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true,
-          "data_collection": "allow"
-        }
-      },
-      "z-ai/glm-5.3": {
-        "provider": {
-          "order": [
-            "Z.AI"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "qwen/qwen3.8-27b": {
-        "provider": {
-          "order": [
-            "Alibaba"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "google/gemini-3.7-flash": {
-        "provider": {
-          "order": [
-            "Google"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "x-ai/grok-4.6": {
-        "provider": {
-          "order": [
-            "xAI"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "deepseek/deepseek-v4-pro-0813": {
-        "provider": {
-          "order": [
-            "Alibaba"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true,
-          "data_collection": "allow"
-        }
-      },
-      "meta/muse-spark-1.2": {
-        "provider": {
-          "order": [
-            "Meta"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "qwen/qwen3.8-max": {
-        "provider": {
-          "order": [
-            "Alibaba"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      }
-    },
+    "model_request_overrides": {},
     "num_runs": 1,
     "parallelism": 48,
     "max_inflight_per_model": 3,
@@ -100,40 +16,7 @@
     "response_reasoning_effort": "off",
     "store_request_messages": false,
     "store_response_raw": true,
-    "model_reasoning_efforts": {
-      "stealth/ox-alpha": [
-        "low",
-        "max"
-      ],
-      "z-ai/glm-5.3": [
-        "minimal",
-        "max"
-      ],
-      "qwen/qwen3.8-27b": [
-        "none",
-        "max"
-      ],
-      "google/gemini-3.7-flash": [
-        "minimal",
-        "max"
-      ],
-      "x-ai/grok-4.6": [
-        "minimal",
-        "max"
-      ],
-      "deepseek/deepseek-v4-pro-0813": [
-        "low",
-        "max"
-      ],
-      "meta/muse-spark-1.2": [
-        "minimal",
-        "xhigh"
-      ],
-      "qwen/qwen3.8-max": [
-        "minimal",
-        "max"
-      ]
-    },
+    "model_reasoning_efforts": {},
     "shuffle_tasks": true,
     "retries": 3,
     "rate_limit_requeue": true,

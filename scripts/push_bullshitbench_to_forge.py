@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
+import math
 import os
 import pathlib
 import re
@@ -17,7 +18,11 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Any, Iterable
 
+from published_dataset import StorageError, asset_exists, read_text
+import publication
 
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEFAULT_API_BASE = "https://forge-api.arena.ai"
 DEFAULT_DATASET = "data/v2/latest/aggregate.jsonl"
 DEFAULT_CATEGORY = "bullshit_detection"
@@ -103,28 +108,110 @@ class ForgeClient:
             raise ForgeError(f"{method} {path} failed: {exc.reason}") from exc
 
 
-def load_aggregate_rows(dataset_path: pathlib.Path) -> dict[str, list[AggregateRow]]:
+def load_question_index(path: pathlib.Path) -> dict[str, dict[str, Any]]:
+    try:
+        payload = publication.decode(path.read_bytes())
+        if isinstance(payload, list):
+            entries = payload
+        elif isinstance(payload, dict) and isinstance(payload.get("techniques"), list):
+            entries = [
+                {"technique": group.get("technique", ""),
+                 "technique_description": group.get("description", ""), **question}
+                for group in payload["techniques"] for question in group["questions"]
+            ]
+        else:
+            raise ValueError("expected a techniques document or a collection snapshot array")
+        questions = {}
+        for question in entries:
+            if not isinstance(question, dict):
+                raise ValueError("question must be an object")
+            question_id = question["id"]
+            if not isinstance(question_id, str) or not question_id.strip():
+                raise ValueError("question ID must be a non-empty string")
+            if question_id in questions:
+                raise ValueError(f"duplicate question ID {question_id!r}")
+            questions[question_id] = {
+                **question,
+                "is_control": bool(question.get("is_control")) or question.get("technique") == "control_legitimate",
+            }
+        return questions
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        raise ForgeError(f"Invalid questions file {path}: {exc}") from exc
+
+
+def load_aggregate_rows(
+    dataset_path: pathlib.Path,
+    questions_path: pathlib.Path | None = None,
+) -> dict[str, list[AggregateRow]]:
+    question_index = None
+    frozen = False
     grouped: dict[str, dict[str, AggregateRow]] = defaultdict(dict)
-    with dataset_path.open("r", encoding="utf-8") as handle:
-        for line_number, line in enumerate(handle, start=1):
-            obj = json.loads(line)
-            if obj.get("consensus_score") is None:
+    try:
+        manifest_path = dataset_path.parent / "manifest.json"
+        manifest_raw = manifest_path.read_bytes() if manifest_path.is_file() else None
+        if manifest_raw is not None:
+            manifest = publication.decode(manifest_raw)
+            if not isinstance(manifest, dict) or not isinstance(manifest.get("files", {}), dict):
+                raise ValueError("invalid publication manifest")
+            if "questions.json" in manifest.get("files", {}):
+                _, question_index = publication.frozen_questions(dataset_path.parent, manifest)
+                frozen = True
+                if questions_path is not None:
+                    publication.compare_questions(question_index, load_question_index(questions_path), "Explicit questions")
+        if not frozen and questions_path is None:
+            version = infer_benchmark_version(dataset_path)
+            if version in ("v1", "v2"):
+                questions_path = ROOT / ("questions.v2.json" if version == "v2" else "questions.json")
+        text = read_text(dataset_path)
+        current_manifest = manifest_path.read_bytes() if manifest_path.is_file() else None
+        if current_manifest != manifest_raw:
+            raise ValueError("publication manifest changed while reading; retry against a stable publication")
+    except (OSError, ValueError) as exc:
+        raise ForgeError(f"Cannot read dataset {dataset_path}: {exc}") from exc
+    for line_number, line in enumerate(text.split("\n"), start=1):
+        if not line.strip():
+            continue
+        try:
+            obj = publication.decode(line)
+            if not isinstance(obj, dict):
+                raise ValueError("expected a JSON object")
+            if frozen and obj.get("question_id") is not None:
+                publication.validate_question_rows([obj], question_index, "Published aggregate")
+            if (obj.get("consensus_score") is None or obj.get("status") == "error"
+                    or obj.get("error") or obj.get("row_errors") or obj.get("consensus_error")
+                    or obj.get("row_identity_mismatch")):
                 continue
+            for key in ("sample_id", "model", "question_id"):
+                if not isinstance(obj.get(key), str) or not obj[key].strip():
+                    raise ValueError(f"{key} must be a non-empty string")
+            score = obj["consensus_score"]
+            if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(score):
+                raise ValueError("consensus_score must be a finite number")
+            question = question_index.get(obj["question_id"], {}) if frozen else {}
+            if not frozen and questions_path is not None and any(not obj.get(key) for key in ("question", "domain", "technique")):
+                if question_index is None:
+                    question_index = load_question_index(questions_path)
+                question = question_index.get(obj["question_id"], {})
+            question_text = obj.get("question") or question.get("question")
+            if not isinstance(question_text, str) or not question_text.strip():
+                raise ValueError(f"question {obj['question_id']!r} has no text; provide its canonical --questions file")
 
             row = AggregateRow(
                 sample_id=str(obj["sample_id"]),
                 model=str(obj["model"]),
                 question_id=str(obj["question_id"]),
-                question=str(obj["question"]),
-                domain=str(obj.get("domain", "")),
-                technique=str(obj.get("technique", "")),
-                consensus_score=float(obj["consensus_score"]),
+                question=question_text,
+                domain=str(obj.get("domain") or question.get("domain", "")),
+                technique=str(obj.get("technique") or question.get("technique", "")),
+                consensus_score=float(score),
                 row_errors=tuple(str(item) for item in obj.get("row_errors", []) or []),
                 row_identity_mismatch=bool(obj.get("row_identity_mismatch")),
             )
 
             # Keep the last row for a given question/model if a dataset contains duplicates.
             grouped[row.question_id][row.model] = row
+        except (ValueError, KeyError, TypeError) as exc:
+            raise ForgeError(f"Invalid aggregate row in {dataset_path}:{line_number}: {exc}") from exc
 
     return {
         question_id: sorted(models.values(), key=lambda row: row.model)
@@ -355,6 +442,7 @@ def parse_args() -> argparse.Namespace:
         description="Push BullshitBench aggregate data into a Forge arena as pairwise feedback."
     )
     parser.add_argument("--dataset", default=DEFAULT_DATASET, help="Path to BullshitBench aggregate.jsonl")
+    parser.add_argument("--questions", help="Questions JSON for legacy/custom data; must agree with any frozen publication snapshot")
     parser.add_argument("--api-base", default=DEFAULT_API_BASE, help="Forge API base URL")
     parser.add_argument(
         "--api-key-env",
@@ -399,14 +487,16 @@ def main() -> int:
     args = parse_args()
 
     dataset_path = pathlib.Path(args.dataset).resolve()
-    if not dataset_path.is_file():
+    if not asset_exists(dataset_path):
         raise SystemExit(f"Dataset file not found: {dataset_path}")
 
     benchmark_version = infer_benchmark_version(dataset_path)
     arena_name = args.arena_name or infer_arena_name(benchmark_version)
     extra_tags = tuple(str(tag).strip() for tag in args.tag if str(tag).strip())
 
-    grouped_rows = load_aggregate_rows(dataset_path)
+    grouped_rows = load_aggregate_rows(
+        dataset_path, pathlib.Path(args.questions).resolve() if args.questions else None
+    )
     summary = summarize_events(grouped_rows, max_events=args.max_events)
 
     print(
@@ -503,6 +593,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except ForgeError as exc:
+    except (ForgeError, StorageError) as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(1) from exc

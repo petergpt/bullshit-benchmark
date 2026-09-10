@@ -2,6 +2,20 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.0] - 2026-09-10
+
+### Added
+- Added DeepSeek V4.1 Flash, Claude Fable 5.1 and GPT-6 Astra at low and maximum reasoning to both suites: 194 V1 variants and 214 V2 variants, covering 32,070 responses.
+- Added the new dashboard with shared filters, multiple model highlights, response comparisons, PNG/CSV exports, and Timeline, Lab trends, Reasoning and Size views. Root, standard viewer and historic V2 links open it; the original viewer remains available at `viewer/index.legacy.html`. Added least-accepted and average-grade sorting and reported reasoning/output token columns with coverage. Requested xhigh effort displays as xHigh.
+
+### Changed
+- Dashboard scores and rankings exclude candidate refusals; bars include them by default, with an independent exclusion checkbox. The original viewer defaults to exclusion. Model details, tooltips and dashboard CSV exports expose both denominators; optional dotted Lab trends lines compare all-attempt rates for the same selected models. Refusal counts and canonical published rates remain unchanged.
+- Store published data in verified immutable parts of at most 4 MiB, with frozen question snapshots and lazy response loading. Publication validates the full dataset before activating its manifest.
+- After three unsuccessful output attempts by one judge, average the other two valid grades and record reduced coverage in answer details. Missing votes stay null. Fewer than two valid grades and unexhausted failures still block new publication.
+- Corrected 75 historical V2 synthetic-zero records while preserving original responses and genuine grades: 73 now use two valid votes and two remain unscored candidate refusals. Two GPT-6 and two DeepSeek V4.1 Flash V2 answers also use the approved reduced panel.
+- Updated the README, screenshots and technical guide; cleared completed catch-up queues whose variants are in the main configs.
+- GitHub Pages deploys an allowlisted public artifact after dataset, config, viewer and export checks pass. Local runs and previews are excluded.
+
 ## [2.0.29] - 2026-08-25
 
 ### Added

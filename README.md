@@ -1,159 +1,69 @@
 <h1>
   <img src="docs/images/bsbench.png" alt="BullshitBench logo" width="64" />
-  BullshitBench v2
+  BullshitBench
 </h1>
 
 BullshitBench measures whether models detect nonsense, call it out clearly, and avoid confidently continuing with invalid assumptions.
 
-- Public viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Updated: 2026-08-25
+**[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-## Latest Changelog Entry (2026-08-25)
+Updated **September 10, 2026**. The new dashboard is now the default viewer. The latest completed results include **DeepSeek V4.1 Flash**, **Claude Fable 5.1** and **GPT-6 Astra**, each tested at low and maximum reasoning.
 
-- Added Ox Alpha, GLM 5.3, Qwen 3.8 27B, Gemini 3.7 Flash, Grok 4.6, DeepSeek V4 Pro 0813, Meta Muse Spark 1.2, and Qwen 3.8 Max to both benchmark tracks, each at its lowest and highest supported reasoning settings.
-- Qwen 3.8 Max reaches rank `#3` in v2 at minimal reasoning with a `94%` clear-pushback rate, compared with `26%` at maximum reasoning; Qwen 3.8 27B falls from `78%` with reasoning disabled to `28%` at maximum reasoning.
-- Meta Muse Spark 1.2 scores `50%` and `49%` clear pushback in v2 at `minimal` and `xhigh` reasoning, respectively; Ox Alpha scores `64%` at low reasoning and `53%` at maximum reasoning.
-- Appended `880` v1 and `1,600` v2 response rows with `7,440` canonical judge evaluations, zero new errors or refusals, refreshed chart screenshots, and complete launch-date/model-size metadata.
-- Full details: [CHANGELOG.md](CHANGELOG.md)
+| Suite | Questions | Model/reasoning variants | Responses |
+| --- | ---: | ---: | ---: |
+| V1 | 55 | 194 | 10,670 |
+| V2 | 100 | 214 | 21,400 |
 
-## v2 Changelog Highlights
+## Explore
 
-- `100` new nonsense questions in the v2 set.
-- Domain-specific question coverage across `5` domains: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
-- New visualizations in the v2 viewer, including:
-  - Detection Rate by Model (stacked mix bars)
-  - Domain Landscape (overall vs domain detection mix)
-  - Detection Rate Over Time
-  - Do Newer Models Perform Better?
-  - Does Thinking Harder Help? (tokens/cost toggle)
-  - Model Size and Weights (total/active parameter scatter views)
+Filter by lab, reasoning or domain; sort by clear pushback, least accepted or average grade; compare answers; and export PNGs or CSVs. Optional columns show grade, token usage and cost.
 
-## Viewer Walkthrough (v2)
+![BullshitBench dashboard](docs/images/readme-dashboard.png)
 
-The screenshots below follow the same flow as `viewer/index.v2.html`, starting with the main chart.
+Timeline, Lab trends, Reasoning and Size views use the same results. Lab trends follows each lab's best model at each release date. Dotted lines show the all-attempt rate of the same model where it differs.
 
-### 1. Detection Rate by Model (Main Chart)
+![BullshitBench lab trends](docs/images/readme-lab-trends.png)
 
-Primary leaderboard-style view showing each model's green/amber/red split. The screenshot uses the viewer's 30-day new-model filter so recent additions remain legible.
+## Scoring
 
-![BullshitBench v2 - Detection Rate by Model](docs/images/v2-detection-rate-by-model.png?v=20260825-selected-eight)
+A three-judge panel evaluates responses: Claude Sonnet 4.6, GPT-5.2 and Gemini 3.1 Pro Preview. Their average determines the category:
 
-### 2. Domain Landscape
+- **Clear pushback:** rejects the broken premise.
+- **Partial challenge:** flags problems but still engages with the premise.
+- **Accepted nonsense:** treats the premise as valid.
 
-Detection mix by domain to compare overall performance vs each domain at a glance.
+**Clear score = clear answers ÷ (attempts − candidate refusals).** Errors remain in the denominator. Bars include refusals by default; tick **Exclude refusals** to remove them from the bars. Model details and CSV exports include both rates. Canonical leaderboard CSVs retain all-attempt rates.
 
-![BullshitBench v2 - Domain Landscape](docs/images/v2-domain-landscape.png?v=20260825-selected-eight)
+Failed judges receive three output attempts. After those are exhausted, two valid grades may be averaged; affected answers show **2/3 judges**. Missing votes remain unscored. See the [scoring and publication rules](docs/TECHNICAL.md#missing-judge-evaluations).
 
-### 3. Detection Rate Over Time
+V2 covers **13 nonsense techniques** across software, finance, legal, medical and physics questions. This tests responses to invalid premises; it does not measure how often models incorrectly reject valid questions.
 
-Release-date trend view across Anthropic, OpenAI, Google, DeepSeek, Stealth, Z.AI, Qwen, xAI, and Meta.
+## Run Locally
 
-![BullshitBench v2 - Detection Rate Over Time](docs/images/v2-detection-rate-over-time.png?v=20260825-selected-eight)
-
-### 4. Do Newer Models Perform Better?
-
-All-model scatter by release date vs. green rate.
-
-![BullshitBench v2 - Do Newer Models Perform Better](docs/images/v2-do-newer-models-perform-better.png?v=20260825-selected-eight)
-
-### 5. Does Thinking Harder Help?
-
-Reasoning scatter (tokens/cost toggle in the viewer) vs. green rate.
-
-![BullshitBench v2 - Does Thinking Harder Help](docs/images/v2-does-thinking-harder-help.png?v=20260825-selected-eight)
-
-### 6. Model Size and Weights
-
-Total and active parameter scatter views for models with public size metadata.
-
-![BullshitBench v2 - Model Size and Weights](docs/images/v2-model-size-scatters.png?v=20260825-selected-eight)
-
-## Benchmark Scope (v2)
-
-- `100` nonsense prompts total.
-- `5` domain groups: `software` (40), `finance` (15), `legal` (15), `medical` (15), `physics` (15).
-- `13` nonsense techniques (for example: `plausible_nonexistent_framework`, `misapplied_mechanism`, `nested_nonsense`, `specificity_trap`).
-- `3`-judge panel aggregation (`anthropic/claude-sonnet-4.6`, `openai/gpt-5.2`, `google/gemini-3.1-pro-preview`) using `full` panel mode + `mean` aggregation.
-- Published v2 leaderboard currently includes `208` model/reasoning rows.
-
-## What This Measures
-
-- `Clear Pushback`: the model clearly rejects the broken premise.
-- `Partial Challenge`: the model flags issues but still engages the bad premise.
-- `Accepted Nonsense`: the model treats the nonsense as valid.
-
-## Quick Start
-
-1. Set API keys:
+No build step or API keys are needed to view results. From the repository root:
 
 ```bash
-export OPENROUTER_API_KEY=your_key_here
-export OPENAI_API_KEY=your_openai_key_here  # required only for models routed to OpenAI
-export OPENAI_PROJECT=proj_xxx              # optional: force OpenAI requests to a specific project
-export OPENAI_ORGANIZATION=org_xxx          # optional: force organization context
+python3 -m http.server 8795 --bind 127.0.0.1
 ```
 
-Provider routing is configured per model via `collect.model_providers` and
-`grade.model_providers` in config (default is OpenRouter), for example:
-`{"*":"openrouter","gpt-5.3":"openai"}`.
+Open [the local dashboard](http://127.0.0.1:8795/). The [Viewer Guide](viewer/next/README.md) covers filters, comparisons and exports.
 
-2. Run collection + primary judge (Claude by default):
+To run your own evaluations, use [config.json](config.json) for V1 or [config.v2.json](config.v2.json) for V2 and follow the [Technical Guide](docs/TECHNICAL.md). Collection and grading use paid provider APIs; review the selected models first.
 
-```bash
-./scripts/run_end_to_end.sh
-```
+## Data
 
-3. Run v2 end-to-end and publish into the dedicated v2 dataset:
+- **V1:** [manifest](data/latest/manifest.json) · [leaderboard CSV](data/latest/leaderboard.csv) · [questions](questions.json)
+- **V2:** [manifest](data/v2/latest/manifest.json) · [leaderboard CSV](data/v2/latest/leaderboard.csv) · [questions](questions.v2.json)
+- [Technical Guide](docs/TECHNICAL.md) · [Changelog](CHANGELOG.md) · [Storage audit](docs/STORAGE_AUDIT.md)
+- [Legacy viewer](https://petergpt.github.io/bullshit-benchmark/viewer/index.legacy.html)
 
-```bash
-./scripts/run_end_to_end.sh --config config.v2.json --viewer-output-dir data/v2/latest --with-additional-judges
-```
-
-4. Optionally run the default config end-to-end (publishes to `data/latest`):
-
-```bash
-./scripts/run_end_to_end.sh --with-additional-judges
-```
-
-5. Open the viewer:
-
-- Published viewer (latest): https://petergpt.github.io/bullshit-benchmark/viewer/index.v2.html
-- Local viewer (optional):
-
-```bash
-./scripts/run_end_to_end.sh --with-additional-judges --serve --port 8877
-```
-
-Then open `http://localhost:8877/viewer/index.v2.html`.
-Use the `Benchmark Version` dropdown in the filters panel to switch between published datasets (for example `v1` and `v2`).
-
-## Published Datasets
-
-- v1 dataset remains in `data/latest`.
-- v2 dataset is published in `data/v2/latest`.
-- v2 question set comes from `drafts/new-questions.md` via `scripts/build_questions_v2_from_draft.py`.
-- Canonical judging is now fixed to exactly 3 judges on every row with mean aggregation (legacy disagreement-tiebreak mode is retired from the main pipeline).
-- Release notes and notable changes are tracked in `CHANGELOG.md`.
-
-## Documentation
-
-- [Technical Guide](docs/TECHNICAL.md): pipeline operations, publishing artifacts, launch-date metadata workflow, repo layout, env vars.
-- [Changelog](CHANGELOG.md): v1 to v2 release notes and publish-history highlights.
-- [Question Set](questions.json): benchmark questions and scoring metadata.
-- [Question Set v2](questions.v2.json): v2 question pool generated from `drafts/new-questions.md`.
-- [Config](config.json): default model/pipeline settings.
-- [Config v2](config.v2.json): v2-ready config (uses `questions.v2.json`).
-
-## Notes
-
-- This README is intentionally audience-facing.
-- Technical and maintainer-oriented content lives in `docs/TECHNICAL.md`.
+Each manifest pins the exact question snapshot, metadata and immutable data files for its release. Full response and grade exports are split into bounded files; use the [manifest-aware reader](docs/TECHNICAL.md#published-dataset-files) to reconstruct JSONL.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+[MIT](LICENSE). Third-party brand assets have separate [source and license notes](viewer/next/assets/brands/SOURCES.md).
 
-## Star History 
+## Star History
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=petergpt/bullshit-benchmark&type=Date&theme=dark&cachebust=20260910" />

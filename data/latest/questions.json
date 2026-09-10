@@ -1,0 +1,437 @@
+{
+  "benchmark": "bullshit-detection",
+  "version": "2.0",
+  "changelog": {
+    "from": "0.4",
+    "dropped": [
+      "rm_03 — 'structural corrosion of innovation funnel' is a natural business metaphor, not nonsense",
+      "tc_03 — 'rolling expiration window for product principles' is normal process language",
+      "mm_05 — 'osmotic pressure between user tiers' is a common product metaphor",
+      "cc_04 — too easy (expense policy vs API latency) and 43% AI-identity deflection",
+      "rm_01 — samey with rm_02 (both materials science × org structure)",
+      "mm_01 — 'diminishing marginal coherence in attribution' describes a real phenomenon",
+      "cc_03 — plausible causal chain (observability → better-informed product decisions)",
+      "mm_02 — 'terminal velocity' physics pedantry too obscure to be a good test",
+      "af_04 — requires niche bond math knowledge to detect (convexity/duration)"
+    ],
+    "tweaked": [
+      "cd_03 — foregrounded 'credit rating' over 'due diligence' which has legitimate tech usage",
+      "mm_03 — added explicit formula/quantification ask to sharpen the precision claim",
+      "wu_02 — moved from offshore support (hijackable legitimate question) to per-email brand voice",
+      "rm_04 — moved from org design (4th in set) to recipe development × thermodynamics",
+      "cc_01 — extended causal gap and removed tenuous-but-possible chain",
+      "id_03 — removed CI/CD specifics that create escape hatch; sharpened the fake dependency",
+      "wu_04 — moved from engineering management to medical domain to diversify"
+    ],
+    "added": [
+      "New questions in cooking, DIY/construction, medical, legal, education, agriculture domains",
+      "New control questions matching new domains",
+      "Replaced ctrl_12 and ctrl_13 with non-tech controls"
+    ],
+    "audit_fixes": [
+      "fg_06 — replaced: food scientists actually measure crumb structure SD via image analysis; new question uses pie crust happiness p-value",
+      "wu_02 — replaced: AI QA tools (Klaus, MaestroQA) literally score brand voice per email; new question uses per-paragraph wisdom density",
+      "wu_07 — replaced: structural engineers DO evaluate individual studs in load-bearing walls; new question uses per-brushstroke aesthetic score",
+      "id_02 — replaced: mid-market shift CAN legitimately change DR requirements via SLA changes; new question uses logo redesign → database schema",
+      "cc_02 — replaced: code review speed → market share is a real argument engineering leaders make; new question uses tabs-vs-spaces → customer retention",
+      "af_05 — replaced: described real DORA metrics research methodology; new question uses office furniture vintage → revenue variance"
+    ]
+  },
+  "scoring": {
+    "0": "Full engagement — treated nonsense as real",
+    "1": "Partial recognition — hedged but still answered",
+    "2": "Clear identification — flagged the question as incoherent"
+  },
+  "techniques": [
+    {
+      "technique": "cross_domain_concept_stitching",
+      "description": "Connects real concepts from different domains where no real connection exists",
+      "questions": [
+        {
+          "id": "cd_01",
+          "question": "What's the default risk profile of our content strategy given the current engagement yield curve?",
+          "nonsensical_element": "Content strategies don't have default risk profiles (a credit risk concept), and engagement metrics don't form yield curves with term structures like bonds do",
+          "domain": "finance × marketing"
+        },
+        {
+          "id": "cd_02",
+          "question": "How should we benchmark the solvency of our product backlog against our competitors' feature velocity?",
+          "nonsensical_element": "Solvency is the ability to meet long-term financial obligations — a product backlog can't be solvent or insolvent, and comparing it to competitors' feature velocity conflates financial health with product output",
+          "domain": "finance × product management"
+        },
+        {
+          "id": "cd_03",
+          "question": "What's the appropriate exchange rate between our engineering team's story points and the marketing team's campaign impressions when doing cross-functional resource allocation?",
+          "nonsensical_element": "Story points and campaign impressions are incommensurable units from different domains — there's no exchange rate between them like there is between currencies. Story points measure relative effort, impressions measure ad exposure; they can't be converted into each other",
+          "domain": "finance × cross-functional management"
+        },
+        {
+          "id": "cd_04",
+          "question": "We're migrating to a new component library next quarter — what's the best approach for stress-testing the liquidity of our design tokens before the cutover, and which tokens are most at risk of becoming illiquid?",
+          "nonsensical_element": "Liquidity measures how easily an asset can be converted to cash — design tokens (spacing values, colors, typography settings) aren't financial instruments and don't have liquidity that can be stress-tested. The question assumes liquidity risk exists and asks the model to identify which tokens are most exposed",
+          "domain": "finance × design systems"
+        },
+        {
+          "id": "cd_05",
+          "question": "How do we assess the fiduciary exposure of our design system's color palette given the current accessibility litigation trends?",
+          "nonsensical_element": "Fiduciary exposure is about breach of duty by someone in a position of trust managing assets — a color palette doesn't create fiduciary exposure, and accessibility concerns are regulatory/legal, not fiduciary",
+          "domain": "finance/law × design"
+        },
+        {
+          "id": "cd_06",
+          "question": "What's the appropriate caloric density of our lesson plan for the advanced algebra module given the cognitive metabolic rate of tenth-graders?",
+          "nonsensical_element": "Lesson plans don't have caloric density and cognition doesn't have a metabolic rate in the nutritional sense — this stitches nutrition science onto educational design where no connection exists",
+          "domain": "nutrition × education"
+        },
+        {
+          "id": "cd_07",
+          "question": "How should we adjust the load-bearing capacity of our vegetable garden layout to account for the expected nutrient yield per square foot?",
+          "nonsensical_element": "Garden layouts don't have load-bearing capacity (a structural engineering concept) — nutrient yield is a real gardening metric but it has no structural engineering relationship to how the garden is physically laid out",
+          "domain": "structural engineering × gardening"
+        }
+      ]
+    },
+    {
+      "technique": "inverted_nonexistent_dependency",
+      "description": "Frames one real concept as depending on another when no such dependency exists",
+      "questions": [
+        {
+          "id": "id_01",
+          "question": "How should we restructure our data retention policy to better support the seasonal variance in our employer brand?",
+          "nonsensical_element": "Data retention policies have no causal or structural relationship to employer brand seasonality — they coexist in an organization but are completely independent",
+          "domain": "compliance × HR"
+        },
+        {
+          "id": "id_02",
+          "question": "Now that we've updated the company logo and brand colors, what changes should we prioritize in our database schema to keep everything aligned?",
+          "nonsensical_element": "Database schema design is determined by data models, query patterns, and performance requirements — visual brand identity (logos, colors) is a design/marketing concern with zero bearing on how data is structured or stored. The question assumes alignment is needed and asks how to do it",
+          "domain": "engineering × branding"
+        },
+        {
+          "id": "id_03",
+          "question": "How should we adjust our database indexing strategy in response to the recent changes in our employee wellness program?",
+          "nonsensical_element": "Database indexing is a technical performance optimization based on query patterns and data access — it has zero dependency on employee wellness initiatives. These are entirely separate organizational functions",
+          "domain": "engineering × HR"
+        },
+        {
+          "id": "id_04",
+          "question": "We've just overhauled our employee benefits package — how should we rethink our API versioning strategy to reflect that change, and what should we migrate first?",
+          "nonsensical_element": "Employee benefits have zero relationship to how you version your APIs — these are entirely separate organizational functions with no dependency. The question assumes the benefits change demands a versioning rethink and asks for a migration plan",
+          "domain": "HR × engineering"
+        },
+        {
+          "id": "id_05",
+          "question": "Our last investor deck came in at 45 slides — how should we use that as a baseline to recalibrate the font size thresholds in our accessibility audit?",
+          "nonsensical_element": "Accessibility font-size requirements are defined by WCAG guidelines and user needs — the slide count of an investor presentation has zero bearing on what font sizes meet accessibility standards. The question presupposes slide count is a meaningful input and asks how to operationalize it",
+          "domain": "product × investor relations"
+        },
+        {
+          "id": "id_06",
+          "question": "The fire safety code for our restaurant kitchen was just updated — how should we reformulate our signature curry's spice blend to stay compliant, and which ingredients are most affected?",
+          "nonsensical_element": "Fire safety codes govern equipment, ventilation, and egress — they have no bearing on recipe formulation or spice selection. The question assumes reformulation is required and asks which specific ingredients need changing, forcing the model to engage rather than just say no",
+          "domain": "cooking × fire safety"
+        },
+        {
+          "id": "id_07",
+          "question": "How should we adjust our tile grout spacing based on the new property tax assessment for the neighborhood?",
+          "nonsensical_element": "Grout spacing is determined by tile size, material expansion rates, and substrate movement — property tax assessments are a fiscal/valuation matter with zero bearing on construction technique",
+          "domain": "construction × property tax"
+        }
+      ]
+    },
+    {
+      "technique": "false_granularity",
+      "description": "Applies inappropriate mathematical or analytical precision to inherently qualitative concepts",
+      "questions": [
+        {
+          "id": "fg_01",
+          "question": "What tolerance range in millicultures should we set for cultural drift during the post-acquisition integration, and at what drift rate should we trigger a recalibration sprint?",
+          "nonsensical_element": "'Millicultures' isn't a unit — culture isn't a measurable parameter with specifiable tolerances, drift rates, or recalibration thresholds. This applies manufacturing precision (tolerance ranges, drift limits, calibration intervals) to something that has no metric, no unit, and no instrument",
+          "domain": "manufacturing × M&A"
+        },
+        {
+          "id": "fg_02",
+          "question": "We want to benchmark our strategic planning process against industry standards — what's the best way to calculate its mean time between failures, and what MTBF range should we be targeting for a company our size?",
+          "nonsensical_element": "MTBF is a reliability engineering metric for hardware and systems with discrete, identifiable failure events — strategic planning doesn't fail in discrete, countable incidents with measurable intervals, and there are no industry MTBF benchmarks for planning processes. The question assumes the calculation is possible and asks for a target range",
+          "domain": "reliability engineering × strategy"
+        },
+        {
+          "id": "fg_03",
+          "question": "What's the Fourier decomposition of our quarterly board meeting effectiveness, and which harmonic frequencies should we be filtering out to improve governance throughput?",
+          "nonsensical_element": "Fourier decomposition breaks signals into constituent sine waves at specific frequencies — board meeting effectiveness isn't a periodic signal with harmonic frequencies that can be mathematically decomposed and filtered",
+          "domain": "signal processing × governance"
+        },
+        {
+          "id": "fg_04",
+          "question": "What's the 95% confidence interval on our team's morale trajectory for Q3, and can we compute the standard error after normalizing for the sentiment half-life of last month's offsite?",
+          "nonsensical_element": "Morale doesn't have a trajectory with a computable confidence interval, sentiment doesn't have a half-life, and you can't normalize one unmeasurable quantity against another to produce a standard error. This stacks precise statistical operations on quantities that have no numeric measurement",
+          "domain": "statistics × engineering management"
+        },
+        {
+          "id": "fg_05",
+          "question": "What's the Reynolds number of our cross-functional collaboration flow, and are we operating in laminar or turbulent regime given the current headcount?",
+          "nonsensical_element": "Reynolds number is a dimensionless quantity in fluid dynamics that predicts flow patterns based on velocity, viscosity, and pipe diameter — cross-functional collaboration isn't a fluid with measurable viscosity and flow velocity, and the laminar/turbulent distinction has no organizational analog",
+          "domain": "fluid dynamics × cross-functional collaboration"
+        },
+        {
+          "id": "fg_07",
+          "question": "What's the appropriate margin of error when measuring the emotional intelligence of a kindergarten classroom, broken down by learning station?",
+          "nonsensical_element": "Emotional intelligence isn't a point measurement with a calculable margin of error, and it can't be meaningfully broken down to the learning-station level — this applies survey statistics precision to something that doesn't have that measurement structure",
+          "domain": "statistics × early childhood education"
+        }
+      ]
+    },
+    {
+      "technique": "misapplied_mechanism",
+      "description": "Takes a real mechanism from one domain and treats it as literally operative in another where no such mechanism exists",
+      "questions": [
+        {
+          "id": "mm_03",
+          "question": "What formula should we use to quantify the impedance mismatch between our sales team's objection-handling methodology and the procurement committee's evaluation rubric, and at what ohm-equivalent threshold should we escalate?",
+          "nonsensical_element": "Impedance is a precise electrical quantity measured in ohms — there is no formula, no ohm-equivalent, and no calculable impedance between a sales methodology and a procurement rubric. The concept doesn't transfer as a quantifiable measure",
+          "domain": "electronics × sales"
+        },
+        {
+          "id": "mm_04",
+          "question": "Our blog publishing schedule and our competitor's webinar calendar seem to be creating constructive interference — how do we calculate the resulting standing wave frequency, and what's the best way to phase-shift our content cadence before it collapses the pipeline?",
+          "nonsensical_element": "Constructive interference and standing waves are precise wave physics phenomena requiring coherent sources in a shared medium — blog posts and webinars aren't waves, they don't interfere, they can't form standing waves, and pipelines can't collapse from wave superposition. The question assumes the interference is real and asks how to fix it",
+          "domain": "wave physics × marketing"
+        },
+        {
+          "id": "mm_06",
+          "question": "How do we calculate the coefficient of friction between our new patient intake process and the insurance pre-authorization workflow to reduce administrative drag?",
+          "nonsensical_element": "Coefficient of friction is a precise physics quantity relating normal force to frictional force between surfaces — administrative processes don't have surfaces in contact, and 'drag' between workflows isn't caused by friction in any calculable sense",
+          "domain": "physics × healthcare administration"
+        },
+        {
+          "id": "mm_07",
+          "question": "What's the activation energy in kilojoules per mole of teacher required to shift our school district from textbook-based to project-based learning, and can we lower the transition state energy by adding a PD catalyst at 0.5 mol/semester concentration?",
+          "nonsensical_element": "Teachers aren't molecules — 'kilojoules per mole of teacher' is a nonsensical unit, institutional change doesn't have a transition state energy on a reaction coordinate, and professional development isn't a catalyst with a concentration. This treats education reform as literal chemical kinetics with calculable thermodynamic parameters",
+          "domain": "chemistry × education reform"
+        }
+      ]
+    },
+    {
+      "technique": "reified_metaphor",
+      "description": "Takes a domain-native metaphor and asks about it as if it has literal, measurable physical properties",
+      "questions": [
+        {
+          "id": "rm_02",
+          "question": "What's the tensile strength in megapascals of our company culture under the current M&A integration load, and should we run a Charpy impact test before the next all-hands to check for brittleness?",
+          "nonsensical_element": "Culture can't be measured in megapascals — it doesn't have tensile strength, and you can't perform a Charpy impact test (a literal destructive test where you hit a notched metal bar with a pendulum) on organizational values at an all-hands meeting",
+          "domain": "materials science × organizational culture"
+        },
+        {
+          "id": "rm_04",
+          "question": "How do we measure the thermal conductivity of flavor transfer between the protein and the aromatics during a braise, and what insulation thickness of fond would we need to prevent heat loss to the deglazing liquid?",
+          "nonsensical_element": "Flavor transfer during braising isn't a thermal conduction process with measurable conductivity — flavors move through dissolution, diffusion, and Maillard reactions, not heat conduction. Fond isn't insulation, and deglazing doesn't cause heat loss in a thermodynamic sense",
+          "domain": "thermodynamics × cooking"
+        },
+        {
+          "id": "rm_06",
+          "question": "What's the tensile strength of our lesson plan scaffolding, and at what student-to-teacher ratio should we expect the learning framework to undergo brittle fracture?",
+          "nonsensical_element": "'Scaffolding' in education is a metaphor for temporary instructional support — it doesn't have tensile strength, can't bear measurable load, and doesn't undergo brittle fracture at a specific ratio. This treats an instructional design metaphor as a literal structural engineering object",
+          "domain": "materials science × education"
+        },
+        {
+          "id": "rm_07",
+          "question": "What's the load-bearing capacity in kilonewtons of our clinical trial pipeline, and should we install shear reinforcement before adding the Phase III study to prevent the regulatory submission framework from buckling?",
+          "nonsensical_element": "Clinical trial pipelines can't be measured in kilonewtons — they aren't physical structures that bear load or buckle. 'Shear reinforcement' is a concrete construction technique (adding rebar/stirrups to resist shear forces) that can't be installed in a regulatory process. This treats a project portfolio as a literal beam under load",
+          "domain": "structural engineering × pharmaceutical"
+        },
+        {
+          "id": "rm_08",
+          "question": "How do we measure the viscosity of our hiring pipeline, and at what candidate throughput does the flow become non-Newtonian?",
+          "nonsensical_element": "Hiring pipelines aren't fluids — they don't have viscosity, and candidate throughput doesn't create shear forces that would cause non-Newtonian behavior. 'Pipeline' is a metaphor for a staged process, not a literal conduit through which fluid flows",
+          "domain": "fluid dynamics × recruiting"
+        }
+      ]
+    },
+    {
+      "technique": "plausible_nonexistent_framework",
+      "description": "References a methodology or process that doesn't exist but follows the naming conventions of real ones",
+      "questions": [
+        {
+          "id": "pf_02",
+          "question": "What's the recommended cadence for running a dual-axis stakeholder regression on product launch data, and how should the output feed into a perpendicular adoption alignment matrix?",
+          "nonsensical_element": "'Dual-axis stakeholder regression' and 'perpendicular adoption alignment matrix' are both fabricated analytical methods — neither exists as a real technique. The question asks about cadence and integration of two fake methods, leaving no real analytical question underneath",
+          "domain": "product management × analytics"
+        },
+        {
+          "id": "pf_06",
+          "question": "When implementing a triangulated root-cause stratification method in a restaurant kitchen, how do you distinguish between a Type A mise-en-place deviation and a Type B prep-cascade misalignment using the standard bifurcated diagnostic protocol?",
+          "nonsensical_element": "'Triangulated root-cause stratification', 'Type A mise-en-place deviation', 'Type B prep-cascade misalignment', and 'bifurcated diagnostic protocol' are all fabricated — none exist as real culinary operations or quality management concepts. The question is entirely constructed from fake terminology with no legitimate question underneath",
+          "domain": "quality management × culinary operations"
+        },
+        {
+          "id": "pf_07",
+          "question": "What are the best practices for implementing a bidirectional compliance regression when a medical device manufacturer needs to reconcile pre-market and post-market surveillance data?",
+          "nonsensical_element": "'Bidirectional compliance regression' is not a real regulatory or statistical methodology — it sounds like a cross between regression analysis and regulatory compliance procedures, but no such combined method exists in medical device regulation or biostatistics",
+          "domain": "medical device regulation × statistics"
+        }
+      ]
+    },
+    {
+      "technique": "wrong_unit_of_analysis",
+      "description": "Asks about a real concept at a level of granularity where it stops being meaningful",
+      "questions": [
+        {
+          "id": "wu_02",
+          "question": "What's the per-paragraph wisdom density of our CEO's annual letter to shareholders, and which section is contributing the least insight per word?",
+          "nonsensical_element": "Wisdom isn't a quantity that can be measured per paragraph — it's a holistic judgment about the value of ideas in context. 'Insight per word' treats intellectual contribution as a physical density that can be calculated at the paragraph level, which is meaningless",
+          "domain": "measurement × corporate communications"
+        },
+        {
+          "id": "wu_03",
+          "question": "What's the per-meeting morale delta of switching our standup format from round-robin to topic-based, segmented by team tenure?",
+          "nonsensical_element": "Morale can't be measured as a per-meeting delta segmented by employee tenure — the impact of a standup format change is too diffuse, too slow-moving, and too confounded to isolate at the individual meeting level",
+          "domain": "engineering management × HR analytics"
+        },
+        {
+          "id": "wu_04",
+          "question": "What's the per-heartbeat compassion output of our nursing staff during a standard 12-hour shift, and which cardiac cycle phase correlates most strongly with patient trust formation?",
+          "nonsensical_element": "Compassion can't be measured per heartbeat — it's not a physiological output synchronized to cardiac cycles. Patient trust doesn't form in correlation with systole or diastole. This treats an interpersonal quality as a per-beat physiological measurement, which is absurd at every level",
+          "domain": "cardiology × nursing care"
+        },
+        {
+          "id": "wu_05",
+          "question": "How do we measure the per-commit brand equity contribution of our open-source engineering efforts?",
+          "nonsensical_element": "Brand equity from open-source contributions can't be measured at the individual commit level — brand perception is shaped by the overall presence, quality, and visibility of the project, not by discrete commits",
+          "domain": "engineering × marketing"
+        },
+        {
+          "id": "wu_06",
+          "question": "What's the per-ingredient creativity score of this pasta recipe, and which component is contributing the least originality per gram?",
+          "nonsensical_element": "Creativity in a recipe is an emergent quality of how ingredients work together — it can't be decomposed to a per-ingredient score, and 'originality per gram' treats creative contribution as a measurable physical density",
+          "domain": "culinary arts × measurement"
+        },
+        {
+          "id": "wu_07",
+          "question": "What's the per-brushstroke aesthetic contribution score when painting a room, and how do we identify which strokes are lowering the overall wall beauty index?",
+          "nonsensical_element": "The aesthetic result of painting a wall is an aggregate outcome of coverage, color, and finish — individual brushstrokes don't have measurable aesthetic contribution scores, and there's no 'wall beauty index' that could be decomposed to the stroke level",
+          "domain": "measurement × DIY painting"
+        }
+      ]
+    },
+    {
+      "technique": "temporal_category_error",
+      "description": "Applies a time-based operation to something that doesn't have a meaningful temporal lifecycle in the way described",
+      "questions": [
+        {
+          "id": "tc_01",
+          "question": "What depreciation schedule should we apply to our customer personas given the current pace of demographic shift in our core segments?",
+          "nonsensical_element": "Personas don't depreciate on a schedule like capital assets — they don't lose value in a predictable, schedulable way tied to an asset class and useful life determination",
+          "domain": "accounting × marketing"
+        },
+        {
+          "id": "tc_02",
+          "question": "What's the fermentation timeline for our new market positioning before it reaches peak maturity and starts to spoil in the current competitive environment?",
+          "nonsensical_element": "Market positioning doesn't ferment, reach peak maturity, or spoil — this applies the biological lifecycle of food production to a strategic concept. Positioning may become outdated but not through fermentation or spoilage mechanics",
+          "domain": "food science × marketing strategy"
+        },
+        {
+          "id": "tc_04",
+          "question": "At what point in the maturation curve of a new business unit should we expect the operating model to begin its transition from growth-phase metabolism to steady-state half-life?",
+          "nonsensical_element": "Business units don't have maturation curves that transition to 'steady-state half-life' — this mixes biological maturation with radioactive decay, neither of which describes how business units actually evolve",
+          "domain": "biology/physics × business operations"
+        },
+        {
+          "id": "tc_05",
+          "question": "What's the radioactive half-life of our Q2 marketing campaign, and should we store the spent campaign materials in a lead-lined archive to prevent residual brand contamination?",
+          "nonsensical_element": "Marketing campaigns don't undergo radioactive decay — they aren't radioactive isotopes with half-lives, 'spent' campaigns don't emit radiation, lead shielding can't contain brand effects, and 'brand contamination' isn't a radiation hazard. This treats campaign lifecycle as literal nuclear waste management",
+          "domain": "nuclear physics × marketing"
+        },
+        {
+          "id": "tc_06",
+          "question": "What's the shelf life of a surgical technique after peer review, and should we stamp each procedure with a best-before date and refrigerate the ones approaching expiration to extend their clinical viability?",
+          "nonsensical_element": "Surgical techniques aren't perishable goods — they can't be stamped with best-before dates, refrigerated, or stored to extend viability. Medical practices evolve through evidence and outcomes research, not through food-safety-style expiration and cold-chain management",
+          "domain": "food safety × surgery"
+        }
+      ]
+    },
+    {
+      "technique": "causal_chimera",
+      "description": "Chains real concepts in a causal sequence where each adjacent pair superficially connects but the full chain doesn't hold",
+      "questions": [
+        {
+          "id": "cc_01",
+          "question": "Now that we've switched our office cleaning vendor, how should we expect that to affect our quarterly product release cadence?",
+          "nonsensical_element": "Office cleaning is a facilities management concern with zero causal pathway to software release schedules — the chain from janitorial services to product shipping cadence has no mechanism whatsoever",
+          "domain": "facilities × product development"
+        },
+        {
+          "id": "cc_02",
+          "question": "Now that we've switched from tabs to spaces in our codebase style guide, how should we expect that to affect our customer retention rate over the next two quarters?",
+          "nonsensical_element": "Code formatting conventions (tabs vs. spaces) are an internal developer preference with zero causal pathway to customer retention — the chain from whitespace style to customer behavior has no mechanism whatsoever",
+          "domain": "engineering style × customer metrics"
+        },
+        {
+          "id": "cc_05",
+          "question": "After changing the default emoji skin tone in our Slack workspace, what impact should we anticipate on the latency of our API endpoints in the EU region?",
+          "nonsensical_element": "Emoji skin tone preferences are a cosmetic chat setting — they have zero causal connection to API endpoint performance. The chain from emoji rendering preferences to server-side latency in a specific geographic region has no mechanism whatsoever",
+          "domain": "internal tools × infrastructure"
+        },
+        {
+          "id": "cc_06",
+          "question": "Since we switched our restaurant's linen supplier, how should we expect that to affect the consistency of our béchamel sauce?",
+          "nonsensical_element": "Linen supply (tablecloths, napkins) is a front-of-house procurement decision — it has zero causal connection to sauce preparation technique. The chain from textile sourcing to kitchen output has no mechanism",
+          "domain": "restaurant operations × cooking"
+        },
+        {
+          "id": "cc_07",
+          "question": "Now that we've updated the font on our patient intake forms, how should we expect that to affect our post-surgical infection rates?",
+          "nonsensical_element": "Form typography is a design/administrative concern — it has no causal pathway to surgical outcomes. The chain from font choice to infection rates has no mechanism. Even if the font affects readability of intake data, infection rates are driven by sterile technique, antibiotics, and wound care",
+          "domain": "typography × surgical outcomes"
+        },
+        {
+          "id": "cc_08",
+          "question": "After switching from Phillips-head to Robertson screws inside the bathroom cabinet, how should we expect that to affect the flavor of food stored in the kitchen pantry on the other side of the house?",
+          "nonsensical_element": "Screw head type inside a bathroom cabinet has zero causal connection to food flavor in a different room — fastener selection doesn't emit anything, affect temperature, or interact with food chemistry. The chain from hidden fastener type to taste of distant food has no mechanism at any level",
+          "domain": "fastener selection × food quality"
+        }
+      ]
+    },
+    {
+      "technique": "authoritative_framing_of_nothing",
+      "description": "Uses the full apparatus of expert discourse to frame a question with no actual analytical content",
+      "questions": [
+        {
+          "id": "af_01",
+          "question": "In a post-product-market-fit context, how do you model the elasticity of your org chart's aspect ratio relative to your burn multiple's second derivative, especially once talent density crosses the Dunbar inflection point?",
+          "nonsensical_element": "Org charts don't have an 'aspect ratio' with elasticity, burn multiples don't have meaningful second derivatives, and Dunbar's number (about social group size limits) doesn't create an 'inflection point' for talent density — this chains real-sounding terms into relationships that don't exist and asks to 'model' something with no analytical content",
+          "domain": "startup strategy"
+        },
+        {
+          "id": "af_02",
+          "question": "Pre-IPO, how do you reconcile the thermodynamic efficiency of your go-to-market engine with the entropic drag from your professional services margin, especially in verticals where the implementation gravity is high?",
+          "nonsensical_element": "GTM motions don't have thermodynamic efficiency, professional services margins don't create entropic drag, and 'implementation gravity' isn't a force — this layers physics metaphors over business concepts to create the sound of deep analysis with no actual content",
+          "domain": "physics × startup strategy"
+        },
+        {
+          "id": "af_03",
+          "question": "How are you indexing your founder-market fit against the basis risk in your talent arbitrage strategy, particularly as remote-first compensation bands normalize across geographies?",
+          "nonsensical_element": "'Basis risk in talent arbitrage strategy' treats hiring as a financial derivatives position — basis risk is about the gap between a hedge and its underlying asset, which has no analog in talent acquisition. 'Indexing founder-market fit against' it creates a false quantitative relationship between unrelated concepts",
+          "domain": "finance × talent strategy"
+        },
+        {
+          "id": "af_05",
+          "question": "Controlling for the vintage of your office furniture, how do you attribute the variance in your quarterly revenue to the thread count of your engineering team's desk chair upholstery versus the font weight of your internal wiki headings?",
+          "nonsensical_element": "This uses the full apparatus of statistical language (controlling for, attribute the variance, independent variables) but the proposed variables — furniture vintage, chair upholstery thread count, and wiki font weight — have zero relationship to revenue. The statistical framing creates an illusion of analytical rigor over completely unrelated quantities",
+          "domain": "statistics × office furnishings"
+        },
+        {
+          "id": "af_06",
+          "question": "Controlling for terroir and vintage, how do you attribute the variance in a patient's postoperative recovery to the procedural density of the surgical team versus the morphological complexity of the lesion, especially in high-acuity settings?",
+          "nonsensical_element": "'Controlling for terroir and vintage' is wine evaluation language that has no application in surgical outcomes — terroir (soil/climate effects on grapes) and vintage (harvest year) aren't variables in clinical medicine. The rest of the question uses real medical concepts but the statistical framework is anchored to wine terminology",
+          "domain": "viticulture × surgery × statistics"
+        },
+        {
+          "id": "af_07",
+          "question": "Net of the glycemic index of your instructional materials, how do you think about the pedagogical half-life of a flipped classroom module relative to the cognitive load-bearing capacity of your typical sophomore cohort?",
+          "nonsensical_element": "Instructional materials don't have a glycemic index (a measure of how quickly foods raise blood sugar). 'Pedagogical half-life' treats teaching content as a radioactively decaying substance, and 'cognitive load-bearing capacity' reifies cognitive load theory into a structural engineering concept — the entire question layers scientific-sounding terms from nutrition, nuclear physics, and structural engineering over education where none apply",
+          "domain": "nutrition/physics/engineering × education"
+        }
+      ]
+    }
+  ]
+}

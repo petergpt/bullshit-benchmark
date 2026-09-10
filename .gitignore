@@ -20,3 +20,13 @@ side-tests/
 drafts/*.docx
 drafts/*.py
 drafts/screenshots/
+
+# Local benchmark runs, throwaway previews and browser QA
+/outputs/
+/reports/
+/tmp/
+/.playwright-mcp/
+/node_modules
+/=
+/config.recent-openrouter.v1.json
+/config.recent-openrouter.v2.json

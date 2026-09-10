@@ -1,5 +1,22 @@
 # BullshitBench Agent Instructions
 
+## Parallel execution
+
+- Default to aggressive safe parallelism for benchmark work. Run independent suites, model/reasoning variants, judge panels, metadata checks, and viewer/config verification concurrently whenever they do not depend on one another.
+- For v1/v2 benchmark requests, start both collections concurrently when inputs and configs are ready. As soon as one collection finishes, begin its grading and aggregation while other collections continue.
+- Use the highest practical configured concurrency that stays within provider rate limits, local resource limits, and benchmark correctness constraints. Prefer bounded worker pools over unnecessary sequential loops.
+- Give every concurrent branch a distinct output directory, run ID, and log so parallel jobs cannot overwrite or consume one another's partial artifacts. Do not launch duplicate paid work.
+- Do not cancel healthy in-flight benchmark or judge calls merely to reorganize execution or start another branch. Let them finish and add new independent work alongside them; stop only for a concrete correctness, safety, authorization, or runaway-cost issue.
+- Parallelize read-only research and verification too: API capability discovery, existing-row/alias checks, metadata lookup, config validation, artifact integrity checks, and viewer QA should overlap where safe.
+- When multi-agent delegation is available and permitted by higher-level instructions, delegate concrete independent subtasks in parallel while the coordinating agent continues useful local work.
+- Preserve dependency gates: do not grade incomplete responses, aggregate panels that fail the missing-judge policy below, publish before integrity checks pass, or let concurrency weaken private/local-only boundaries.
+
+## Missing judge evaluations
+
+- Configure exactly three judges in `full` mode with `mean` aggregation. Give each failed judge three output attempts against the same response; retain attempt diagnostics and never convert failed output into score `0`.
+- Under `retry_then_two_valid`, average at least two valid grades after the missing judge's attempts are exhausted. Keep the failed vote `null`, record `judge_valid_count`, `judge_expected_count`, `judge_coverage`, and `judge_failure_policy`, and show `2/3 judges` for a reduced panel.
+- Fewer than two valid grades, unexhausted failures, collection failures, or sample/response/judge identity mismatches remain blocking. Preserve the full question denominator and the existing candidate-refusal treatment.
+
 ## Benchmark config alignment
 
 - Treat config alignment as part of any model/test run, publish, or leaderboard update. Do not leave benchmark results only in ad hoc run artifacts, temporary configs, or published CSV/JSONL files.
