@@ -1,0 +1,145 @@
+{
+  "retrieved": "2026-09-05",
+  "lobehub_revision": "4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75",
+  "simple_icons_revision": "7f18aaa676087b8240b6f4ff58a6720be282da59",
+  "files": [
+    {
+      "file": "ai21.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/ai21.svg",
+      "bytes": 1235,
+      "sha256": "6c80f2c0d8b11d1bee179666049b00e0ab7f58f5ee8c307ca0dd3327bb49f282"
+    },
+    {
+      "file": "anthropic.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/anthropic.svg",
+      "bytes": 368,
+      "sha256": "e833fdfa7e7187a86a05b870925067556a506dcd4239089aed73e1e58c9366a3"
+    },
+    {
+      "file": "arcee-ai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/arcee-color.svg",
+      "bytes": 377,
+      "sha256": "41a8ed8278ec89d6a12ba5c96172ee30d6fadc93474792a8c95732ad7466233e"
+    },
+    {
+      "file": "baidu.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/baidu-color.svg",
+      "bytes": 1384,
+      "sha256": "1059750a2069aec6080ff48732931e87a99bd3d22db3e8471cebe255b6014b75"
+    },
+    {
+      "file": "bytedance-seed.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/bytedance-color.svg",
+      "bytes": 953,
+      "sha256": "3d37647be262c79b044e293bb1a4993202537e9f9ffdbd2bbe7e9fc5378d1005"
+    },
+    {
+      "file": "deepseek.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/deepseek-color.svg",
+      "bytes": 2164,
+      "sha256": "deba5f98a5c1796e20fcac3149bcd7eb8a32f0bdd04d048819400b1f28bd1439"
+    },
+    {
+      "file": "google.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/google-color.svg",
+      "bytes": 920,
+      "sha256": "4e6aa8892ef15a6b431f40f2c9045979bf7e2357524e7bbb89b353cf4f32a5ac"
+    },
+    {
+      "file": "meta.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/meta-color.svg",
+      "bytes": 6022,
+      "sha256": "adf9f2c1a646ccd3a37ca8c2e7e5985d64630cd633f4b95fba393d1d44e0578c"
+    },
+    {
+      "file": "minimax.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/minimax-color.svg",
+      "bytes": 1570,
+      "sha256": "7f7187fa6d9b341ac5f22f6c5a970523afb439dc45566d64eb4f4b9b604d6b01"
+    },
+    {
+      "file": "mistralai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/mistral-color.svg",
+      "bytes": 655,
+      "sha256": "722f74b289d95486b43662fe24fa883b333701296f618406cd0ed502299170b6"
+    },
+    {
+      "file": "moonshotai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/moonshot.svg",
+      "bytes": 4028,
+      "sha256": "435f41b74e6a87639b6bf860e9628f20cbe7d6229bece412d548f4cea3081852"
+    },
+    {
+      "file": "nvidia.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/nvidia-color.svg",
+      "bytes": 1025,
+      "sha256": "8c941e4eb8b782eccaaea1240c059d20be33ab8eda28d7c9ed9b53ac802fe683"
+    },
+    {
+      "file": "openai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/openai.svg",
+      "bytes": 1687,
+      "sha256": "a595df6b423920c67a7f8f73c063e4bfb72d415948097b6cac063a2366bb5186"
+    },
+    {
+      "file": "poolside.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/poolside-color.svg",
+      "bytes": 2509,
+      "sha256": "5df24fb33e364f9762952088b1ffd9b537dd3ddb6d3e1e5fec6893898eb29667"
+    },
+    {
+      "file": "qwen.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/qwen-color.svg",
+      "bytes": 2044,
+      "sha256": "77f5768c66d08ce1d3d14e73373975c1bc0454be88c81523ddd0ffd7e2974029"
+    },
+    {
+      "file": "stepfun.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/stepfun-color.svg",
+      "bytes": 676,
+      "sha256": "f55afc0e6004c8854f76bd5bbcc0fce9fc0ed9316691d54fb02d088c24fab40d"
+    },
+    {
+      "file": "tencent.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/tencent-color.svg",
+      "bytes": 277,
+      "sha256": "7c370ad4b75e3f30d0fa7da71f90466a0ee95a887189479aa9df414079b50eb6"
+    },
+    {
+      "file": "x-ai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/xai.svg",
+      "bytes": 372,
+      "sha256": "89eb7de9f0d02a41cfecd9109e253d7fd3529e27467dee4254faa67f3ac21451"
+    },
+    {
+      "file": "z-ai.svg",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/packages/static-svg/icons/zai.svg",
+      "bytes": 319,
+      "sha256": "e748cb5108ce37b116d7a5ba97d37e0ae97eadf6849b0de11afb248e244a01e1"
+    },
+    {
+      "file": "LICENSE-lobehub.txt",
+      "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/4aaf4ee1fb2678a7f989ea570f0f6ce14a9abf75/LICENSE",
+      "bytes": 1064,
+      "sha256": "add9d7531d1b21646317a8958e38fc727506fa39d24bdecb44154d943c82753a"
+    },
+    {
+      "file": "xiaomi.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/7f18aaa676087b8240b6f4ff58a6720be282da59/icons/xiaomi.svg",
+      "bytes": 903,
+      "sha256": "8866d12a70d85ab43acd3b9c80f1b37792d91160d8273efffdf817af5fd608cb"
+    },
+    {
+      "file": "LICENSE-simple-icons.md",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/7f18aaa676087b8240b6f4ff58a6720be282da59/LICENSE.md",
+      "bytes": 6569,
+      "sha256": "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+    },
+    {
+      "file": "prime-intellect.png",
+      "source": "https://www.primeintellect.ai/icons/logo-icon.png?dpl=dpl_FdZWUWWeCFpfyHKAvRE5NC8BrGqe",
+      "bytes": 62588,
+      "sha256": "3d7b0ddac38e785bace1523d2be274591b47dad82a0a5f3572230a40ff3e9328"
+    }
+  ]
+}

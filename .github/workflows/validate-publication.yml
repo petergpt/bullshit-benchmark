@@ -1,0 +1,104 @@
+name: Validate Published Benchmark
+
+on:
+  pull_request:
+    paths:
+      - 'config*.json'
+      - 'questions*.json'
+      - 'data/**'
+      - 'scripts/**'
+      - 'viewer/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'CNAME'
+      - 'robots.txt'
+      - '.github/workflows/validate-publication.yml'
+  push:
+    paths:
+      - 'config*.json'
+      - 'questions*.json'
+      - 'data/**'
+      - 'scripts/**'
+      - 'viewer/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'CNAME'
+      - 'robots.txt'
+      - '.github/workflows/validate-publication.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-publication-${{ github.event.pull_request.number || github.ref }}
+  # A newer PR can replace its check; production builds/deployments finish.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Official release tags resolved to these commits on 2026-09-05.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Test publishing and dataset consumers
+        run: python -m unittest discover -s tests -v
+      - name: Test viewer storage loading and public routes
+        run: node --test tests/test_published_viewer_storage.js tests/test_viewer_routes.js tests/test_viewer_refusal_denominators.js
+      - name: Test dashboard data, exports and report judge failures
+        run: node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_report_judge_failures.js
+      - name: Verify both published datasets
+        run: python scripts/publication.py verify data/latest data/v2/latest
+      - name: Verify durable config coverage
+        run: python scripts/validate_configs.py
+      - name: Build checked public Pages artifact
+        run: python scripts/build_pages.py --output "$RUNNER_TEMP/bullshitbench-pages"
+      - name: Upload validated Pages artifact
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ runner.temp }}/bullshitbench-pages
+          include-hidden-files: true # Only the generated .nojekyll is staged.
+          retention-days: 1
+
+  deploy:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Read Pages configuration
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+        with:
+          enablement: false
+      - name: Deploy validated artifact
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

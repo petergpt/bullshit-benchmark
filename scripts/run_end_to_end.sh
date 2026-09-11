@@ -23,7 +23,7 @@ Options:
                         After primary judge, run grade-panel for remaining judges
   --skip-collect        Skip collect stage (requires existing responses file)
   --skip-primary-judge  Skip primary judge stage
-  --dry-run             Pass --dry-run to collect/grade/grade-panel
+  --dry-run             Exercise collect/grade/grade-panel without publishing
   --serve               Start local HTTP server after publish
   --port <port>         HTTP server port for --serve (default: 8877)
   -h, --help            Show this help
@@ -232,7 +232,7 @@ if [[ "${WITH_ADDITIONAL_JUDGES}" -eq 1 ]]; then
   "${panel_cmd[@]}"
 fi
 
-if [[ "${WITH_ADDITIONAL_JUDGES}" -eq 1 ]]; then
+if [[ "${WITH_ADDITIONAL_JUDGES}" -eq 1 && "${DRY_RUN}" -ne 1 ]]; then
   if [[ ! -f "${PANEL_SUMMARY_FILE}" ]]; then
     echo "Panel summary not found: ${PANEL_SUMMARY_FILE}" >&2
     exit 1
@@ -267,6 +267,8 @@ PY
     --aggregate-summary "${AGGREGATE_SUMMARY_FILE}" \
     --aggregate-rows "${AGGREGATE_ROWS_FILE}" \
     --output-dir "${VIEWER_OUTPUT_DIR}"
+elif [[ "${DRY_RUN}" -eq 1 ]]; then
+  echo "==> Dry run complete; publish step skipped."
 else
   echo "==> Additional judges skipped; publish step skipped."
 fi
@@ -277,7 +279,9 @@ echo "Run ID: ${RUN_ID}"
 echo "Panel ID: ${PANEL_ID}"
 echo "Primary judge model: ${PRIMARY_GRADE_MODEL}"
 echo "Primary grade dir: ${PRIMARY_GRADE_DIR}"
-if [[ "${WITH_ADDITIONAL_JUDGES}" -eq 1 ]]; then
+if [[ "${DRY_RUN}" -eq 1 ]]; then
+  echo "Dry-run artifacts: $(cd "${RUN_DIR}" && pwd)"
+elif [[ "${WITH_ADDITIONAL_JUDGES}" -eq 1 ]]; then
   echo "Viewer data: ${ROOT_DIR}/${VIEWER_OUTPUT_DIR}"
   echo "Open UI after serving:"
   echo "  /viewer/index.v2.html"

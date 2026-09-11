@@ -16,11 +16,16 @@ import re
 from typing import Any
 from urllib.parse import urlparse
 
+from published_dataset import asset_exists, read_text
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "model_metadata"
 DEFAULT_CONFIG = ROOT / "config.json"
+DEFAULT_CONFIG_V2 = ROOT / "config.v2.json"
 DEFAULT_LATEST_AGGREGATE = ROOT / "data" / "latest" / "aggregate.jsonl"
 DEFAULT_LATEST_RESPONSES = ROOT / "data" / "latest" / "responses.jsonl"
+DEFAULT_LATEST_AGGREGATE_V2 = ROOT / "data" / "v2" / "latest" / "aggregate.jsonl"
+DEFAULT_LATEST_RESPONSES_V2 = ROOT / "data" / "v2" / "latest" / "responses.jsonl"
 DEFAULT_RUNS_DIR = ROOT / "runs"
 
 INVENTORY_CSV = DATA_DIR / "tested_models_inventory.csv"
@@ -201,17 +206,16 @@ def read_json(path: pathlib.Path) -> Any:
 
 def read_jsonl(path: pathlib.Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    with path.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                parsed = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(parsed, dict):
-                rows.append(parsed)
+    for line_number, line in enumerate(read_text(path).split("\n"), start=1):
+        if not line.strip():
+            continue
+        try:
+            parsed = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON in {path}:{line_number}: {exc.msg}") from exc
+        if not isinstance(parsed, dict):
+            raise ValueError(f"Invalid row in {path}:{line_number}: expected a JSON object")
+        rows.append(parsed)
     return rows
 
 
@@ -286,14 +290,17 @@ def add_observation(
 
 
 def scan_inventory(
-    config_path: pathlib.Path,
-    latest_aggregate_path: pathlib.Path,
-    latest_responses_path: pathlib.Path,
+    config_path: pathlib.Path | None,
+    latest_aggregate_path: pathlib.Path | None,
+    latest_responses_path: pathlib.Path | None,
     runs_dir: pathlib.Path,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     model_map: dict[str, dict[str, Any]] = {}
 
-    if config_path.exists():
+    config_paths = (config_path,) if config_path is not None else (DEFAULT_CONFIG, DEFAULT_CONFIG_V2)
+    for config_path in config_paths:
+        if not config_path.exists():
+            continue
         config = read_json(config_path)
         collect_cfg = config.get("collect", {}) if isinstance(config, dict) else {}
         if isinstance(collect_cfg, dict):
@@ -309,8 +316,12 @@ def scan_inventory(
                             in_config=True,
                         )
 
-    for path in (latest_aggregate_path, latest_responses_path):
-        if not path.exists():
+    latest_paths = (
+        ((latest_aggregate_path,) if latest_aggregate_path is not None else (DEFAULT_LATEST_AGGREGATE, DEFAULT_LATEST_AGGREGATE_V2))
+        + ((latest_responses_path,) if latest_responses_path is not None else (DEFAULT_LATEST_RESPONSES, DEFAULT_LATEST_RESPONSES_V2))
+    )
+    for path in latest_paths:
+        if not asset_exists(path):
             continue
         for row in read_jsonl(path):
             model = str(row.get("model", "")).strip()
@@ -658,9 +669,9 @@ def build_canonical_rows(final_by_model: dict[str, dict[str, Any]]) -> list[dict
 def command_inventory(args: argparse.Namespace) -> int:
     ensure_data_dir()
     inventory_rows, bucket_rows = scan_inventory(
-        pathlib.Path(args.config),
-        pathlib.Path(args.latest_aggregate),
-        pathlib.Path(args.latest_responses),
+        pathlib.Path(args.config) if args.config else None,
+        pathlib.Path(args.latest_aggregate) if args.latest_aggregate else None,
+        pathlib.Path(args.latest_responses) if args.latest_responses else None,
         pathlib.Path(args.runs_dir),
     )
 
@@ -853,9 +864,9 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--config", default=str(DEFAULT_CONFIG))
-    common.add_argument("--latest-aggregate", default=str(DEFAULT_LATEST_AGGREGATE))
-    common.add_argument("--latest-responses", default=str(DEFAULT_LATEST_RESPONSES))
+    common.add_argument("--config", help="Config to inventory (default: both durable v1/v2 configs)")
+    common.add_argument("--latest-aggregate", help="Aggregate dataset to inventory (default: both published v1/v2 datasets)")
+    common.add_argument("--latest-responses", help="Response dataset to inventory (default: both published v1/v2 datasets)")
     common.add_argument("--runs-dir", default=str(DEFAULT_RUNS_DIR))
 
     subparsers.add_parser("inventory", parents=[common], help="Build tested model inventory and buckets")

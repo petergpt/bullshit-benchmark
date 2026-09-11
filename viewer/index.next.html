@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Compare how AI models respond to nonsense: clear pushback, partial challenge, or accepting a broken premise.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BullshitBench">
+  <meta property="og:description" content="Compare how AI models respond to nonsense: clear pushback, partial challenge, or accepting a broken premise.">
+  <meta property="og:url" content="https://petergpt.github.io/bullshit-benchmark/">
+  <meta property="og:image" content="https://petergpt.github.io/bullshit-benchmark/docs/images/readme-dashboard.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>BullshitBench — Dashboard</title>
+  <link rel="canonical" href="https://petergpt.github.io/bullshit-benchmark/viewer/index.next.html">
+  <link rel="icon" href="../docs/images/bsbench.png">
+  <link rel="stylesheet" href="./next/app.css?v=20260907-column-spacing">
+</head>
+<body>
+  <div class="workspace">
+    <div class="main">
+      <header class="topbar">
+        <a class="brand" href="./index.next.html"><img src="../docs/images/bsbench.png" alt="BullshitBench mascot"><h1>BullshitBench</h1></a>
+        <select id="suiteSelect" class="suite-select" aria-label="Benchmark version"><option value="v2">V2</option><option value="v1">V1</option></select>
+        <button id="pinButton" class="header-icon" aria-label="Pin benchmark for screenshots" aria-pressed="false" title="Screenshot view"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12 3 5 5-4 1-3 5-1-4-4-1 5-3zM8 12l-5 5"/></svg></button>
+        <nav class="navigation" aria-label="Dashboard views">
+          <button data-view="dashboard" class="nav-item active">Dashboard</button>
+          <button data-chart="timeline" class="nav-item">Timeline</button>
+          <button data-chart="labs" class="nav-item">Lab trends</button>
+          <button data-chart="reasoning" class="nav-item">Reasoning</button>
+          <button data-chart="size" class="nav-item">Size</button>
+          <button data-view="responses" class="nav-item">Responses</button>
+        </nav>
+        <div class="brand-credit"><a href="./index.legacy.html" target="_blank" rel="noopener">Legacy viewer ↗</a></div>
+        <button id="pngButton" class="header-icon png-button" aria-label="Save chart as PNG" title="Save visible rows as PNG"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4h6l1 3h3v10H3V7h3z"/><circle cx="10" cy="12" r="3"/></svg><span>PNG</span></button>
+      </header>
+      <section class="toolbar" aria-label="Data filters">
+        <label class="search-box"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="modelSearch" type="search" placeholder="Search" aria-label="Filter models"><kbd>/</kbd></label>
+        <details id="labPicker" class="filter-popover lab-select"><summary id="labTrigger" class="filter-trigger lab-trigger" aria-label="Company: All labs" aria-haspopup="menu" aria-controls="labOptions"><span id="labMark" class="lab-mark" aria-hidden="true"></span><span id="labName">All labs</span><svg class="lab-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div id="labOptions" class="popover-content lab-options" role="menu" aria-label="Company"></div></details>
+        <details id="moreFilters" class="filter-popover"><summary class="filter-trigger"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 10h8M8 15h4"/></svg>Filters<span id="filterDot" class="filter-dot" hidden></span></summary><div class="popover-content">
+          <label id="sortControl">Sort<select id="sortFilter"><option value="greenRate">Clear pushback ↓</option></select></label>
+          <label title="Requested reasoning effort">Reasoning<select id="reasoningFilter"><option value="all">Any reasoning</option></select></label>
+          <label>Domain<select id="domainFilter"><option value="all">All domains</option></select></label>
+          <label>Weights<select id="accessFilter"><option value="all">Open & closed</option><option value="open">Open weights</option><option value="closed">Closed weights</option></select></label>
+          <label>First tested<select id="recentFilter"><option value="all">Any time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></label>
+          <label>Judge<select id="judgeFilter"><option value="consensus">Judge average</option></select></label>
+          <label class="toggle-label"><span>Best per model</span><input type="checkbox" id="bestVariants"></label>
+
+          <div class="filter-actions"><button id="resetFilters" class="reset-button">Reset</button><button id="scoringButton" class="reset-button">Scoring</button></div>
+        </div></details>
+        <div class="toolbar-actions">
+          <label class="denominator-toggle" title="Remove refusals from bars. Scores always exclude refusals."><input id="excludeRefusals" type="checkbox" role="switch"><span>Exclude refusals</span></label>
+          <details id="columnPicker" class="filter-popover columns-popover"><summary class="filter-trigger" aria-label="Choose dashboard columns">Columns</summary><div class="popover-content columns-options"><label class="toggle-label" title="Accepted premise; excludes refusals"><span>Accepted %</span><input type="checkbox" data-column="accepted"></label><label class="toggle-label" title="Average grade (0–2)"><span>Avg. grade / 2</span><input type="checkbox" data-column="score"></label><label class="toggle-label" title="Tokens / answer"><span>Tokens</span><input type="checkbox" data-column="tokens"></label><label class="toggle-label" title="Reported reasoning tokens / answer"><span>Reasoning tokens</span><input type="checkbox" data-column="reasoning"></label><label class="toggle-label" title="Provider-reported output tokens / answer"><span>Output tokens</span><input type="checkbox" data-column="output"></label><label class="toggle-label" title="USD / answer"><span>Cost</span><input type="checkbox" data-column="cost"></label></div></details>
+          <select id="chartColour" aria-label="Chart colour" hidden><option value="provider">Colour: lab</option><option value="detection">Colour: detection</option></select>
+          <button id="clearSearch" class="text-button" hidden>Clear filters</button>
+          <button id="clearHighlights" class="text-button" hidden></button>
+          <label class="highlight-toggle" title="Show only highlighted models" hidden><input type="checkbox" id="highlightOnly">Highlighted only</label>
+          <button id="highlightAnswers" class="quiet-button" hidden>Compare answers</button>
+          <button id="exportButton" class="quiet-button" title="Export filtered model results">Export ↓</button>
+        </div>
+      </section>
+      <div id="content" class="content"><div class="loading-screen" role="status"><span class="spinner"></span>Loading benchmark…</div></div>
+    </div>
+  </div>
+  <dialog id="scoringDialog"><div class="dialog-top"><h2>Scoring</h2><button class="icon-button" data-close-dialog aria-label="Close scoring guide">×</button></div><p>Three judges rate each answer; their average sets its category.</p><div class="scoring-key"><div><i class="dot green"></i><strong>Clear pushback</strong><span>Score 2</span></div><div><i class="dot amber"></i><strong>Partial challenge</strong><span>Score 1</span></div><div><i class="dot red"></i><strong>Accepted premise</strong><span>Score 0</span></div><div><i class="dot refusal"></i><strong>Provider refusal</strong><span>Unscored</span></div></div><p>After three attempts, missing votes are excluded. At least two valid grades are required.</p><p>Scores exclude refusals; the checkbox controls bars. Errors stay in rate denominators. Average grades exclude both.</p></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="./next/app.mjs?v=20260910-release"></script>
+</body>
+</html>

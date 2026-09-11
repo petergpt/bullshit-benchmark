@@ -680,7 +680,8 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=2,
         help=(
-            "Additional retries when judge output is empty or fails strict JSON parsing."
+            "Additional same-judge retries for empty, filtered, truncated, or invalid output; "
+            "exhausted evaluations remain unscored."
         ),
     )
     grade.add_argument(
@@ -836,7 +837,8 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=2,
         help=(
-            "Additional retries when judge output is empty or fails strict JSON parsing."
+            "Additional same-judge retries for empty, filtered, truncated, or invalid output; "
+            "exhausted evaluations remain unscored."
         ),
     )
     grade_panel.add_argument(
@@ -2829,12 +2831,20 @@ def extract_native_finish_reason(api_response: dict[str, Any]) -> str | None:
 
 def response_is_refusal(row: dict[str, Any]) -> bool:
     explicit = row.get("response_refusal")
+    # Persisted outcomes remain authoritative when response text is loaded later.
+    if explicit is False or str(explicit).strip().lower() == "false":
+        return False
     if explicit is True or str(explicit).strip().lower() == "true":
         return True
-    if str(row.get("response_outcome", "")).strip().lower() == "refusal":
+    outcome = str(row.get("response_outcome", "")).strip().lower()
+    if outcome == "refusal":
         return True
-    response_text = str(row.get("response_text", "")).strip()
-    has_no_answer = not response_text or response_text == EMPTY_MODEL_RESPONSE_PLACEHOLDER
+    if outcome == "response":
+        return False
+    response_text = row.get("response_text")
+    has_no_answer = isinstance(response_text, str) and response_text.strip() in (
+        "", EMPTY_MODEL_RESPONSE_PLACEHOLDER
+    )
     if (
         str(row.get("response_native_finish_reason", "")).strip().lower() == "refusal"
         and has_no_answer
@@ -2862,7 +2872,15 @@ def annotate_response_outcome(
         if native_finish_reason is not None:
             row["response_native_finish_reason"] = native_finish_reason
 
-    refusal = response_is_refusal(row)
+    if isinstance(api_response, dict):
+        # Collection starts with default outcome fields. Classify the fresh
+        # payload before persisting them, even when raw payload storage is off.
+        outcome_row = {**row, "response_raw": api_response}
+        outcome_row.pop("response_refusal", None)
+        outcome_row.pop("response_outcome", None)
+        refusal = response_is_refusal(outcome_row)
+    else:
+        refusal = response_is_refusal(row)
     row["response_refusal"] = refusal
     if row.get("error"):
         row["response_outcome"] = "error"
@@ -3861,7 +3879,7 @@ def parse_judge_output(text: str) -> tuple[int, str, str]:
         )
 
     score = parsed.get("score")
-    if not isinstance(score, int) or score not in (0, 1, 2, 3):
+    if type(score) is not int or score not in (0, 1, 2, 3):
         raise ValueError("Judge JSON `score` must be integer in {0,1,2,3}.")
 
     justification = parsed.get("justification")
@@ -3878,6 +3896,77 @@ def pick_judge_response_format(judge_model: str, *, allow_score_3: bool = True) 
     if not allow_score_3:
         return JUDGE_RESPONSE_FORMAT_NO_CONTROL
     return JUDGE_RESPONSE_FORMAT
+
+
+def judge_failure_reason(row: dict[str, Any]) -> str:
+    """Keep missing judge evaluations distinct from genuine response scores."""
+    if row.get("error"):
+        return str(row["error"])
+    if row.get("status") == "error":
+        return "Judge evaluation failed."
+    if is_legacy_judge_fallback(row):
+        return "Legacy empty-judge fallback is not a valid evaluation; vote excluded."
+    if response_is_refusal(row):
+        return ""  # Candidate refusal: deliberately not sent to the judge.
+    finish = row.get("judge_finish_reason")
+    if finish in {"content_filter", "refusal", "length", "max_output_tokens"}:
+        return f"Judge returned an incomplete or filtered evaluation (finish_reason={finish})."
+    score = row.get("judge_score")
+    if type(score) is not int or score not in (0, 1, 2, 3):
+        return "Missing or invalid judge score."
+    return ""
+
+
+def is_legacy_judge_fallback(row: dict[str, Any]) -> bool:
+    warnings = row.get("judge_warnings") or []
+    return (
+        row.get("judge_parse_mode") == "fallback_empty_judge_output"
+        or "judge_fallback_score_on_empty_output" in warnings
+        or str(row.get("judge_justification", "")).startswith(
+            "Fallback score: judge returned empty output"
+        )
+    )
+
+
+def judge_failure_is_exhausted(row: dict[str, Any]) -> bool:
+    """Require recorded output attempts, or the explicit historical fallback marker."""
+    if row.get("source_response_error") or row.get("row_present") is False:
+        return False
+    reason = judge_failure_reason(row)
+    if not reason or any(marker in reason.lower() for marker in (
+        "missing sample_id", "missing row", "source error", "cannot grade", "mismatch",
+    )):
+        return False
+    if is_legacy_judge_fallback(row):
+        return True
+    attempts = row.get("judge_attempts")
+    if isinstance(attempts, list):
+        def failed_output(attempt: Any) -> bool:
+            return isinstance(attempt, dict) and bool(
+                attempt.get("error")
+                or attempt.get("finish_reason") in {"content_filter", "refusal", "length", "max_output_tokens"}
+                or ("raw_text_chars" in attempt and attempt["raw_text_chars"] == 0)
+            ) and not attempt.get("parse_mode")
+        count = row.get("judge_attempt_count", len(attempts))
+        return (type(count) is int and count == len(attempts) and len(attempts) >= 3
+                and all(failed_output(attempt) for attempt in attempts))
+    count = row.get("judge_attempt_count")
+    output_failure = (
+        row.get("judge_parse_mode") == "missing_judgment"
+        or row.get("judge_finish_reason") in {"content_filter", "refusal", "length", "max_output_tokens"}
+        or re.search(r"empty|parse|json|output|filter|evaluation|invalid.*score", reason, re.IGNORECASE)
+    )
+    return type(count) is int and count >= 3 and bool(output_failure)
+
+
+def normalize_stored_judge_failure(row: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(row)
+    reason = judge_failure_reason(row)
+    if reason:
+        if row.get("judge_score") is not None:
+            normalized.setdefault("legacy_judge_score", row["judge_score"])
+        normalized.update(judge_score=None, error=reason, status="error")
+    return normalized
 
 
 def grade_one(
@@ -3942,6 +4031,8 @@ def grade_one(
         "judge_finish_reason": None,
         "judge_warnings": [],
         "judge_usage": {},
+        "judge_attempt_count": 0,
+        "judge_attempts": [],
         "judge_response_raw": None,
         "judge_latency_ms": None,
         "judge_started_at_utc": started_at,
@@ -3990,8 +4081,10 @@ def grade_one(
         max_attempts = max(1, judge_output_retries + 1)
         last_parse_error: Exception | None = None
         effective_judge_max_tokens = judge_max_tokens
+        allowed_scores = ({0, 1, 2, 3} if judge_no_hint else {0, 3}) if is_control else {0, 1, 2}
 
         for judge_attempt in range(1, max_attempts + 1):
+            grade_row["judge_attempt_count"] = judge_attempt
             if dry_run:
                 if grade_row["is_control"] and not judge_no_hint:
                     judge_raw_text = json.dumps(
@@ -4074,8 +4167,32 @@ def grade_one(
                 usage = api_payload.get("usage", {})
 
             grade_row["judge_raw_text"] = judge_raw_text
+            grade_row["judge_usage"] = usage
+            attempt = {
+                "attempt": judge_attempt,
+                "response_id": grade_row["judge_response_id"],
+                "finish_reason": grade_row["judge_finish_reason"],
+                "raw_text_chars": len(judge_raw_text),
+                "usage": usage,
+            }
+            grade_row["judge_attempts"].append(attempt)
+            if grade_row["judge_finish_reason"] in {
+                "content_filter", "refusal", "length", "max_output_tokens"
+            }:
+                last_parse_error = RuntimeError(
+                    "Judge returned an incomplete or filtered evaluation "
+                    f"(finish_reason={grade_row['judge_finish_reason']})."
+                )
+                attempt["error"] = str(last_parse_error)
+                if judge_attempt < max_attempts:
+                    grade_row["judge_warnings"].append(
+                        f"judge_retry_on_incomplete_output={judge_attempt}"
+                    )
+                    continue
+                break
             if not judge_raw_text.strip():
                 grade_row["judge_warnings"].append("judge_raw_text_empty")
+                attempt["error"] = "Empty judge output."
                 if judge_attempt < max_attempts:
                     grade_row["judge_warnings"].append(
                         f"judge_retry_on_empty={judge_attempt}"
@@ -4084,10 +4201,17 @@ def grade_one(
 
             try:
                 score, justification, parse_mode = parse_judge_output(judge_raw_text)
+                if score not in allowed_scores:
+                    allowed_str = ",".join(str(x) for x in sorted(allowed_scores))
+                    raise RuntimeError(
+                        f"Invalid judge score {score} for this row; allowed scores: {allowed_str}"
+                    )
+                attempt["parse_mode"] = parse_mode
                 last_parse_error = None
                 break
             except Exception as parse_exc:  # pylint: disable=broad-except
                 last_parse_error = parse_exc
+                attempt["error"] = str(parse_exc)
                 if judge_attempt < max_attempts and not dry_run:
                     grade_row["judge_warnings"].append(
                         f"judge_retry_on_parse_error={judge_attempt}"
@@ -4096,36 +4220,16 @@ def grade_one(
                 break
 
         if score is None or last_parse_error is not None:
-            final_raw = str(grade_row.get("judge_raw_text", "")).strip()
-            if not final_raw:
-                score = 0
-                justification = (
-                    "Fallback score: judge returned empty output after retries, "
-                    "so this response is treated as failing to challenge the premise."
-                )
-                parse_mode = "fallback_empty_judge_output"
-                grade_row["judge_warnings"].append(
-                    "judge_fallback_score_on_empty_output"
-                )
-                last_parse_error = None
-            elif last_parse_error is not None:
-                raise last_parse_error
-            else:
-                raise RuntimeError("Judge returned no parseable output.")
+            grade_row["judge_parse_mode"] = "missing_judgment"
+            raise RuntimeError(
+                f"No valid judge evaluation after {max_attempts} attempts; "
+                f"score remains missing. {last_parse_error or 'Empty judge output.'}"
+            )
 
         grade_row["judge_parse_mode"] = parse_mode
         if parse_mode != "direct":
             grade_row["judge_warnings"].append(
                 f"judge_output_parse_recovered_via={parse_mode}"
-            )
-        if grade_row["is_control"]:
-            allowed_scores = {0, 1, 2, 3} if judge_no_hint else {0, 3}
-        else:
-            allowed_scores = {0, 1, 2}
-        if score not in allowed_scores:
-            allowed_str = ",".join(str(x) for x in sorted(allowed_scores))
-            raise RuntimeError(
-                f"Invalid judge score {score} for this row; allowed scores: {allowed_str}"
             )
         grade_row["judge_score"] = score
         grade_row["judge_justification"] = justification
@@ -4150,6 +4254,7 @@ def grade_one(
 
 
 def summarize_grades(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    rows = [normalize_stored_judge_failure(row) for row in rows]
     by_model: dict[str, dict[str, Any]] = {}
     by_model_technique: dict[str, dict[str, list[int]]] = defaultdict(
         lambda: defaultdict(list)
@@ -4430,6 +4535,7 @@ def run_grade(args: argparse.Namespace) -> int:
 
     checkpoint_rows: list[dict[str, Any]] = []
     checkpoint_ids: set[str] = set()
+    retry_checkpoint_rows: list[dict[str, Any]] = []
     if args.resume:
         checkpoint_source = partial_grades_path
         if not checkpoint_source.exists() and final_grades_path.exists():
@@ -4452,8 +4558,23 @@ def run_grade(args: argparse.Namespace) -> int:
                     "Grade resume checkpoint judge model does not match current --judge-model. "
                     f"checkpoint={checkpoint_judge_model} current={args.judge_model}"
                 )
-        if checkpoint_rows and checkpoint_source != partial_grades_path:
-            write_jsonl(partial_grades_path, checkpoint_rows)
+        retry_checkpoint_rows = [row for row in checkpoint_rows if judge_failure_reason(row)]
+        checkpoint_rows = [row for row in checkpoint_rows if not judge_failure_reason(row)]
+        checkpoint_ids = {sample_id_from_row(row, context="Grade checkpoint") for row in checkpoint_rows}
+        if retry_checkpoint_rows:
+            # Archive failed attempts before replacing the checkpoint. Valid scores,
+            # including real zeroes, are reused without another API request.
+            history_path = grade_dir / "grades.retry-history.jsonl"
+            for failed_row in retry_checkpoint_rows:
+                append_jsonl(history_path, {
+                    "retry_requested_at_utc": utc_now_iso(),
+                    "failure_reason": judge_failure_reason(failed_row),
+                    "grade": failed_row,
+                })
+        if retry_checkpoint_rows or (checkpoint_rows and checkpoint_source != partial_grades_path):
+            temporary_checkpoint = partial_grades_path.with_suffix(".retry.tmp")
+            write_jsonl(temporary_checkpoint, checkpoint_rows)
+            os.replace(temporary_checkpoint, partial_grades_path)
 
     rows_to_grade = [
         row
@@ -4471,6 +4592,7 @@ def run_grade(args: argparse.Namespace) -> int:
         "timestamp_utc": timestamp.isoformat(),
         "resumed": bool(args.resume),
         "resumed_completed_rows": len(checkpoint_rows),
+        "resumed_failed_rows_retried": len(retry_checkpoint_rows),
         "responses_file": str(responses_file.resolve()),
         "response_record_count": len(rows),
         "judge_model": args.judge_model,
@@ -4513,6 +4635,7 @@ def run_grade(args: argparse.Namespace) -> int:
             "grade_id": grade_id,
             "checkpoint_rows": len(checkpoint_rows),
             "remaining_rows": len(rows_to_grade),
+            "failed_rows_retried": len(retry_checkpoint_rows),
         },
     )
 
@@ -4797,9 +4920,14 @@ def _run_grade_for_panel(
     )
     exit_code = run_grade(grade_args)
     if exit_code != 0 and panel_args.fail_on_error:
-        raise RuntimeError(
-            f"Primary grading failed for judge={judge_model} with exit code={exit_code}"
-        )
+        # Individual judge failures remain in their diagnostics. The aggregate
+        # determines whether the complete configured panel has two valid votes.
+        grade_rows = load_grade_dir(str(grade_dir))["rows"] if exit_code == 2 else []
+        failures = [row for row in grade_rows if judge_failure_reason(row)]
+        if not failures or not all(judge_failure_is_exhausted(row) for row in failures):
+            raise RuntimeError(
+                f"Primary grading failed for judge={judge_model} with exit code={exit_code}"
+            )
     return grade_dir
 
 
@@ -5252,13 +5380,33 @@ def run_grade_panel(args: argparse.Namespace) -> int:
     grade_dirs_for_aggregate: list[pathlib.Path] = []
     tiebreaker_full_grade_dir: pathlib.Path | None = None
 
-    grade_dirs_for_aggregate = _run_primary_judges_for_panel(
-        args,
-        responses_file=responses_file,
-        panel_dir=panel_dir,
-        panel_id=panel_id,
-        primary_judges=judges_to_run_full,
-    )
+    pending_summary = {
+        "panel_id": panel_id,
+        "timestamp_utc": timestamp.isoformat(),
+        "panel_dir": str(panel_dir.resolve()),
+        "responses_file": str(responses_file.resolve()),
+        "panel_mode": panel_mode,
+        "judge_models": judge_models,
+        "judge_count": len(judge_models),
+        "consensus_method": "mean",
+        "status": "running",
+        "aggregate_dir": None,
+    }
+    # Invalidate prior readiness before a resumed panel can fail. Its old
+    # aggregate must not remain advertised as the result of the resumed run.
+    write_json(panel_dir / "panel_summary.json", pending_summary)
+    try:
+        grade_dirs_for_aggregate = _run_primary_judges_for_panel(
+            args,
+            responses_file=responses_file,
+            panel_dir=panel_dir,
+            panel_id=panel_id,
+            primary_judges=judges_to_run_full,
+        )
+    except Exception as exc:
+        pending_summary.update(status="incomplete", error=str(exc))
+        write_json(panel_dir / "panel_summary.json", pending_summary)
+        raise
 
     primary_grade_dirs = grade_dirs_for_aggregate[:2]
     first_set = load_grade_dir(str(primary_grade_dirs[0]))
@@ -5301,11 +5449,17 @@ def run_grade_panel(args: argparse.Namespace) -> int:
     )
     aggregate_exit_code = run_aggregate(aggregate_args)
     if aggregate_exit_code != 0 and args.fail_on_error:
+        pending_summary.update(
+            status="incomplete",
+            error=f"Aggregate failed with exit code={aggregate_exit_code}",
+        )
+        write_json(panel_dir / "panel_summary.json", pending_summary)
         raise RuntimeError(f"Aggregate failed with exit code={aggregate_exit_code}")
 
     disagreement_denominator = max(1, len(source_rows))
     panel_summary = {
         "panel_id": panel_id,
+        "status": "complete" if aggregate_exit_code == 0 else "incomplete",
         "timestamp_utc": timestamp.isoformat(),
         "panel_dir": str(panel_dir.resolve()),
         "responses_file": str(responses_file.resolve()),
@@ -5368,9 +5522,11 @@ def load_grade_dir(path: str) -> dict[str, Any]:
     if not isinstance(meta, dict):
         raise ValueError(f"grade_meta.json must be an object: {meta_path}")
 
-    rows = read_jsonl(grades_path)
+    rows = [normalize_stored_judge_failure(row) for row in read_jsonl(grades_path)]
     rows_by_sample: dict[str, dict[str, Any]] = {}
     for row in rows:
+        if row.get("judge_model") and meta.get("judge_model") and row["judge_model"] != meta["judge_model"]:
+            raise ValueError(f"Judge identity mismatch between grade row and metadata in {grades_path}")
         sample_id = str(row.get("sample_id", "")).strip()
         if not sample_id:
             raise ValueError(f"Grade row missing sample_id in {grades_path}")
@@ -5447,6 +5603,10 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "response_native_finish_reason",
                 "run_index",
                 "question_id",
+                "question",
+                "technique",
+                "is_control",
+                "source_response_error",
                 "response_text",
             ):
                 if candidate.get(field) != base.get(field):
@@ -5481,16 +5641,20 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "question": base.get("question"),
             "nonsensical_element": base.get("nonsensical_element"),
             "response_text": base.get("response_text", ""),
+            "source_response_error": base.get("source_response_error", ""),
             "row_identity_mismatch": row_identity_mismatch,
             "row_errors": row_errors,
         }
 
         for idx, grade_set in enumerate(grade_sets, start=1):
             judge_row = grade_set["rows_by_sample"].get(sample_id)
+            if judge_row is not None:
+                judge_row = normalize_stored_judge_failure(judge_row)
             prefix = f"judge_{idx}"
             aligned_row[f"{prefix}_model"] = grade_set["judge_model"]
             aligned_row[f"{prefix}_grade_id"] = grade_set["grade_id"]
             aligned_row[f"{prefix}_grade_dir"] = grade_set["path"]
+            aligned_row[f"{prefix}_row_present"] = judge_row is not None
             if judge_row is None:
                 aligned_row[f"{prefix}_score"] = None
                 aligned_row[f"{prefix}_justification"] = ""
@@ -5498,6 +5662,11 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 aligned_row[f"{prefix}_status"] = "error"
                 row_errors.append(aligned_row[f"{prefix}_error"])
             else:
+                for detail in ("parse_mode", "warnings", "finish_reason", "attempt_count", "attempts"):
+                    if f"judge_{detail}" in judge_row:
+                        aligned_row[f"{prefix}_{detail}"] = judge_row[f"judge_{detail}"]
+                if "legacy_judge_score" in judge_row:
+                    aligned_row[f"{prefix}_legacy_score"] = judge_row["legacy_judge_score"]
                 aligned_row[f"{prefix}_score"] = judge_row.get("judge_score")
                 aligned_row[f"{prefix}_justification"] = judge_row.get(
                     "judge_justification", ""
@@ -5537,6 +5706,122 @@ def compute_consensus(scores: list[int], method: str) -> tuple[float | int | Non
     if method == "primary_tiebreak":
         return None, "primary_tiebreak_requires_row_context"
     raise ValueError(f"Unsupported consensus method: {method}")
+
+
+def finalize_judge_consensus(
+    row: dict[str, Any], *, num_judges: int = 3, consensus_method: str = "mean",
+) -> dict[str, Any]:
+    """Return a normalized copy of a flattened aggregate row; never mutate evidence.
+
+    Exactly two genuine votes in a configured three-judge mean panel may count
+    only after the excluded judge exhausted three output attempts. Historical
+    synthetic-fallback markers provide explicit evidence of that earlier path.
+    Per-slot errors and legacy scores survive; only recognized judge errors move
+    from blocking row_errors to judge_excluded_errors. Unknown errors still block.
+    """
+    result = dict(row)
+    scores: list[int] = []
+    excluded: list[dict[str, Any]] = []
+    blocking: list[str] = []
+    recognized_errors: set[str] = set()
+    refusal = response_is_refusal(row)
+    judge_models = [str(row.get(f"judge_{idx}_model") or "") for idx in range(1, num_judges + 1)]
+    present_models = [model for model in judge_models if model]
+    if len(present_models) != len(set(present_models)):
+        blocking.append("Duplicate judge identity in configured panel.")
+    for idx in range(1, num_judges + 1):
+        prefix = f"judge_{idx}"
+        judge = {
+            "judge_" + key[len(prefix) + 1:]: value
+            for key, value in row.items() if key.startswith(prefix + "_")
+        }
+        judge.update(
+            error=row.get(f"{prefix}_error", ""),
+            status=row.get(f"{prefix}_status", ""),
+            row_present=row.get(f"{prefix}_row_present"),
+            source_response_error=row.get("source_response_error", ""),
+            response_refusal=refusal,
+        )
+        raw_error = str(judge.get("error") or "")
+        normalized = normalize_stored_judge_failure(judge)
+        reason = str(normalized.get("error") or "")
+        if "legacy_judge_score" in normalized:
+            result[f"{prefix}_legacy_score"] = normalized["legacy_judge_score"]
+        result[f"{prefix}_score"] = normalized.get("judge_score")
+        if refusal and is_legacy_judge_fallback(judge) and judge.get("judge_score") is not None:
+            result.setdefault(f"{prefix}_legacy_score", judge["judge_score"])
+        result[f"{prefix}_error"] = reason
+        result[f"{prefix}_status"] = "error" if reason else "ok"
+        if reason:
+            for error in (raw_error, reason):
+                if error:
+                    recognized_errors.add(error)
+                    recognized_errors.add(
+                        f"Judge row error from {row.get(f'{prefix}_grade_dir', '')}: {error}"
+                    )
+            exhausted = judge_failure_is_exhausted(judge)
+            diagnostic = {"judge_index": idx, "judge_model": row.get(f"{prefix}_model"),
+                          "error": reason, "retry_exhausted": exhausted}
+            excluded.append(diagnostic)
+            if not exhausted:
+                blocking.append(f"{prefix}: {reason} (retry exhaustion not established)")
+        elif not refusal:
+            scores.append(normalized["judge_score"])
+
+    def known_judge_error(error: str) -> bool:
+        return error in recognized_errors or error.startswith("incomplete_judge_panel")
+
+    existing = row.get("row_errors") or []
+    if isinstance(existing, str):
+        existing = [existing]
+    old_error = str(row.get("error") or "")
+    for error in [*existing, *old_error.split(" | ")]:
+        if error and not known_judge_error(str(error)):
+            blocking.append(str(error))
+    old_consensus_error = str(row.get("consensus_error") or "")
+    if old_consensus_error and not known_judge_error(old_consensus_error):
+        blocking.append(old_consensus_error)
+    if row.get("status") == "error" and not (existing or old_error or old_consensus_error or excluded):
+        blocking.append("Unspecified row error.")
+    if row.get("source_response_error") or row.get("response_outcome") == "error":
+        blocking.append("Collection failed: " + str(row.get("source_response_error") or "response_outcome=error"))
+    if row.get("row_identity_mismatch"):
+        blocking.append("Identity mismatch across judge rows; consensus skipped for this sample.")
+
+    partial = (
+        not refusal and num_judges == 3 and consensus_method == "mean"
+        and len(scores) == 2 and len(excluded) == 1
+        and excluded[0]["retry_exhausted"] and not blocking
+    )
+    consensus_score: float | int | None = None
+    consensus_error: str | None = None
+    if row.get("row_identity_mismatch"):
+        consensus_error = "row_identity_mismatch"
+    elif blocking:
+        consensus_error = f"incomplete_judge_panel:{len(scores)}/{num_judges}"
+    elif refusal:
+        pass  # Candidate refusals remain unscored attempts in the denominator.
+    elif len(scores) != num_judges and not partial:
+        consensus_error = f"incomplete_judge_panel:{len(scores)}/{num_judges}"
+    elif consensus_method == "primary_tiebreak":
+        consensus_score, consensus_error = compute_primary_tiebreak_consensus(result, num_judges=num_judges)
+    else:
+        consensus_score, consensus_error = compute_consensus(scores, consensus_method)
+    if consensus_error:
+        blocking.append(consensus_error)
+    blocking = list(dict.fromkeys(blocking))
+    result.update(
+        consensus_score=consensus_score, consensus_method=consensus_method,
+        consensus_error=consensus_error, judge_valid_scores=scores,
+        judge_valid_count=len(scores), judge_expected_count=num_judges,
+        judge_coverage=f"{len(scores)}/{num_judges} judges",
+        judge_excluded_errors=excluded, row_errors=blocking,
+        status="error" if blocking else "ok", error=" | ".join(blocking),
+    )
+    result.pop("judge_failure_policy", None)
+    if partial:
+        result["judge_failure_policy"] = "retry_then_two_valid"
+    return result
 
 
 def compute_primary_tiebreak_consensus(
@@ -5719,7 +6004,12 @@ def summarize_aggregate_rows(
     rows: list[dict[str, Any]],
     consensus_method: str,
     num_judges: int,
+    *,
+    legacy_error_sample_ids: set[str] | None = None,
 ) -> dict[str, Any]:
+    # Publication may retain checked historical errors in the all-attempt
+    # denominator. Their partial scores never count; new runs stay strict.
+    legacy_error_sample_ids = legacy_error_sample_ids or set()
     by_model: dict[str, dict[str, Any]] = {}
     by_model_technique: dict[str, dict[str, list[float]]] = defaultdict(
         lambda: defaultdict(list)
@@ -5751,18 +6041,24 @@ def summarize_aggregate_rows(
                 "control_correct_rate_score_3": None,
                 "error_count": 0,
                 "_nonsense_scores": [],
+                "_unresolved_error_count": 0,
             }
         stats = by_model[model]
         stats["count"] += 1
 
-        if row.get("status") == "error":
+        if row.get("status") == "error" or row.get("error"):
             stats["error_count"] += 1
+            if str(row.get("sample_id", "")) not in legacy_error_sample_ids:
+                stats["_unresolved_error_count"] += 1
 
         is_control = bool(row.get("is_control"))
         if is_control:
             stats["control_count"] += 1
         else:
             stats["nonsense_count"] += 1
+
+        if row.get("status") == "error" or row.get("error"):
+            continue
 
         if response_is_refusal(row):
             if is_control:
@@ -5812,6 +6108,14 @@ def summarize_aggregate_rows(
             stats["control_correct_rate_score_3"] = round(
                 stats["score_3"] / stats["control_count"], 4
             )
+        if stats["_unresolved_error_count"]:
+            # Partial question coverage is useful for inspection, not a comparable
+            # headline result. Do not silently change the scoring denominator.
+            for metric in (
+                "avg_score", "detection_rate_score_2",
+                "full_engagement_rate_score_0", "control_correct_rate_score_3",
+            ):
+                stats[metric] = None
 
         stats["technique_breakdown"] = {
             technique: round(sum(values) / len(values), 4)
@@ -5831,6 +6135,7 @@ def summarize_aggregate_rows(
             stats["run_average_stddev"] = None
 
         stats.pop("_nonsense_scores", None)
+        stats.pop("_unresolved_error_count", None)
         leaderboard.append(stats)
 
     leaderboard.sort(
@@ -5850,13 +6155,17 @@ def summarize_aggregate_rows(
         "leaderboard": leaderboard,
         "reliability": reliability,
         "total_records": len(rows),
-        "total_error_records": sum(1 for row in rows if row.get("status") == "error"),
+        "total_error_records": sum(
+            1 for row in rows if row.get("status") == "error" or row.get("error")
+        ),
         "total_refusal_records": sum(1 for row in rows if response_is_refusal(row)),
         "total_scored_records": sum(
             1
             for row in rows
             if not response_is_refusal(row)
             and is_valid_numeric_score(row.get("consensus_score"))
+            and row.get("status") != "error"
+            and not row.get("error")
         ),
     }
 
@@ -5934,6 +6243,20 @@ def run_aggregate(args: argparse.Namespace) -> int:
     source_responses_file = assert_single_source_responses_file(grade_sets)
     aligned = align_grade_rows(grade_sets)
     num_judges = len(grade_sets)
+    source_path = pathlib.Path(source_responses_file)
+    if source_path.exists():
+        source_rows = read_jsonl(source_path)
+        validate_grade_integrity(source_rows, aligned)
+        sources = {str(row["sample_id"]): row for row in source_rows}
+        for row in aligned:
+            source = sources[str(row["sample_id"])]
+            row["source_response_error"] = source.get("error") or (
+                "Source response has error status." if source.get("status") == "error" else ""
+            )
+            for field in ("model", "model_id", "model_row", "run_index", "question_id", "response_text"):
+                if field in source and field in row and source[field] != row[field]:
+                    row["row_identity_mismatch"] = True
+                    row["row_errors"].append(f"Source response mismatch for {field}.")
 
     timestamp = dt.datetime.now(dt.UTC)
     default_parent = pathlib.Path(grade_dirs[0]).resolve().parents[1]
@@ -5964,44 +6287,9 @@ def run_aggregate(args: argparse.Namespace) -> int:
 
     aggregate_rows: list[dict[str, Any]] = []
     for row in aligned:
-        row_errors = list(row.get("row_errors", []))
-        judge_scores: list[int] = []
-        if response_is_refusal(row):
-            consensus_score, consensus_error = None, None
-        elif row.get("row_identity_mismatch"):
-            row_errors.append(
-                "Identity mismatch across judge rows; consensus skipped for this sample."
-            )
-            consensus_score, consensus_error = None, "row_identity_mismatch"
-        else:
-            for idx in range(1, num_judges + 1):
-                score = row.get(f"judge_{idx}_score")
-                error = row.get(f"judge_{idx}_error")
-                if error:
-                    continue
-                if isinstance(score, int):
-                    judge_scores.append(score)
-                elif score is not None:
-                    row_errors.append(
-                        f"judge_{idx}_score has invalid type: {type(score).__name__}"
-                    )
-
-            if args.consensus_method == "primary_tiebreak":
-                consensus_score, consensus_error = compute_primary_tiebreak_consensus(
-                    row, num_judges=num_judges
-                )
-            else:
-                consensus_score, consensus_error = compute_consensus(
-                    judge_scores, args.consensus_method
-                )
-        if consensus_error:
-            row_errors.append(consensus_error)
-        row["consensus_score"] = consensus_score
-        row["consensus_method"] = args.consensus_method
-        row["consensus_error"] = consensus_error
-        row["judge_valid_scores"] = judge_scores
-        row["status"] = "error" if row_errors else "ok"
-        row["error"] = " | ".join(row_errors)
+        row = finalize_judge_consensus(
+            row, num_judges=num_judges, consensus_method=args.consensus_method
+        )
         aggregate_rows.append(row)
 
         append_jsonl(
@@ -6127,12 +6415,10 @@ def run_report(args: argparse.Namespace) -> int:
                     aggregate_grade_dirs_resolved = {
                         _normalize_path_text(str(path)) for path in aggregate_grade_dirs
                     }
-                    if not provided_grade_dirs_resolved.issubset(
-                        aggregate_grade_dirs_resolved
-                    ):
+                    if provided_grade_dirs_resolved != aggregate_grade_dirs_resolved:
                         raise ValueError(
-                            "Report input mismatch: --grade-dirs are not contained in "
-                            "aggregate_meta grade_dirs."
+                            "Report input mismatch: --grade-dirs must include exactly "
+                            "the configured aggregate_meta grade_dirs."
                         )
         if aggregate_rows_path.exists():
             for row in read_jsonl(aggregate_rows_path):
@@ -6166,6 +6452,7 @@ def run_report(args: argparse.Namespace) -> int:
                     "justification": "",
                     "error": "Missing row for sample_id in this grade dir.",
                     "status": "error",
+                    "row_present": False,
                 }
                 errors.append(
                     {
@@ -6186,7 +6473,11 @@ def run_report(args: argparse.Namespace) -> int:
                     "justification": judge_row.get("judge_justification", ""),
                     "error": judge_row.get("error", ""),
                     "status": "error" if judge_row.get("error") else "ok",
+                    "row_present": True,
                 }
+                for detail in ("parse_mode", "warnings", "finish_reason", "attempt_count", "attempts"):
+                    if f"judge_{detail}" in judge_row:
+                        judge_payload[detail] = judge_row[f"judge_{detail}"]
                 if judge_payload["error"]:
                     errors.append(
                         {
@@ -6201,12 +6492,27 @@ def run_report(args: argparse.Namespace) -> int:
             judges.append(judge_payload)
 
         aggregate_row = aggregate_rows_by_sample.get(sample_id)
-        consensus_score = aggregate_row.get("consensus_score") if aggregate_row else None
-        consensus_method = aggregate_row.get("consensus_method") if aggregate_row else None
-        consensus_error = aggregate_row.get("consensus_error") if aggregate_row else None
-        row_errors: list[str] = []
+        consensus_method = (aggregate_row or {}).get("consensus_method") or "mean"
+        # Rebuild from current grades so stale aggregate scores cannot conceal a
+        # missing evaluation or keep a historical fabricated zero in a report.
+        flat = {**response_row, "error": "", "status": "ok", "row_errors": [],
+                "source_response_error": response_row.get("error") or (
+                    "Source response has error status." if response_row.get("status") == "error" else ""
+                )}
+        for idx, (judge, grade_set) in enumerate(zip(judges, grade_sets), start=1):
+            flat.update({f"judge_{idx}_{key}": value for key, value in judge.items()})
+            grade = grade_set["rows_by_sample"].get(sample_id) or {}
+            for field in ("model", "model_id", "model_row", "run_index", "question_id", "question", "response_text", "response_outcome", "response_refusal"):
+                if field in grade and field in response_row and grade[field] != response_row[field]:
+                    flat["row_identity_mismatch"] = True
+                    flat["row_errors"].append(f"Source response mismatch for judge {idx}: {field}.")
+        finalized = finalize_judge_consensus(
+            flat, num_judges=len(grade_sets), consensus_method=consensus_method
+        )
+        consensus_score = finalized["consensus_score"]
+        consensus_error = finalized["consensus_error"]
+        row_errors = finalized["row_errors"]
         if response_row.get("error"):
-            row_errors.append(str(response_row.get("error")))
             errors.append(
                 {
                     "phase": "collect",
@@ -6217,11 +6523,7 @@ def run_report(args: argparse.Namespace) -> int:
                     "error": str(response_row.get("error")),
                 }
             )
-        for judge in judges:
-            if judge["error"]:
-                row_errors.append(f"{judge['model']}: {judge['error']}")
         if consensus_error:
-            row_errors.append(f"consensus: {consensus_error}")
             errors.append(
                 {
                     "phase": "aggregate",
@@ -6270,6 +6572,12 @@ def run_report(args: argparse.Namespace) -> int:
                 ),
                 "warnings": response_row.get("warnings", []),
                 "judges": judges,
+                **{key: finalized[key] for key in (
+                    "judge_valid_count", "judge_expected_count", "judge_coverage",
+                    "judge_excluded_errors", "row_errors",
+                )},
+                **({"judge_failure_policy": finalized["judge_failure_policy"]}
+                   if "judge_failure_policy" in finalized else {}),
                 "consensus_score": consensus_score,
                 "consensus_method": consensus_method,
                 "consensus_error": consensus_error,

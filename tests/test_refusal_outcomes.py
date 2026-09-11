@@ -63,7 +63,7 @@ class RefusalOutcomeTests(unittest.TestCase):
                 }
             ]
         }
-        row = {"response_raw": payload, "error": ""}
+        row = {"response_raw": payload, "response_text": "", "error": ""}
 
         MODULE.annotate_response_outcome(row)
 
@@ -109,6 +109,66 @@ class RefusalOutcomeTests(unittest.TestCase):
 
         self.assertFalse(row["response_refusal"])
         self.assertEqual(row["response_outcome"], "response")
+
+    def test_persisted_outcome_survives_slimming_response_text(self) -> None:
+        full_row = {
+            "response_text": "The premise is invalid, and here is why.",
+            "response_native_finish_reason": "refusal",
+        }
+        MODULE.annotate_response_outcome(full_row)
+        summary_row = {key: value for key, value in full_row.items() if key != "response_text"}
+
+        self.assertFalse(MODULE.response_is_refusal(full_row))
+        self.assertFalse(MODULE.response_is_refusal(summary_row))
+        summary_row.pop("response_refusal")
+        self.assertFalse(MODULE.response_is_refusal(summary_row))
+
+    def test_explicit_refusal_boolean_has_priority_over_other_markers(self) -> None:
+        for value in (False, "false", " FALSE "):
+            with self.subTest(value=value):
+                self.assertFalse(MODULE.response_is_refusal({
+                    "response_refusal": value,
+                    "response_outcome": "refusal",
+                    "response_native_finish_reason": "refusal",
+                    "response_text": "",
+                }))
+        for value in (True, "true", " TRUE "):
+            with self.subTest(value=value):
+                self.assertTrue(MODULE.response_is_refusal({
+                    "response_refusal": value,
+                    "response_outcome": "response",
+                }))
+
+    def test_missing_text_is_not_an_empty_answer(self) -> None:
+        for marker in (
+            {"response_native_finish_reason": "refusal"},
+            {"response_raw": {"choices": [{"native_finish_reason": "refusal"}]}},
+        ):
+            with self.subTest(marker=marker):
+                self.assertFalse(MODULE.response_is_refusal(marker))
+                self.assertFalse(MODULE.response_is_refusal({**marker, "response_text": None}))
+                for empty in ("", MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER):
+                    self.assertTrue(MODULE.response_is_refusal({**marker, "response_text": empty}))
+
+    def test_fresh_payload_detects_refusal_before_storing_outcome(self) -> None:
+        payloads = [
+            {"choices": [{"native_finish_reason": "refusal", "message": {"content": None}}]},
+            {"choices": [{"message": {"content": None, "refusal": "I cannot answer."}}]},
+        ]
+        for payload in payloads:
+            with self.subTest(payload=payload):
+                row = {
+                    "response_refusal": False,
+                    "response_outcome": "response",
+                    "response_text": MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER,
+                    "response_raw": None,
+                    "error": "",
+                }
+                MODULE.annotate_response_outcome(row, payload)
+
+                self.assertTrue(row["response_refusal"])
+                self.assertEqual(row["response_outcome"], "refusal")
+                self.assertIsNone(row["response_raw"])
 
     def test_summary_excludes_refusal_from_scores_and_reliability(self) -> None:
         rows = [

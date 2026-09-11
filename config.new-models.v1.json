@@ -1,67 +1,22 @@
 {
   "collect": {
     "questions": "questions.json",
-    "models": [
-      "moonshotai/kimi-k2.6",
-      "z-ai/glm-5.1",
-      "qwen/qwen3.6-plus"
-    ],
+    "models": [],
     "models_file": "",
     "model_providers": {
       "*": "openrouter"
     },
-    "model_request_overrides": {
-      "moonshotai/kimi-k2.6": {
-        "provider": {
-          "order": [
-            "Moonshot AI"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "z-ai/glm-5.1": {
-        "provider": {
-          "order": [
-            "Z.AI"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "qwen/qwen3.6-plus": {
-        "provider": {
-          "order": [
-            "Alibaba"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      }
-    },
+    "model_request_overrides": {},
     "num_runs": 1,
-    "parallelism": 16,
-    "max_inflight_per_model": 1,
+    "parallelism": 48,
+    "max_inflight_per_model": 3,
     "techniques": "cross_domain_concept_stitching,inverted_nonexistent_dependency,false_granularity,misapplied_mechanism,reified_metaphor,plausible_nonexistent_framework,wrong_unit_of_analysis,temporal_category_error,causal_chimera,authoritative_framing_of_nothing",
     "temperature": null,
     "omit_response_system_prompt": true,
     "response_reasoning_effort": "off",
     "store_request_messages": false,
     "store_response_raw": true,
-    "model_reasoning_efforts": {
-      "moonshotai/kimi-k2.6": [
-        "none",
-        "xhigh"
-      ],
-      "z-ai/glm-5.1": [
-        "none",
-        "xhigh"
-      ],
-      "qwen/qwen3.6-plus": [
-        "none",
-        "xhigh"
-      ]
-    },
+    "model_reasoning_efforts": {},
     "shuffle_tasks": true,
     "retries": 3,
     "rate_limit_requeue": true,
@@ -81,7 +36,7 @@
       "openai/gpt-5.2",
       "google/gemini-3.1-pro-preview"
     ],
-    "parallelism": 16,
+    "parallelism": 20,
     "judge_temperature": null,
     "judge_reasoning_effort": "medium",
     "judge_max_tokens": 0,
@@ -98,6 +53,6 @@
     "consensus_method": "mean",
     "parallel_primary_judges": true,
     "tiebreaker_model": "",
-    "parallelism": 16
+    "parallelism": 20
   }
 }
