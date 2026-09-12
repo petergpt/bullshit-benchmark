@@ -178,7 +178,7 @@ Publishing also exports:
 - Catch-up queues: `config.new-models.v1.json` and `config.new-models.v2.json`. Completed August variants were folded into the main configs. These queues may contain unpublished candidates; add only intended new models, with matching reasoning/provider overrides, before running them. The config gate permits an empty candidate queue; the collector rejects an empty model list before creating a run or making API calls. Main configs must remain nonempty.
 - Question set (v1): `questions.json`
 - Question set (v2): `questions.v2.json` (generated from `drafts/new-questions.md` via `scripts/build_questions_v2_from_draft.py`)
-- Provider routing is controlled by `collect.model_providers` and `grade.model_providers` (`openrouter` or `openai`; supports `*` and `<org>/*` patterns, e.g. `{"*":"openrouter","gpt-5.3":"openai"}`).
+- Provider routing is controlled by `collect.model_providers` and `grade.model_providers` (`openrouter`, `openai`, or `atlascloud`; supports `*` and `<org>/*` patterns, e.g. `{"*":"openrouter","gpt-5.3":"openai","qwen/*":"atlascloud"}`).
 - `openai/gpt-5.5-chat` is a benchmark display/model row routed by its config override to the `chat-latest` API slug. That moving API alias does not itself identify a fixed model version; retain the original run's request/response metadata when interpreting historical results.
 - Claude Fable 5.1 and GPT-6 Astra are in both main configs with `low` and `max` reasoning. The current datasets have 192 V1 variants / 10,560 response records and 212 V2 variants / 21,200 response records. Historical variants outside the active rerun set have exact entries in `data/model_metadata/legacy_config_exceptions.json`.
 - Configs include `openai/gpt-5.2-codex` and `openai/gpt-5.3-codex` with reasoning sweeps (`low`, `high`, `xhigh`).
@@ -270,5 +270,8 @@ Optional:
 - `OPENROUTER_REFERER`
 - `OPENROUTER_APP_NAME`
 - `OPENAI_API_KEY` (required when any model is routed to provider `openai`)
+- `ATLASCLOUD_API_KEY` (required when any model is routed to provider `atlascloud`)
+- `ATLASCLOUD_BASE_URL` (optional Atlas Cloud-compatible API base; defaults to `https://api.atlascloud.ai/v1`)
+- `ATLASCLOUD_USER_AGENT` (optional request user agent; defaults to `BullshitBench/1.0`)
 - `OPENAI_PROJECT` or `OPENAI_PROJECT_ID` (optional OpenAI project header override)
 - `OPENAI_ORGANIZATION` or `OPENAI_ORG` or `OPENAI_ORG_ID` (optional OpenAI org header override)
