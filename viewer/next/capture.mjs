@@ -232,7 +232,7 @@ export async function exportRankingsPng({
   if (mascot) drawImageContained(ctx, mascot, pad, 20, 83, 66);
   else text(ctx, 'B!', pad + 41, 52, { size: 42, weight: 850, color: '#f7fbf9', align: 'center' });
   text(ctx, 'BullshitBench', pad + 100, 53, { size: 34, weight: 500, family: '"Futura", "Avenir Next", sans-serif', spacing: '-0.51px', color: '#f7fbf9' });
-  const suite = version === 'v1' ? 'V1' : 'V2';
+  const suite = version === 'v1' ? 'V1' : version === 'v2.1' ? 'V2.1' : 'V2';
   const scope = domain && domain !== 'all' ? String(domain) : 'All domains';
   const scopeMax = sheetWidth - (pad + 480) - pad - 61;
   font(ctx, 14, 650);

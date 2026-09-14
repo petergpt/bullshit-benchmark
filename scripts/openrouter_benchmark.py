@@ -2726,7 +2726,19 @@ def extract_native_finish_reason(api_response: dict[str, Any]) -> str | None:
     return text or None
 
 
-def response_is_refusal(row: dict[str, Any]) -> bool:
+def response_is_refusal(
+    row: dict[str, Any], *, empty_response_placeholder_is_refusal: bool = False,
+) -> bool:
+    response_text = row.get("response_text")
+    if (
+        empty_response_placeholder_is_refusal
+        and isinstance(response_text, str)
+        and response_text.strip() == EMPTY_MODEL_RESPONSE_PLACEHOLDER
+    ):
+        # V2.1 deliberately overrides any persisted "acceptance" outcome for
+        # the empty-response placeholder; the authoritative-outcome rule
+        # below only applies when this flag is off.
+        return True
     explicit = row.get("response_refusal")
     # Persisted outcomes remain authoritative when response text is loaded later.
     if explicit is False or str(explicit).strip().lower() == "false":
@@ -2738,7 +2750,6 @@ def response_is_refusal(row: dict[str, Any]) -> bool:
         return True
     if outcome == "response":
         return False
-    response_text = row.get("response_text")
     has_no_answer = isinstance(response_text, str) and response_text.strip() in (
         "", EMPTY_MODEL_RESPONSE_PLACEHOLDER
     )
@@ -2762,6 +2773,8 @@ def response_is_refusal(row: dict[str, Any]) -> bool:
 def annotate_response_outcome(
     row: dict[str, Any],
     api_response: dict[str, Any] | None = None,
+    *,
+    empty_response_placeholder_is_refusal: bool = False,
 ) -> None:
     raw = api_response if isinstance(api_response, dict) else row.get("response_raw")
     if isinstance(raw, dict):
@@ -2775,9 +2788,15 @@ def annotate_response_outcome(
         outcome_row = {**row, "response_raw": api_response}
         outcome_row.pop("response_refusal", None)
         outcome_row.pop("response_outcome", None)
-        refusal = response_is_refusal(outcome_row)
+        refusal = response_is_refusal(
+            outcome_row,
+            empty_response_placeholder_is_refusal=empty_response_placeholder_is_refusal,
+        )
     else:
-        refusal = response_is_refusal(row)
+        refusal = response_is_refusal(
+            row,
+            empty_response_placeholder_is_refusal=empty_response_placeholder_is_refusal,
+        )
     row["response_refusal"] = refusal
     if row.get("error"):
         row["response_outcome"] = "error"

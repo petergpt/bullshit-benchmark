@@ -17,7 +17,8 @@ Usage:
     --aggregate-rows <path/to/aggregate.jsonl> \
     [--questions-file <original/questions.json>] \
     [--output-dir data/latest] \
-    [--publish-mode auto|supplemental|replace]
+    [--publish-mode auto|supplemental|replace] \
+    [--empty-response-placeholder-is-refusal]
 
 Copies the selected run artifacts into a stable viewer dataset directory:
   responses.jsonl
@@ -52,6 +53,7 @@ PANEL_SUMMARY_FILE=""
 AGGREGATE_SUMMARY_FILE=""
 AGGREGATE_ROWS_FILE=""
 PUBLISH_MODE="auto"
+EMPTY_RESPONSE_PLACEHOLDER_IS_REFUSAL="0"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -89,6 +91,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --replace)
       PUBLISH_MODE="replace"
+      shift
+      ;;
+    --empty-response-placeholder-is-refusal)
+      EMPTY_RESPONSE_PLACEHOLDER_IS_REFUSAL="1"
       shift
       ;;
     -h|--help)
@@ -157,7 +163,8 @@ python3 - <<'PY' \
   "${MODEL_LAUNCH_CANONICAL}" \
   "${MODEL_LAUNCH_HEADERS}" \
   "${MODEL_PARAMS_CANONICAL}" \
-  "${MODEL_PARAMS_HEADERS}"
+    "${MODEL_PARAMS_HEADERS}" \
+    "${EMPTY_RESPONSE_PLACEHOLDER_IS_REFUSAL}"
 import datetime as dt
 import gzip
 import importlib.util
@@ -178,6 +185,7 @@ model_launch_canonical = pathlib.Path(sys.argv[9]).resolve()
 model_launch_headers = str(sys.argv[10] or "").strip()
 model_params_canonical = pathlib.Path(sys.argv[11]).resolve()
 model_params_headers = str(sys.argv[12] or "").strip()
+empty_response_placeholder_is_refusal = sys.argv[13] == "1"
 
 # publication.py validates and stages the exact source before rows are slimmed.
 questions_out = output_dir / "questions.json"
@@ -640,7 +648,10 @@ spec.loader.exec_module(module)
 
 for row in merged_responses:
     module.normalize_stored_model_reasoning_variant(row)
-    module.annotate_response_outcome(row)
+    module.annotate_response_outcome(
+        row,
+        empty_response_placeholder_is_refusal=empty_response_placeholder_is_refusal,
+    )
     module.enrich_collect_record_metrics(row)
 
 for row in merged_aggregate_rows:
@@ -664,6 +675,22 @@ for row in merged_aggregate_rows:
         row["consensus_score"] = None
         row["consensus_error"] = None
         row["judge_valid_scores"] = []
+        if empty_response_placeholder_is_refusal:
+            row["judge_valid_count"] = 0
+            row["judge_expected_count"] = 3
+            row["judge_coverage"] = "0/3 judges"
+            row["judge_excluded_errors"] = []
+            row["row_errors"] = []
+            row["status"] = "ok"
+            row["error"] = ""
+            row.pop("judge_failure_policy", None)
+            for index in (1, 2, 3):
+                prefix = f"judge_{index}_"
+                for suffix in (
+                    "score", "error", "status", "warnings", "parse_mode",
+                    "finish_reason", "attempt_count", "fallback",
+                ):
+                    row.pop(prefix + suffix, None)
 
 merged_responses = slim_published_response_rows(merged_responses)
 merged_aggregate_rows = slim_published_aggregate_rows(merged_aggregate_rows)
