@@ -321,7 +321,7 @@ async function legacyGzip(url) {
 }
 
 export function loadBenchmark(version = 'v2') {
-  if (!['v1', 'v2'].includes(version)) return Promise.reject(new Error('Unknown benchmark version.'));
+  if (!['v1', 'v2', 'v2.1'].includes(version)) return Promise.reject(new Error('Unknown benchmark version.'));
   if (!DATASETS.has(version)) {
     const request = load(version).catch(error => { DATASETS.delete(version); throw error; });
     DATASETS.set(version, request);
@@ -329,7 +329,7 @@ export function loadBenchmark(version = 'v2') {
   return DATASETS.get(version);
 }
 async function load(version) {
-  const base = new URL(version === 'v1' ? 'data/latest/' : 'data/v2/latest/', ROOT);
+  const base = new URL(version === 'v1' ? 'data/latest/' : `data/${version}/latest/`, ROOT);
   const manifestText = await fetchText(new URL('manifest.json', base), true);
   const manifest = manifestText ? JSON.parse(manifestText) : null;
   const storage = validateStorage(manifest);

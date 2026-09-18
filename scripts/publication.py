@@ -655,6 +655,20 @@ def publish(args):
                 command += ['--output-dir', str(stage), '--publish-mode', args.publish_mode]
                 env = dict(os.environ, BULLSHITBENCH_PUBLISH_STAGE='1')
                 subprocess.run(command, cwd=ROOT, env=env, check=True)
+            elif args.empty_response_placeholder_is_refusal:
+                command = [
+                    'bash', str(ROOT / 'scripts/publish_latest_to_viewer.sh'),
+                    '--responses-file', str(stage / 'responses.jsonl'),
+                    '--collection-stats', str(stage / 'collection_stats.json'),
+                    '--panel-summary', str(stage / 'panel_summary.json'),
+                    '--aggregate-summary', str(stage / 'aggregate_summary.json'),
+                    '--aggregate-rows', str(stage / 'aggregate.jsonl'),
+                    '--output-dir', str(stage),
+                    '--publish-mode', 'replace',
+                    '--empty-response-placeholder-is-refusal',
+                ]
+                env = dict(os.environ, BULLSHITBENCH_PUBLISH_STAGE='1')
+                subprocess.run(command, cwd=ROOT, env=env, check=True)
             storage.pack_dataset(stage)
             manifest = freeze_metadata(stage, destination)
             result = validate_dataset(stage)
@@ -677,6 +691,8 @@ def main(argv=None):
                    help='original question source; defaults to questions_snapshot.json beside responses')
     p = commands.add_parser('migrate', help='losslessly migrate an existing dataset without collecting or grading')
     p.add_argument('--output-dir', required=True)
+    p.add_argument('--empty-response-placeholder-is-refusal', action='store_true',
+                   help='rebuild with V2.1 semantics: classify the empty-response placeholder as a refusal')
     p.add_argument('--questions-file', type=Path,
                    help='verified original question source, required when the existing publication has no snapshot')
     p = commands.add_parser('verify', help='verify hashes, row identities, viewer assets and metadata')

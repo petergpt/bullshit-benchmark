@@ -139,6 +139,23 @@ class RefusalOutcomeTests(unittest.TestCase):
                     "response_outcome": "response",
                 }))
 
+    def test_empty_response_placeholder_requires_explicit_v21_mode(self) -> None:
+        row = {
+            "response_refusal": False,
+            "response_outcome": "response",
+            "response_text": MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER,
+        }
+
+        self.assertFalse(MODULE.response_is_refusal(row))
+        self.assertTrue(MODULE.response_is_refusal(
+            row, empty_response_placeholder_is_refusal=True,
+        ))
+        MODULE.annotate_response_outcome(
+            row, empty_response_placeholder_is_refusal=True,
+        )
+        self.assertTrue(row["response_refusal"])
+        self.assertEqual(row["response_outcome"], "refusal")
+
     def test_missing_text_is_not_an_empty_answer(self) -> None:
         for marker in (
             {"response_native_finish_reason": "refusal"},

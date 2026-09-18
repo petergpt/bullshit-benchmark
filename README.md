@@ -13,6 +13,7 @@ Updated **September 10, 2026**. The new dashboard is now the default viewer. The
 | --- | ---: | ---: | ---: |
 | V1 | 55 | 194 | 10,670 |
 | V2 | 100 | 214 | 21,400 |
+| V2.1 | 100 | 214 | 21,400 |
 
 ## Explore
 
@@ -50,10 +51,27 @@ Open [the local dashboard](http://127.0.0.1:8795/). The [Viewer Guide](viewer/ne
 
 To run your own evaluations, use [config.json](config.json) for V1 or [config.v2.json](config.v2.json) for V2 and follow the [Technical Guide](docs/TECHNICAL.md). Collection and grading use paid provider APIs; review the selected models first.
 
+V2.1 is a compatibility publication derived from V2. It keeps the same responses and questions, but treats the stored `[Model returned an empty response.]` placeholder as a candidate refusal and removes any associated judge score. This behavior is opt-in; ordinary V2 migration keeps the original classification rules.
+
+To regenerate V2.1 from the current V2 publication, copy the V2 dataset to the V2.1 path and run the flagged migration:
+
+```bash
+rm -rf data/v2.1/latest
+mkdir -p data/v2.1
+cp -a data/v2/latest data/v2.1/latest
+python3 scripts/publication.py migrate \
+  --output-dir data/v2.1/latest \
+  --empty-response-placeholder-is-refusal
+python3 scripts/publication.py verify data/v2.1/latest
+```
+
+The `--empty-response-placeholder-is-refusal` flag is required for V2.1. Do not use it when regenerating V2.
+
 ## Data
 
 - **V1:** [manifest](data/latest/manifest.json) · [leaderboard CSV](data/latest/leaderboard.csv) · [questions](questions.json)
 - **V2:** [manifest](data/v2/latest/manifest.json) · [leaderboard CSV](data/v2/latest/leaderboard.csv) · [questions](questions.v2.json)
+- **V2.1:** [manifest](data/v2.1/latest/manifest.json) · [leaderboard CSV](data/v2.1/latest/leaderboard.csv) · [questions](questions.v2.json)
 - [Technical Guide](docs/TECHNICAL.md) · [Changelog](CHANGELOG.md) · [Storage audit](docs/STORAGE_AUDIT.md)
 - [Legacy viewer](https://petergpt.github.io/bullshit-benchmark/viewer/index.legacy.html)
 

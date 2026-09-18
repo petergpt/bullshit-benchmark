@@ -19,7 +19,8 @@ vm.runInContext(currentHtml.slice(currentHtml.indexOf('function judgeScore('), c
 
 // Published CSVs and immutable viewer rows must agree after the approved repair.
 const SNAPSHOTS = { v1: { rows: 10670, models: 194, twoJudgeAnswers: 0 },
-  v2: { rows: 21400, models: 214, twoJudgeAnswers: 77 } };
+  v2: { rows: 21400, models: 214, twoJudgeAnswers: 77 },
+  'v2.1': { rows: 21400, models: 214, twoJudgeAnswers: 62 } };
 
 async function withFiles(fn, rewrite = bytes => bytes, virtualFiles = new Map()) {
   const previous = globalThis.fetch;
@@ -89,6 +90,7 @@ test('score buckets, missing grades, refusals and the exclusion denominator', ()
   assert.equal(classify({ consensus_score: null }), 'error');
   assert.equal(classify({ consensus_score: 2, judge_1_score: null }, 1), 'error');
   assert.equal(classify({ consensus_score: 2, response_refusal: false, response_raw: { choices: [{ message: { refusal: 'old provider field' } }] } }), 'green');
+  assert.equal(classify({ consensus_score: 2, response_refusal: false, response_outcome: 'response', response_text: '[Model returned an empty response.]' }), 'green');
   assert.equal(summarizeRows(rows).greenRate, 20);
   const excluded = summarizeRows(rows, { excludeRefusals: true });
   assert.equal(excluded.greenRate, 25);
@@ -255,7 +257,7 @@ test('two valid judges retain their mean and provenance; failed selected votes s
   } finally { canonical.S.selectedJudges = new Set([1, 2, 3]); }
 });
 
-for (const [version, path] of [['v1', 'data/latest/'], ['v2', 'data/v2/latest/']]) {
+for (const [version, path] of [['v1', 'data/latest/'], ['v2', 'data/v2/latest/'], ['v2.1', 'data/v2.1/latest/']]) {
   test(`${version}: every row matches the canonical viewer and published CSV`, async () => {
     const { loadBenchmark } = await fresh();
     await withFiles(async requests => {
