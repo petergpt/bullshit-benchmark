@@ -68,7 +68,7 @@ const initialSort = sortDefinitions.find(item => item.key === url.searchParams.g
 const state = {
   view: ['dashboard', 'explorer', 'responses'].includes(url.searchParams.get('view')) ? url.searchParams.get('view') : 'dashboard',
   columns: new Set(columnDefinitions.filter(column => (legacyRankings && ['score','tokens','cost'].includes(column.id)) || requestedColumns.has(column.id)).map(column => column.id)),
-  version: requestedVersion === 'v1' ? 'v1' : 'v2',
+  version: ['v1', 'v2', 'v2.1'].includes(requestedVersion) ? requestedVersion : 'v2',
   domain: url.searchParams.get('domain') || 'all', query: url.searchParams.get('q') || '', provider: url.searchParams.get('provider') || 'all', reasoning: url.searchParams.get('reasoning') || 'all', access: url.searchParams.get('access') || 'all', recent: ['7','30','90'].includes(url.searchParams.get('recent')) ? url.searchParams.get('recent') : 'all',
   judge: ['judge_1','judge_2','judge_3'].includes(url.searchParams.get('judge')) ? url.searchParams.get('judge') : 'consensus', excludeRefusals: url.searchParams.get('excludeRefusals') === '1', sort: initialSort.key, direction: ['1','-1'].includes(url.searchParams.get('direction')) ? Number(url.searchParams.get('direction')) : initialSort.direction,
   focus: url.searchParams.get('model'), compare: [],
