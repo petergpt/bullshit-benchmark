@@ -317,7 +317,8 @@ function logTicks(start, end) {
   return ticks.length ? ticks : [start, end];
 }
 
-function chartGeometry(container, compact) {
+function chartGeometry(container, compact, snapshotSize) {
+  if (snapshotSize) return snapshotSize;
   const computed = getComputedStyle(container);
   const innerWidth = container.clientWidth - (parseFloat(computed.paddingLeft) || 0) - (parseFloat(computed.paddingRight) || 0);
   const innerHeight = container.clientHeight - (parseFloat(computed.paddingTop) || 0) - (parseFloat(computed.paddingBottom) || 0);
@@ -328,7 +329,7 @@ function chartGeometry(container, compact) {
   return { width, height };
 }
 
-function labelPoints(plot, marked, bounds) {
+function labelPoints(plot, marked, bounds, exportFontSize) {
   const layer = svg('g', { class: 'next-chart-labels', 'aria-hidden': 'true' });
   plot.append(layer);
   const selected = marked.filter(point => point.chosen);
@@ -342,7 +343,7 @@ function labelPoints(plot, marked, bounds) {
   const selectedFamilies = new Set(selected.map(point => baseOf(point.model)));
   const candidates = [...selected, ...[...families.values()].filter(point => !selectedFamilies.has(baseOf(point.model)))];
   const nodes = new Map();
-  const fontSize = bounds.width < 500 ? 10 : 11;
+  const fontSize = exportFontSize || (bounds.width < 500 ? 10 : 11);
   const measured = candidates.map(point => {
     const { model, chosen, latest, x, y } = point;
     const suffix = variantCounts.get(baseOf(model)) > 1 ? ` · ${effortLabel(model)}` : '';
@@ -351,7 +352,7 @@ function labelPoints(plot, marked, bounds) {
     const node = svg('text', { class: 'next-chart-label-text', x: 0, y: 0, fill: chosen ? TEAL : INK, 'font-size': fontSize, 'font-weight': chosen || latest ? 600 : 500, stroke: PANEL, 'stroke-width': 4 }, label);
     group.append(node); layer.append(group);
     let box = node.getBBox();
-    const maxWidth = Math.min(260, bounds.width - 12);
+    const maxWidth = Math.min(exportFontSize ? 320 : 260, bounds.width - 12);
     if (box.width > maxWidth) {
       let name = nameOf(model);
       while (name.length > 4 && box.width > maxWidth) {
@@ -379,12 +380,15 @@ function labelPoints(plot, marked, bounds) {
 }
 
 function scatter(container, options, config) {
-  const points = config.points.filter(point => finite(point.x) && finite(point.model.greenRate) && (point.model.rateRows ?? point.model.total) > 0);
+  const withMetadata = config.points.filter(point => finite(point.x));
+  const points = withMetadata.filter(point => finite(point.model.greenRate) && (point.model.rateRows ?? point.model.total) > 0);
   if (!points.length) return empty(container, config.emptyTitle, config.emptyDetail);
-  const omissions = config.missingText || `${options.models.length - points.length} without ${config.missingLabel}`;
+  const missingMetadata = options.models.length - withMetadata.length, missingScores = withMetadata.length - points.length;
+  const omissions = config.missingText || [missingMetadata ? `${missingMetadata} without ${config.missingLabel}` : '', missingScores ? `${missingScores} without an available score` : ''].filter(Boolean).join(' · ');
   container.setAttribute('aria-description', omissions);
   detectionLegend(container, options);
-  const { width, height } = chartGeometry(container, options.compact);
+  const { width, height } = chartGeometry(container, options.compact, options.snapshotSize);
+  const axisFontSize = options.snapshotSize ? 14 : 12;
   const margin = { left: width < 500 ? 42 : 48, right: width < 500 ? 12 : 20, top: options.compact ? 22 : 26, bottom: options.compact ? 42 : 50 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
@@ -410,18 +414,18 @@ function scatter(container, options, config) {
   for (const value of [0, 25, 50, 75, 100]) {
     const y = scaleY(value);
     plot.append(svg('line', { x1: margin.left, x2: width - margin.right, y1: y, y2: y, stroke: LINE, 'stroke-dasharray': value ? '3 5' : null }));
-    plot.append(svg('text', { x: margin.left - 10, y: y + 4, fill: MUTED, 'font-size': 12, 'text-anchor': 'end' }, `${value}%`));
+    plot.append(svg('text', { x: margin.left - 10, y: y + 4, fill: MUTED, 'font-size': axisFontSize, 'text-anchor': 'end' }, `${value}%`));
   }
-  plot.append(svg('text', { x: margin.left, y: 13, fill: MUTED, 'font-size': 12 }, 'Clear pushback'));
+  plot.append(svg('text', { x: margin.left, y: 13, fill: MUTED, 'font-size': axisFontSize }, 'Clear pushback'));
   const allTicks = config.ticks || (config.log ? logTicks(start, end) : dateTicks(start, end));
   const maxTicks = Math.max(2, Math.floor(plotWidth / 85));
   const ticks = allTicks.length <= maxTicks ? allTicks : Array.from({ length: maxTicks }, (_, index) => allTicks[Math.round(index * (allTicks.length - 1) / (maxTicks - 1))]);
   ticks.forEach(value => {
     const x = scaleX(value);
     plot.append(svg('line', { x1: x, x2: x, y1: height - margin.bottom, y2: height - margin.bottom + 5, stroke: '#aab5ad' }));
-    plot.append(svg('text', { x, y: height - margin.bottom + 20, fill: MUTED, 'font-size': 12, 'text-anchor': 'middle' }, config.tick(value)));
+    plot.append(svg('text', { x, y: height - margin.bottom + 20, fill: MUTED, 'font-size': axisFontSize, 'text-anchor': 'middle' }, config.tick(value)));
   });
-  plot.append(svg('text', { x: margin.left + plotWidth / 2, y: height - 5, fill: MUTED, 'font-size': 12, 'text-anchor': 'middle' }, config.xLabel));
+  plot.append(svg('text', { x: margin.left + plotWidth / 2, y: height - 5, fill: MUTED, 'font-size': axisFontSize, 'text-anchor': 'middle' }, config.xLabel));
   const plotScroll = el('div', { class: 'next-chart-plot-scroll', tabindex: '0', 'aria-label': config.label });
   plotScroll.append(plot);
   container.append(plotScroll);
@@ -458,8 +462,8 @@ function scatter(container, options, config) {
     plot.append(group);
     marked.push({ x, y, model: point.model, chosen, latest: config.latestModels?.has(point.model.id) });
   });
-  labelPoints(plot, marked, { x: margin.left + 3, y: margin.top + 3, width: plotWidth - 6, height: plotHeight - 6 });
-  if (typeof ResizeObserver !== 'undefined') {
+  labelPoints(plot, marked, { x: margin.left + 3, y: margin.top + 3, width: plotWidth - 6, height: plotHeight - 6 }, options.snapshotSize ? 15 : undefined);
+  if (!options.snapshotSize && typeof ResizeObserver !== 'undefined') {
     const observer = new ResizeObserver(() => {
       if (!container.isConnected) { observer.disconnect(); return; }
       const next = chartGeometry(container, options.compact);
@@ -642,13 +646,13 @@ function renderReasoning(container, options) {
   });
   measured.forEach(item => {
     const axisBox = item.axis.getBoundingClientRect();
-    item.width = axisBox.width || 250;
+    item.width = options.snapshotSize?.reasoningWidth || axisBox.width || 250;
     item.height = axisBox.height || 25;
     item.axis.setAttribute('viewBox', `0 0 ${item.width} ${item.height}`);
-    [0, 50, 100].forEach(value => item.axis.append(svg('text', { x: 8 + value / 100 * (item.width - 16), y: item.height / 2 + 4, fill: MUTED, 'font-size': 12, 'text-anchor': value === 0 ? 'start' : value === 100 ? 'end' : 'middle' }, `${value}%`)));
+    [0, 50, 100].forEach(value => item.axis.append(svg('text', { x: 8 + value / 100 * (item.width - 16), y: item.height / 2 + 4, fill: MUTED, 'font-size': options.snapshotSize ? 14 : 12, 'text-anchor': value === 0 ? 'start' : value === 100 ? 'end' : 'middle' }, `${value}%`)));
     item.graphics.forEach(({ graphic, models, delta }) => {
       const box = graphic.getBoundingClientRect();
-      const width = box.width || item.width;
+      const width = options.snapshotSize?.reasoningWidth || box.width || item.width;
       const height = box.height || 26;
       graphic.setAttribute('viewBox', `0 0 ${width} ${height}`);
       const x = rate => 8 + Math.max(0, Math.min(100, rate)) / 100 * (width - 16);
@@ -690,7 +694,7 @@ function renderReasoning(container, options) {
     disclosure.addEventListener('toggle', () => { options.showUnchanged = disclosure.open; options.onUnchangedChange?.(disclosure.open); });
     container.append(disclosure);
   }
-  if (typeof ResizeObserver !== 'undefined' && measured.length) {
+  if (!options.snapshotSize && typeof ResizeObserver !== 'undefined' && measured.length) {
     const observer = new ResizeObserver(() => {
       if (!container.isConnected) { observer.disconnect(); return; }
       if (measured.every(item => {

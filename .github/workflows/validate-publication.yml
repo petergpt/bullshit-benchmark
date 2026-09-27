@@ -65,7 +65,7 @@ jobs:
       - name: Test viewer storage loading and public routes
         run: node --test tests/test_published_viewer_storage.js tests/test_viewer_routes.js tests/test_viewer_refusal_denominators.js
       - name: Test dashboard data, exports and report judge failures
-        run: node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_report_judge_failures.js
+        run: node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_next_viewer_export.mjs tests/test_report_judge_failures.js
       - name: Verify both published datasets
         run: python scripts/publication.py verify data/latest data/v2/latest
       - name: Verify durable config coverage

@@ -1,5 +1,5 @@
 import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil } from './data.mjs?v=20260907-dashboard';
-import { renderExplorer } from './charts.mjs?v=20260907-dashboard';
+import { renderExplorer } from './charts.mjs?v=20260927-chart-export';
 import { brandLogo, brandColor, brandName } from './brands.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -80,6 +80,7 @@ const state = {
 };
 let dataset, allModels = [], modelMap = new Map(), domains = [], visibleModels = [], filteredRows = [], scopeModelCount = 0;
 let loadGeneration = 0, answerGeneration = 0, searchTimer, toastTimer;
+let chartExportPending = false;
 // Scores, rankings and averages always exclude refusals. The checkbox controls bars only.
 const options = () => ({ judge: state.judge, excludeRefusals: true });
 const metaFor = model => dataset.modelMetadata.get(model.base) || {};
@@ -164,8 +165,7 @@ function updateChrome() {
   $('#highlightOnly').checked=state.highlightOnly;
   $('#highlightAnswers').hidden=state.highlighted.size===0 || state.view==='responses';
   $('#highlightAnswers').textContent=state.highlighted.size>1 ? 'Compare answers' : 'View answers';
-  $('#pngButton').hidden=state.view!=='dashboard';
-  $('#pngButton').disabled=!visibleModels.length;
+  updatePngButton();
   const advanced = state.domain !== 'all' || state.reasoning !== 'all' || state.access !== 'all' || state.recent !== 'all' || state.judge !== 'consensus' || state.bestVariants || state.sort !== 'greenRate' || state.direction !== -1;
   $('#filterDot').hidden = !advanced;
   $('#clearSearch').hidden = !(advanced || state.excludeRefusals || state.query || state.provider !== 'all' || state.reasoning !== 'all' || state.domain !== 'all');
@@ -294,6 +294,7 @@ function renderDashboard() { $('#content').innerHTML=`<div class="rank-layout">$
 function renderCharts() {
   $('#content').innerHTML=`<div class="explorer-layout"><section class="explorer-panel"><div id="chartCanvas" class="explorer-canvas"></div></section></div>${inspectorOverlay()}`;
   renderExplorer($('#chartCanvas'),chartOptions(state.chartMode));
+  updatePngButton();
   observeMixLabels();
 }
 function rerenderPreservingScroll(render = renderView) {
@@ -302,19 +303,35 @@ function rerenderPreservingScroll(render = renderView) {
   render();
   selectors.forEach((selector,i)=>document.querySelectorAll(selector).forEach((node,j)=>{if(positions[i][j]){node.scrollTop=positions[i][j].top;node.scrollLeft=positions[i][j].left;}}));
 }
+function updatePngButton() {
+  const button = $('#pngButton');
+  button.hidden = state.view === 'responses';
+  button.title = state.view === 'dashboard' ? 'Save visible rows as PNG' : 'Save chart as PNG';
+  const hasChart = state.view === 'dashboard' ? visibleModels.length : !!$('#chartCanvas .next-chart-mark, #chartCanvas .next-chart-unchanged-row');
+  button.disabled = chartExportPending || !dataset || !hasChart;
+  button.setAttribute('aria-busy', String(chartExportPending));
+  button.querySelector('span').textContent = chartExportPending ? 'Saving…' : 'PNG';
+}
 async function downloadChart() {
-  const viewport=$('.table-scroll'); if(!viewport || !visibleModels.length) return;
-  const bounds=viewport.getBoundingClientRect(),visibleBottom=Math.min(bounds.bottom,innerHeight),headerBottom=$('.rank-table thead').getBoundingClientRect().bottom;
-  const ids=[...document.querySelectorAll('.rank-table tbody tr')].filter(row=>{const r=row.getBoundingClientRect();return r.top>=Math.max(bounds.top,headerBottom)-1 && r.bottom<=visibleBottom+1;}).map(row=>row.dataset.model);
-  const models=ids.map(id=>visibleModels.find(model=>model.id===id)).filter(Boolean);
-  if(!models.length){toast('Scroll to a full row');return;}
-  const button=$('#pngButton');button.disabled=true;
+  if (chartExportPending || !dataset || !visibleModels.length || state.view === 'responses') return;
+  const dashboard = state.view === 'dashboard';
+  let models = visibleModels;
+  if (dashboard) {
+    const viewport=$('.table-scroll'); if(!viewport) return;
+    const bounds=viewport.getBoundingClientRect(),visibleBottom=Math.min(bounds.bottom,innerHeight),headerBottom=$('.rank-table thead').getBoundingClientRect().bottom;
+    const ids=[...document.querySelectorAll('.rank-table tbody tr')].filter(row=>{const r=row.getBoundingClientRect();return r.top>=Math.max(bounds.top,headerBottom)-1 && r.bottom<=visibleBottom+1;}).map(row=>row.dataset.model);
+    models=ids.map(id=>visibleModels.find(model=>model.id===id)).filter(Boolean);
+    if(!models.length){toast('Scroll to a full row');return;}
+  }
+  // Freeze every setting before waiting for assets, even if the user changes views.
+  const filterLabel=[state.provider!=='all'?companyName(state.provider):null,state.reasoning!=='all'?`${reasoningLabel(state.reasoning)} reasoning`:null,state.access!=='all'?`${state.access==='open'?'Open':'Closed'} weights`:null,state.recent!=='all'?`Added in last ${state.recent} days`:null,state.bestVariants?'Best per model':null,state.highlightOnly?'Highlighted only':null,state.query?`Search: ${state.query}`:null].filter(Boolean).join(' · ');
+  const settings={...(dashboard ? {} : chartOptions(state.chartMode)),models,totalModels:scopeModelCount,filterLabel,version:state.version,domain:state.domain,judge:state.judge,judgeLabel:$('#judgeFilter').selectedOptions[0].textContent,excludeRefusals:dashboard ? state.excludeRefusals : true,highlighted:new Set(state.highlighted),brandLogo,brandColor,width:dashboard ? Math.max(1200,Math.min(1800,innerWidth)) : 1280};
+  chartExportPending = true; updatePngButton();
   try {
-    const {exportRankingsPng}=await import('./capture.mjs?v=20260907-dashboard');
-    const filterLabel=[state.provider!=='all'?companyName(state.provider):null,state.reasoning!=='all'?`${reasoningLabel(state.reasoning)} reasoning`:null,state.access!=='all'?`${state.access==='open'?'Open':'Closed'} weights`:null,state.recent!=='all'?`Added in last ${state.recent} days`:null,state.bestVariants?'Best per model':null,state.highlightOnly?'Highlighted only':null,state.query?`Search: ${state.query}`:null].filter(Boolean).join(' · ');
-    const result=await exportRankingsPng({models,totalModels:scopeModelCount,filterLabel,version:state.version,domain:state.domain,judge:state.judge,judgeLabel:$('#judgeFilter').selectedOptions[0].textContent,excludeRefusals:state.excludeRefusals,highlighted:new Set(state.highlighted),brandLogo,brandColor,width:Math.max(1200,Math.min(1800,innerWidth))});
-    const href=URL.createObjectURL(result.blob),a=document.createElement('a');a.href=href;a.download=result.filename;a.click();setTimeout(()=>URL.revokeObjectURL(href),30000);toast(`PNG saved · ${models.length} rows`);
-  } catch(error){console.error(error);toast(`PNG export failed: ${error.message}`);} finally{button.disabled=false;}
+    const {exportRankingsPng,exportExplorerPng}=await import('./capture.mjs?v=20260927-chart-export');
+    const result=await (dashboard ? exportRankingsPng(settings) : exportExplorerPng(settings));
+    const href=URL.createObjectURL(result.blob),a=document.createElement('a');a.href=href;a.download=result.filename;a.click();setTimeout(()=>URL.revokeObjectURL(href),30000);toast(dashboard ? `PNG saved · ${models.length} rows` : 'Chart PNG saved');
+  } catch(error){console.error(error);toast(`PNG export failed: ${error.message}`);} finally{chartExportPending=false;updatePngButton();}
 }
 function questionsInScope() {
   const query = state.questionQuery.toLowerCase().trim();
@@ -438,6 +455,7 @@ async function openDataset() {
   $('#content').innerHTML = '<div class="loading-screen" role="status"><span class="spinner"></span>Loading benchmark…</div>';
   $('#suiteSelect').value = state.version;
   dataset = null;
+  updatePngButton();
   try {
     const result = await loadBenchmark(state.version);
     if (generation !== loadGeneration) return;

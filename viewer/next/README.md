@@ -31,7 +31,14 @@ are retained in the URL. The pin button hides navigation/filter chrome and keeps
 a clean benchmark header above the scrolling chart; Escape exits this mode.
 **PNG** exports the fully visible bar rows at 2× resolution, with logos, highlights,
 filter labels and rank/excerpt context. Clear percentages always exclude refusals; bars follow the checkbox. One footer line records both denominators and any reduced judge coverage. PNG export is available on the
-Dashboard; other chart views retain normal browser screenshots. Optional table
+Dashboard, Timeline, Lab trends, Reasoning and Size. Explorer exports use the same
+branded header and footer, preserve filters, highlights and colours, and render
+the full plot at a readable size even on phones. Lab trends keeps its latest-model
+summaries and the All attempts comparison setting. Reasoning includes every
+Higher/Lower row and includes Unchanged rows when that section is open. Empty
+charts cannot be exported. Explorer PNGs are 2560 pixels wide, with 15px scatter
+labels and 14px axes before the 2× render; long comparisons grow in height instead
+of shrinking the text. Optional table
 columns do not change the outcome chart exported by PNG or the full CSV fields.
 
 Company assets are stored locally; see `assets/brands/SOURCES.md` for the pinned
@@ -57,7 +64,7 @@ produces PNGs from the supplied rows without changing application state.
 
 ## Verification
 
-Run `node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_published_viewer_storage.js tests/test_viewer_refusal_denominators.js`
+Run `node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_next_viewer_export.mjs tests/test_published_viewer_storage.js tests/test_viewer_refusal_denominators.js tests/test_viewer_routes.js`
 from the repository root. The tests check all 33,620 published rows against both
 viewers and their leaderboard CSVs: V1 has 11,220 answers / 204 variants; V2 has
 22,400 answers / 224 variants. They also check response text, lazy loading,

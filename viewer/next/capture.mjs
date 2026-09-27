@@ -1,4 +1,5 @@
 /** Native, self-contained chart export for the alternate viewer. */
+import { brandName } from './brands.mjs';
 const PALETTE = {
   background: '#f2eee6', panel: '#fcfbf7', ink: '#1d2521', muted: '#637068',
   forest: '#18493f', teal: '#1d5b50', line: '#d6dbd0', stripe: '#f5f4ec',
@@ -16,6 +17,7 @@ const MAX_EDGE = 32760;
 const MAX_PIXELS = 64 * 1024 * 1024;
 const mascotURL = new URL('../../docs/images/bsbench.png', import.meta.url).href;
 const images = new Map();
+const CHART_TITLES = { timeline: 'Timeline', labs: 'Lab trends', reasoning: 'Reasoning', size: 'Model size' };
 
 function count(value) {
   const n = Number(value);
@@ -182,6 +184,268 @@ function filenamePart(value) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'all-domains';
 }
 
+function wrappedLines(ctx, value, width, size = 12) {
+  font(ctx, size);
+  const lines = [];
+  let current = '';
+  for (const word of String(value).split(/\s+/)) {
+    const next = current ? `${current} ${word}` : word;
+    if (current && ctx.measureText(next).width > width) { lines.push(current); current = word; }
+    else current = next;
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+/** Render the same chart offscreen, without observers or changes to the live view. */
+async function explorerSnapshot(options, width, plotHeight) {
+  const { renderExplorer } = await import('./charts.mjs?v=20260927-chart-export');
+  await document.fonts?.ready;
+  const host = document.createElement('div');
+  host.inert = true;
+  host.setAttribute('aria-hidden', 'true');
+  host.style.cssText = `position:fixed;left:-20000px;top:0;width:${width}px;height:${plotHeight}px;font:14px ${FONT};pointer-events:none;`;
+  document.body.append(host);
+  try {
+    const panelWidth = (width - 20) / 2;
+    const nameWidth = Math.round(panelWidth * .46);
+    const reasoningWidth = panelWidth - nameWidth - 70;
+    renderExplorer(host, { ...options, compact: false, onSelect: undefined, onUnchangedChange: undefined,
+      onRefusalComparisonChange: undefined, snapshotSize: { width, height: plotHeight, reasoningWidth } });
+    const plot = host.querySelector('.next-chart-plot');
+    const panels = [...host.querySelectorAll('.next-chart-reasoning-panel')].map(panel => ({
+      title: panel.querySelector('strong').textContent,
+      higher: panel.classList.contains('is-higher'),
+      axis: panel.querySelector('.next-chart-family-axis svg')?.cloneNode(true),
+      rows: [...panel.querySelectorAll('.next-chart-family-row')].map(row => ({
+        name: row.querySelector('.next-chart-family-name').textContent,
+        pair: row.querySelector('.next-chart-pair').textContent,
+        logo: row.querySelector('img')?.src,
+        delta: row.querySelector('.next-chart-delta').textContent,
+        selected: row.classList.contains('is-selected'),
+        graphic: row.querySelector('svg').cloneNode(true),
+      })),
+    }));
+    const unchanged = [...host.querySelectorAll('.next-chart-unchanged-row')].map(row => ({
+      name: row.querySelector('.next-chart-unchanged-name').textContent,
+      scores: [...row.querySelectorAll('button')].map(button => button.textContent).join(' → '),
+      selected: !!row.querySelector('.is-selected'),
+    }));
+    if (!plot && !panels.some(panel => panel.rows.length) && !unchanged.length) {
+      throw new Error(host.querySelector('.next-chart-empty strong')?.textContent || 'No chart data to export.');
+    }
+    const marks = host.querySelectorAll(`.next-chart-mark${options.showUnchanged ? ', .next-chart-unchanged-score' : ''}`);
+    const modelIds = new Set([...marks].map(mark => mark.dataset.model));
+    return { plot: plot?.cloneNode(true), panels, unchanged, panelWidth, nameWidth, reasoningWidth,
+      models: options.models.filter(model => modelIds.has(model.id)),
+      description: host.getAttribute('aria-description') || '',
+      comparison: !!host.querySelector('.next-chart-lab-comparison'),
+      labs: [...host.querySelectorAll('.next-chart-lab')].map(lab => ({
+        name: lab.querySelector('.next-chart-lab-name span').textContent,
+        rate: lab.querySelector('b').textContent,
+        model: lab.querySelector('.next-chart-lab-model').textContent,
+        otherRate: lab.querySelector('.next-chart-lab-all-rate')?.textContent,
+        logo: lab.querySelector('img')?.src,
+        color: lab.style.getPropertyValue('--lab-color'),
+      })),
+    };
+  } finally { host.remove(); }
+}
+
+function svgLayer(width, height) {
+  const root = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  root.setAttribute('width', width * SCALE);
+  root.setAttribute('height', height * SCALE);
+  root.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  root.setAttribute('font-family', FONT);
+  root.setAttribute('stroke', 'none');
+  const style = document.createElementNS(root.namespaceURI, 'style');
+  style.textContent = '.next-chart-label-text{paint-order:stroke;stroke-linejoin:round}.next-chart-mark.is-selected circle{stroke:#1d2521;stroke-width:2.5}';
+  root.append(style);
+  return {
+    root,
+    add(node, x, y, w, h) {
+      if (!node) return;
+      for (const [key, value] of Object.entries({ x, y, width: w, height: h })) node.setAttribute(key, value);
+      // Rasterize strokes at the same 2× resolution as text and markers.
+      node.querySelectorAll('[vector-effect]').forEach(mark => mark.removeAttribute('vector-effect'));
+      root.append(node);
+    },
+  };
+}
+
+async function paintSvg(ctx, root) {
+  const href = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(root)], { type: 'image/svg+xml;charset=utf-8' }));
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      const timer = setTimeout(() => { img.onload = img.onerror = null; reject(new Error('Chart image took too long to render.')); }, 10000);
+      img.onload = () => { clearTimeout(timer); resolve(img); };
+      img.onerror = () => { clearTimeout(timer); reject(new Error('The browser could not render the chart image.')); };
+      img.src = href;
+    });
+    ctx.drawImage(image, 0, 0, Number(root.getAttribute('width')) / SCALE, Number(root.getAttribute('height')) / SCALE);
+  } finally { URL.revokeObjectURL(href); }
+}
+
+/** All explorer charts, composed with the Dashboard PNG's branding at 2× resolution. */
+export async function exportExplorerPng({ version = 'v2', domain = 'all', judgeLabel = '', filterLabel = '', width = 1280, ...options } = {}) {
+  if (!CHART_TITLES[options.mode]) throw new Error('This view does not have a chart to export.');
+  if (!Array.isArray(options.models) || !options.models.length) throw new Error('Choose at least one model to export.');
+  options = { judge: 'consensus', excludeRefusals: true, ...options };
+  const sheetWidth = Math.round(Math.max(1200, Math.min(1800, Number(width) || 1280)));
+  const pad = 28, innerWidth = sheetWidth - pad * 2, plotHeight = Math.round(innerWidth * .46);
+  const snapshot = await explorerSnapshot(options, innerWidth - 32, plotHeight);
+  const imageSources = [...new Set([...snapshot.labs.map(lab => lab.logo), ...snapshot.panels.flatMap(panel => panel.rows.map(row => row.logo))].filter(Boolean))];
+  const [mascot, ...loadedImages] = await Promise.all([loadImage(mascotURL), ...imageSources.map(loadImage)]);
+  const logos = new Map(imageSources.map((src, index) => [src, loadedImages[index]]));
+  // Measure wrapping before sizing the sheet, so filters and provenance never get clipped.
+  const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('This browser could not create the image.');
+  const filters = wrappedLines(ctx, String(filterLabel).replace(/\s+/g, ' ').trim(), innerWidth, 12);
+  const titleY = 124, subtitleY = 148;
+  const subtitle = options.mode === 'reasoning' ? 'Clear pushback by requested reasoning effort · lowest → highest'
+    : options.mode === 'labs' ? 'Best per lab and release · OpenAI, Anthropic & Google'
+    : options.mode === 'size' ? 'Clear pushback by total parameter count · logarithmic scale' : 'Clear pushback by release date';
+  const chartY = 170 + filters.length * 18;
+  const labWidth = (innerWidth - 32 - 36) / 3;
+  const labLines = snapshot.labs.map(lab => wrappedLines(ctx, lab.model, labWidth - 16));
+  const labsHeight = snapshot.labs.length ? 50 + Math.max(...labLines.map(lines => lines.length)) * 17 + (snapshot.labs.some(lab => lab.otherRate) ? 20 : 0) : 0;
+  const companyKeys = [];
+  let keyX = 0, keyRow = 0;
+  if (['timeline', 'size'].includes(options.mode) && options.colorMode !== 'detection') {
+    font(ctx, 12);
+    for (const org of [...new Set(snapshot.models.map(model => model.org))].sort((a, b) => brandName(a).localeCompare(brandName(b)))) {
+      const label = brandName(org), keyWidth = ctx.measureText(label).width + 34;
+      if (keyX && keyX + keyWidth > innerWidth - 32) { keyX = 0; keyRow++; }
+      companyKeys.push({ label, color: validColor(safelyCall(options.brandColor, org)), x: keyX, y: keyRow * 24 });
+      keyX += keyWidth;
+    }
+  }
+  const keyHeight = companyKeys.length ? (keyRow + 1) * 24 + 12 : options.mode === 'labs' || options.colorMode === 'detection' ? 32 : 0;
+  const maxRows = Math.max(1, ...snapshot.panels.map(panel => panel.rows.length));
+  const reasoningHeight = 68 + maxRows * 44;
+  const unchangedHeight = snapshot.unchanged.length ? 40 + (options.showUnchanged ? Math.ceil(snapshot.unchanged.length / 2) * 48 : 0) : 0;
+  const chartHeight = options.mode === 'reasoning' ? reasoningHeight + unchangedHeight + 32 : labsHeight + plotHeight + keyHeight + 32;
+  const twoJudgeAnswers = options.judge === 'consensus' ? snapshot.models.reduce((sum, model) => sum + count(model.twoJudgeAnswerCount), 0) : 0;
+  const footer = [
+    `${snapshot.models.length} plotted variant${snapshot.models.length === 1 ? '' : 's'}`,
+    options.judge === 'consensus' ? '' : judgeLabel || String(options.judge).replace(/^judge_/, 'Judge '),
+    options.excludeRefusals ? 'Clear: excl. refusals' : 'Clear: all attempts',
+    twoJudgeAnswers ? `2/3 judges on ${number(twoJudgeAnswers)} answer${twoJudgeAnswers === 1 ? '' : 's'}` : '',
+    snapshot.description,
+  ].filter(Boolean).join(' · ');
+  const footerLines = wrappedLines(ctx, footer, innerWidth, 11);
+  const sheetHeight = chartY + chartHeight + 14 + footerLines.length * 16 + 16;
+  const pixelWidth = sheetWidth * SCALE, pixelHeight = sheetHeight * SCALE;
+  if (pixelHeight > MAX_EDGE || pixelWidth * pixelHeight > MAX_PIXELS) throw new Error('This snapshot is too large. Filter the chart to fewer models.');
+  canvas.width = pixelWidth; canvas.height = pixelHeight;
+  ctx.scale(SCALE, SCALE); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  try {
+    const { suite, scope } = drawHeader(ctx, { width: sheetWidth, height: sheetHeight, version, domain, mascot });
+    text(ctx, CHART_TITLES[options.mode], pad, titleY, { size: 23, weight: 600, color: PALETTE.forest });
+    text(ctx, subtitle, pad, subtitleY, { size: 13, color: PALETTE.muted });
+    filters.forEach((label, index) => text(ctx, label, pad, 171 + index * 18, { size: 12, color: PALETTE.teal }));
+    rectangle(ctx, pad, chartY, innerWidth, chartHeight, PALETTE.panel, 6);
+    const layer = svgLayer(sheetWidth, sheetHeight);
+    const x = pad + 16, y = chartY + 16;
+    if (options.mode === 'reasoning') {
+      snapshot.panels.forEach((panel, index) => {
+        const left = x + index * (snapshot.panelWidth + 20), w = snapshot.panelWidth;
+        const color = panel.higher ? PALETTE.green : PALETTE.red;
+        rectangle(ctx, left, y, w, 34, panel.higher ? '#e5f0e3' : '#f7e7e1', 4);
+        text(ctx, `${panel.higher ? '↑' : '↓'} ${panel.title}`, left + 12, y + 17, { size: 15, weight: 600, color });
+        text(ctx, `${panel.rows.length} model${panel.rows.length === 1 ? '' : 's'}`, left + w - 12, y + 17, { size: 12, color, align: 'right' });
+        text(ctx, 'Model · requested effort', left + 10, y + 51, { size: 11, color: PALETTE.muted });
+        text(ctx, 'Δ pp', left + w - 10, y + 51, { size: 11, color: PALETTE.muted, align: 'right' });
+        layer.add(panel.axis, left + snapshot.nameWidth, y + 38, snapshot.reasoningWidth, 25);
+        if (!panel.rows.length) text(ctx, 'None in this selection', left + 12, y + 90, { size: 12, color: PALETTE.muted });
+        panel.rows.forEach((row, rowIndex) => {
+          const top = y + 68 + rowIndex * 44;
+          rectangle(ctx, left, top, w, 44, row.selected ? PALETTE.highlight : rowIndex % 2 ? PALETTE.stripe : PALETTE.panel);
+          if (row.selected) rectangle(ctx, left, top, 3, 44, PALETTE.teal);
+          line(ctx, left, top + 44, left + w, top + 44);
+          const logo = logos.get(row.logo);
+          if (logo) drawImageContained(ctx, logo, left + 10, top + 12, 20, 20);
+          const textX = left + (logo ? 38 : 10);
+          fittedText(ctx, row.name, textX, top + 15, left + snapshot.nameWidth - textX - 8, { size: 14, minimum: 13, weight: row.selected ? 600 : 400 });
+          text(ctx, row.pair, textX, top + 32, { size: 12, color: PALETTE.muted });
+          text(ctx, row.delta, left + w - 10, top + 22, { size: 13, weight: 600, color, align: 'right' });
+          layer.add(row.graphic, left + snapshot.nameWidth, top + 8, snapshot.reasoningWidth, 28);
+        });
+      });
+      if (snapshot.unchanged.length) {
+        const top = y + reasoningHeight + 18;
+        text(ctx, `Unchanged · ${snapshot.unchanged.length} model${snapshot.unchanged.length === 1 ? '' : 's'}${options.showUnchanged ? '' : ' (collapsed)'}`, x, top, { size: 13, color: PALETTE.muted });
+        if (options.showUnchanged) snapshot.unchanged.forEach((row, index) => {
+          const left = x + (index % 2) * (snapshot.panelWidth + 20), rowY = top + 18 + Math.floor(index / 2) * 48;
+          rectangle(ctx, left, rowY, snapshot.panelWidth, 46, row.selected ? PALETTE.highlight : PALETTE.stripe, 3);
+          fittedText(ctx, row.name, left + 10, rowY + 14, snapshot.panelWidth - 20, { size: 12, weight: row.selected ? 600 : 400 });
+          fittedText(ctx, row.scores, left + 10, rowY + 32, snapshot.panelWidth - 20, { size: 11, color: PALETTE.muted });
+        });
+      }
+    } else {
+      snapshot.labs.forEach((lab, index) => {
+        const left = x + index * (labWidth + 18);
+        rectangle(ctx, left, y, labWidth, 3, lab.color);
+        const logo = logos.get(lab.logo);
+        if (logo) drawImageContained(ctx, logo, left, y + 14, 22, 22);
+        text(ctx, lab.name, left + (logo ? 30 : 0), y + 25, { size: 14, weight: 600 });
+        text(ctx, lab.rate, left + labWidth, y + 25, { size: 18, weight: 600, color: PALETTE.forest, align: 'right' });
+        labLines[index].forEach((label, lineIndex) => text(ctx, label, left, y + 50 + lineIndex * 17, { size: 12, color: PALETTE.muted }));
+        if (lab.otherRate) text(ctx, lab.otherRate, left, y + 50 + labLines[index].length * 17, { size: 11, color: PALETTE.muted });
+      });
+      const keyY = y + labsHeight + 14;
+      if (options.mode === 'labs') {
+        line(ctx, x, keyY, x + 25, keyY, PALETTE.muted);
+        text(ctx, options.excludeRefusals ? 'Excluding refusals' : 'All attempts', x + 33, keyY, { size: 12, color: PALETTE.muted });
+        if (snapshot.comparison) {
+          ctx.setLineDash([3, 5]); line(ctx, x + 185, keyY, x + 210, keyY, PALETTE.muted); ctx.setLineDash([]);
+          text(ctx, 'All attempts', x + 218, keyY, { size: 12, color: PALETTE.muted });
+        }
+      } else if (options.colorMode === 'detection') {
+        const gradient = ctx.createLinearGradient(x + 167, 0, x + 247, 0);
+        gradient.addColorStop(0, PALETTE.red); gradient.addColorStop(.5, PALETTE.amber); gradient.addColorStop(1, PALETTE.green);
+        text(ctx, 'Colour: clear pushback', x, keyY, { size: 12, color: PALETTE.muted });
+        text(ctx, '0%', x + 140, keyY, { size: 11, color: PALETTE.muted });
+        rectangle(ctx, x + 167, keyY - 4, 80, 8, gradient, 2);
+        text(ctx, '100%', x + 256, keyY, { size: 11, color: PALETTE.muted });
+      } else {
+        for (const key of companyKeys) {
+          rectangle(ctx, x + key.x, keyY + key.y - 4, 8, 8, key.color, 2);
+          text(ctx, key.label, x + key.x + 15, keyY + key.y, { size: 12, color: PALETTE.muted });
+        }
+      }
+      layer.add(snapshot.plot, x, y + labsHeight + keyHeight, innerWidth - 32, plotHeight);
+    }
+    await paintSvg(ctx, layer.root);
+    footerLines.forEach((label, index) => text(ctx, label, pad, chartY + chartHeight + 22 + index * 16, { size: 11, color: PALETTE.muted }));
+    const blob = await new Promise((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('The browser could not encode the snapshot.')), 'image/png'));
+    return { blob, filename: `bullshitbench-${suite.toLowerCase()}-${filenamePart(CHART_TITLES[options.mode])}-${filenamePart(scope)}.png`, width: pixelWidth, height: pixelHeight };
+  } finally { canvas.width = 1; canvas.height = 1; }
+}
+
+function drawHeader(ctx, { width, height, version, domain, mascot }) {
+  const pad = 28;
+  rectangle(ctx, 0, 0, width, height, PALETTE.background);
+  rectangle(ctx, 0, 0, width, 96, PALETTE.forest);
+  if (mascot) drawImageContained(ctx, mascot, pad, 20, 83, 66);
+  else text(ctx, 'B!', pad + 41, 52, { size: 42, weight: 850, color: '#f7fbf9', align: 'center' });
+  text(ctx, 'BullshitBench', pad + 100, 53, { size: 34, weight: 500, family: '"Futura", "Avenir Next", sans-serif', spacing: '-0.51px', color: '#f7fbf9' });
+  const suite = version === 'v1' ? 'V1' : 'V2';
+  const scope = domain && domain !== 'all' ? String(domain) : 'All domains';
+  const scopeMax = width - (pad + 480) - pad - 61;
+  font(ctx, 14, 650);
+  const scopeWidth = Math.min(scopeMax, ctx.measureText(scope).width + 24);
+  rectangle(ctx, width - pad - 52, 38, 52, 30, '#2a5a50', 4);
+  text(ctx, suite, width - pad - 26, 53, { size: 16, weight: 750, color: '#ffffff', align: 'center' });
+  if (domain && domain !== 'all') {
+    rectangle(ctx, width - pad - 61 - scopeWidth, 38, scopeWidth, 30, '#e2e7dc', 4);
+    fittedText(ctx, scope, width - pad - 61 - scopeWidth / 2, 53, scopeWidth - 20, { size: 14, weight: 650, color: PALETTE.teal, align: 'center' });
+  }
+  return { suite, scope };
+}
+
 /**
  * Export the supplied ranking rows, in their supplied order. No data is fetched
  * apart from the same-origin mascot and provider images. Neither DOM nor UI
@@ -227,22 +491,7 @@ export async function exportRankingsPng({
   const modelX = pad + rankWidth, effortX = modelX + modelWidth, rateX = effortX + effortWidth;
   const barX = rateX + rateWidth, barWidth = sheetWidth - pad - barX - 14;
 
-  rectangle(ctx, 0, 0, sheetWidth, sheetHeight, PALETTE.background);
-  rectangle(ctx, 0, 0, sheetWidth, headerHeight, PALETTE.forest);
-  if (mascot) drawImageContained(ctx, mascot, pad, 20, 83, 66);
-  else text(ctx, 'B!', pad + 41, 52, { size: 42, weight: 850, color: '#f7fbf9', align: 'center' });
-  text(ctx, 'BullshitBench', pad + 100, 53, { size: 34, weight: 500, family: '"Futura", "Avenir Next", sans-serif', spacing: '-0.51px', color: '#f7fbf9' });
-  const suite = version === 'v1' ? 'V1' : 'V2';
-  const scope = domain && domain !== 'all' ? String(domain) : 'All domains';
-  const scopeMax = sheetWidth - (pad + 480) - pad - 61;
-  font(ctx, 14, 650);
-  const scopeWidth = Math.min(scopeMax, ctx.measureText(scope).width + 24);
-  rectangle(ctx, sheetWidth - pad - 52, 38, 52, 30, '#2a5a50', 4);
-  text(ctx, suite, sheetWidth - pad - 26, 53, { size: 16, weight: 750, color: '#ffffff', align: 'center' });
-  if (domain && domain !== 'all') {
-    rectangle(ctx, sheetWidth - pad - 61 - scopeWidth, 38, scopeWidth, 30, '#e2e7dc', 4);
-    fittedText(ctx, scope, sheetWidth - pad - 61 - scopeWidth / 2, 53, scopeWidth - 20, { size: 14, weight: 650, color: PALETTE.teal, align: 'center' });
-  }
+  const { suite, scope } = drawHeader(ctx, { width: sheetWidth, height: sheetHeight, version, domain, mascot });
   if (filters) fittedText(ctx, filters, pad, headerHeight + 17, innerWidth, { size: 12, minimum: 10, weight: 600, color: PALETTE.teal });
 
   rectangle(ctx, pad, tableY, innerWidth, tableHeadHeight, '#e7ebdf', 4);
