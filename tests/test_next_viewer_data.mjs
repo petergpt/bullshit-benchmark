@@ -18,8 +18,10 @@ const canonical = vm.createContext({ S: { selectedJudges: new Set([1, 2, 3]) }, 
 vm.runInContext(currentHtml.slice(currentHtml.indexOf('function judgeScore('), currentHtml.indexOf('function questionMeta(')), canonical);
 
 // Published CSVs and immutable viewer rows must agree after the approved repair.
-const SNAPSHOTS = { v1: { rows: 10670, models: 194, twoJudgeAnswers: 0 },
-  v2: { rows: 21400, models: 214, twoJudgeAnswers: 77 } };
+const SNAPSHOTS = {
+  v1: { rows: 11220, models: 204, twoJudgeAnswers: 20, recentModel: 'openai/gpt-6-sol@reasoning=none' },
+  v2: { rows: 22400, models: 224, twoJudgeAnswers: 106, recentModel: 'openai/gpt-6-sol@reasoning=none' },
+};
 
 async function withFiles(fn, rewrite = bytes => bytes, virtualFiles = new Map()) {
   const previous = globalThis.fetch;
@@ -284,7 +286,7 @@ for (const [version, path] of [['v1', 'data/latest/'], ['v2', 'data/v2/latest/']
       assert.deepEqual(differences, []);
       assert.equal(dataset.modelMetadata.get('anthropic/claude-3-haiku').launchDate, '2024-03-13');
       assert.equal(dataset.modelMetadata.get('ai21/jamba-large-1.7').totalParams, 398);
-      assert.ok(dataset.recentInfo.models.includes('deepseek/deepseek-v4.1-flash@reasoning=low'));
+      assert.ok(dataset.recentInfo.models.includes(SNAPSHOTS[version].recentModel));
       assert.equal(requests.some(url => url.includes('/viewer_details/')), false, 'answers must load lazily');
       const qid = dataset.questions[0].id;
       const [detailsA, detailsB] = await Promise.all([dataset.getDetails(qid), dataset.getDetails(qid)]);

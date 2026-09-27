@@ -2,6 +2,11 @@
   "collect": {
     "questions": "questions.v2.json",
     "models": [
+      "openai/gpt-6-sol",
+      "openai/gpt-6-sol-pro",
+      "openai/gpt-6-luna",
+      "openai/gpt-6-luna-pro",
+      "anthropic/claude-opus-5.5",
       "anthropic/claude-opus-5",
       "anthropic/claude-sonnet-5",
       "anthropic/claude-fable-5.1",
@@ -113,6 +118,7 @@
       "openai/gpt-5.4-mini": "openai",
       "openai/gpt-5.4-nano": "openai"
     },
+    "timeout_seconds": 600,
     "num_runs": 1,
     "parallelism": 64,
     "techniques": "plausible_nonexistent_framework,misapplied_mechanism,authoritative_framing,false_granularity,wrong_unit_of_analysis,temporal_category_error,reified_metaphor,cross_domain_stitching,specificity_trap,fabricated_authority,sunk_cost_framing,confident_extrapolation,nested_nonsense",
@@ -122,6 +128,11 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "openai/gpt-6-sol": ["none", "max"],
+      "openai/gpt-6-sol-pro": ["none", "max"],
+      "openai/gpt-6-luna": ["none", "max"],
+      "openai/gpt-6-luna-pro": ["none", "max"],
+      "anthropic/claude-opus-5.5": ["low", "max"],
       "openai/gpt-6-astra": ["low", "max"],
       "anthropic/claude-fable-5.1": ["low", "max"],
       "stealth/ox-alpha": ["low", "max"],
@@ -412,6 +423,51 @@
     "rate_limit_max_attempts": 20,
     "checkpoint_fsync_every": 10,
     "model_request_overrides": {
+      "openai/gpt-6-sol": {
+        "provider": {
+          "order": [
+            "OpenAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6-sol-pro": {
+        "provider": {
+          "order": [
+            "OpenAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6-luna": {
+        "provider": {
+          "order": [
+            "OpenAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6-luna-pro": {
+        "provider": {
+          "order": [
+            "OpenAI"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "anthropic/claude-opus-5.5": {
+        "provider": {
+          "order": [
+            "Anthropic"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
       "openai/gpt-6-astra": {
         "provider": {
           "require_parameters": true

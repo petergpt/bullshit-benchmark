@@ -2,6 +2,17 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.1] - 2026-09-27
+
+### Added
+- Added GPT-6 Sol, Sol Pro, Luna and Luna Pro at `none`/`max` reasoning, and Claude Opus 5.5 at `low`/`max`, to both suites: 1,550 new responses, with 204 V1 variants and 224 V2 variants in total.
+- Added verified September 22 launch dates and closed-weight metadata for all five routes. Pro routes are execution variants of the underlying Sol/Luna models.
+
+### Changed
+- Folded the completed variants and strict provider overrides into both main configs, cleared their catch-up queues, and increased collection timeouts to 600 seconds for long maximum-effort calls.
+- Preserved all earlier responses and grades. The new run has zero collection or aggregate errors; 20 V1 answers and 29 V2 answers use two valid judges after the missing judge exhausted three output attempts. Candidate refusals remain separately recorded.
+- Refreshed both datasets, leaderboard metadata, recent additions, documentation and viewer validation snapshots.
+
 ## [2.1.0] - 2026-09-10
 
 ### Added

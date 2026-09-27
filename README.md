@@ -7,12 +7,12 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 **[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-Updated **September 10, 2026**. The new dashboard is now the default viewer. The latest completed results include **DeepSeek V4.1 Flash**, **Claude Fable 5.1** and **GPT-6 Astra**, each tested at low and maximum reasoning.
+Updated **September 27, 2026**. The latest completed results include **GPT-6 Sol**, **GPT-6 Sol Pro**, **GPT-6 Luna**, **GPT-6 Luna Pro** and **Claude Opus 5.5**, each tested at its lowest and maximum supported reasoning effort in both suites.
 
 | Suite | Questions | Model/reasoning variants | Responses |
 | --- | ---: | ---: | ---: |
-| V1 | 55 | 194 | 10,670 |
-| V2 | 100 | 214 | 21,400 |
+| V1 | 55 | 204 | 11,220 |
+| V2 | 100 | 224 | 22,400 |
 
 ## Explore
 

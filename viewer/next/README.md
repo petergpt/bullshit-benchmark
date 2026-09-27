@@ -58,9 +58,9 @@ produces PNGs from the supplied rows without changing application state.
 ## Verification
 
 Run `node --test tests/test_next_viewer_data.mjs tests/test_next_viewer_capture.mjs tests/test_published_viewer_storage.js tests/test_viewer_refusal_denominators.js`
-from the repository root. The tests check all 32,070 published rows against both
-viewers and their leaderboard CSVs: V1 has 10,670 answers / 194 variants; V2 has
-21,400 answers / 214 variants. They also check response text, lazy loading,
+from the repository root. The tests check all 33,620 published rows against both
+viewers and their leaderboard CSVs: V1 has 11,220 answers / 204 variants; V2 has
+22,400 answers / 224 variants. They also check response text, lazy loading,
 concurrency, missing-judge selection and rejection of invalid assets. Refusal-denominator checks cover both rates, explicit inclusion, reset, retained error rows and unavailable rates for all-refusal groups.
 
 The adapter follows immutable viewer rows. Each failed judge has three output attempts;
@@ -71,8 +71,9 @@ CSV exports and the PNG footer, without badges in model labels or Lab trends sum
 Selecting an unavailable individual judge never substitutes
 zero or the consensus result.
 
-The V2 dataset contains 77 answers with two valid judges: 73 historical answers,
-two GPT-6 Astra answers and two DeepSeek V4.1 Flash answers. Two candidate refusals
+The V1 dataset contains 20 answers with two valid judges. V2 contains 106:
+73 historical answers, two GPT-6 Astra answers, two DeepSeek V4.1 Flash answers
+and 29 answers from the September 25 OpenAI/Anthropic run. Two candidate refusals
 reviewed alongside the historical repair remain unscored. Real judge votes and model
 responses are preserved. Both suites' leaderboard CSVs match viewer outcomes in All attempts mode,
 including the two previously discrepant Fable 5 rows; no CSV exceptions remain.
