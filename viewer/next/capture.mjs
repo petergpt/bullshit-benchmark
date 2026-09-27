@@ -199,7 +199,7 @@ function wrappedLines(ctx, value, width, size = 12) {
 
 /** Render the same chart offscreen, without observers or changes to the live view. */
 async function explorerSnapshot(options, width, plotHeight) {
-  const { renderExplorer } = await import('./charts.mjs?v=20260927-chart-export');
+  const { renderExplorer } = await import('./charts.mjs?v=20260927-compact-labs');
   await document.fonts?.ready;
   const host = document.createElement('div');
   host.inert = true;
@@ -305,12 +305,20 @@ export async function exportExplorerPng({ version = 'v2', domain = 'all', judgeL
   const filters = wrappedLines(ctx, String(filterLabel).replace(/\s+/g, ' ').trim(), innerWidth, 12);
   const titleY = 124, subtitleY = 148;
   const subtitle = options.mode === 'reasoning' ? 'Clear pushback by requested reasoning effort · lowest → highest'
-    : options.mode === 'labs' ? 'Best per lab and release · OpenAI, Anthropic & Google'
+    : options.mode === 'labs' ? ''
     : options.mode === 'size' ? 'Clear pushback by total parameter count · logarithmic scale' : 'Clear pushback by release date';
-  const chartY = 170 + filters.length * 18;
+  const chartTop = subtitle ? 170 : 148;
+  const chartY = chartTop + filters.length * 18;
   const labWidth = (innerWidth - 32 - 36) / 3;
-  const labLines = snapshot.labs.map(lab => wrappedLines(ctx, lab.model, labWidth - 16));
-  const labsHeight = snapshot.labs.length ? 50 + Math.max(...labLines.map(lines => lines.length)) * 17 + (snapshot.labs.some(lab => lab.otherRate) ? 20 : 0) : 0;
+  const labDetails = snapshot.labs.map(lab => {
+    const lines = wrappedLines(ctx, lab.model, labWidth - 16);
+    font(ctx, 12);
+    const lastLineWidth = ctx.measureText(lines.at(-1) || '').width;
+    font(ctx, 11);
+    const inlineRate = !!lab.otherRate && lastLineWidth + 14 + ctx.measureText(lab.otherRate).width <= labWidth;
+    return { lines, inlineRate, lineCount: lines.length + (lab.otherRate && !inlineRate ? 1 : 0) };
+  });
+  const labsHeight = snapshot.labs.length ? 48 + (Math.max(...labDetails.map(detail => detail.lineCount)) - 1) * 17 : 0;
   const companyKeys = [];
   let keyX = 0, keyRow = 0;
   if (['timeline', 'size'].includes(options.mode) && options.colorMode !== 'detection') {
@@ -344,8 +352,8 @@ export async function exportExplorerPng({ version = 'v2', domain = 'all', judgeL
   try {
     const { suite, scope } = drawHeader(ctx, { width: sheetWidth, height: sheetHeight, version, domain, mascot });
     text(ctx, CHART_TITLES[options.mode], pad, titleY, { size: 23, weight: 600, color: PALETTE.forest });
-    text(ctx, subtitle, pad, subtitleY, { size: 13, color: PALETTE.muted });
-    filters.forEach((label, index) => text(ctx, label, pad, 171 + index * 18, { size: 12, color: PALETTE.teal }));
+    if (subtitle) text(ctx, subtitle, pad, subtitleY, { size: 13, color: PALETTE.muted });
+    filters.forEach((label, index) => text(ctx, label, pad, chartTop + 1 + index * 18, { size: 12, color: PALETTE.teal }));
     rectangle(ctx, pad, chartY, innerWidth, chartHeight, PALETTE.panel, 6);
     const layer = svgLayer(sheetWidth, sheetHeight);
     const x = pad + 16, y = chartY + 16;
@@ -387,13 +395,14 @@ export async function exportExplorerPng({ version = 'v2', domain = 'all', judgeL
     } else {
       snapshot.labs.forEach((lab, index) => {
         const left = x + index * (labWidth + 18);
+        const detail = labDetails[index];
         rectangle(ctx, left, y, labWidth, 3, lab.color);
         const logo = logos.get(lab.logo);
-        if (logo) drawImageContained(ctx, logo, left, y + 14, 22, 22);
-        text(ctx, lab.name, left + (logo ? 30 : 0), y + 25, { size: 14, weight: 600 });
-        text(ctx, lab.rate, left + labWidth, y + 25, { size: 18, weight: 600, color: PALETTE.forest, align: 'right' });
-        labLines[index].forEach((label, lineIndex) => text(ctx, label, left, y + 50 + lineIndex * 17, { size: 12, color: PALETTE.muted }));
-        if (lab.otherRate) text(ctx, lab.otherRate, left, y + 50 + labLines[index].length * 17, { size: 11, color: PALETTE.muted });
+        if (logo) drawImageContained(ctx, logo, left, y + 7, 22, 22);
+        text(ctx, lab.name, left + (logo ? 30 : 0), y + 18, { size: 14, weight: 600 });
+        text(ctx, lab.rate, left + labWidth, y + 18, { size: 18, weight: 600, color: PALETTE.forest, align: 'right' });
+        detail.lines.forEach((label, lineIndex) => text(ctx, label, left, y + 40 + lineIndex * 17, { size: 12, color: PALETTE.muted }));
+        if (lab.otherRate) text(ctx, lab.otherRate, left + (detail.inlineRate ? labWidth : 0), y + 40 + (detail.lineCount - 1) * 17, { size: 11, color: PALETTE.muted, align: detail.inlineRate ? 'right' : 'left' });
       });
       const keyY = y + labsHeight + 14;
       if (options.mode === 'labs') {

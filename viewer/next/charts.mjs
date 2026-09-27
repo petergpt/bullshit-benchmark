@@ -100,17 +100,17 @@ const STYLES = `
 .next-chart-reasoning-panel .next-chart-reasoning-title{background:var(--change-bg);color:var(--change);justify-content:flex-start;gap:5px}.next-chart-reasoning-title .direction-arrow{font-size:15px;font-weight:600;color:inherit}.next-chart-reasoning-title strong{font-weight:500}
 .next-chart-reasoning-panel .next-chart-delta{font-weight:500;color:var(--change)}.next-chart-reasoning-panel .next-chart-family-title{flex-direction:row;align-items:center;justify-content:flex-start;gap:6px}.next-chart-family-title img{width:15px;height:15px;object-fit:contain;flex:none}.next-chart-family-text{display:flex;flex-direction:column;min-width:0}
 .next-chart-unchanged{flex:none;max-height:30%;overflow:auto;border:1px solid ${LINE};border-radius:3px;margin-top:6px;background:#f1ede4;font-size:11px;color:${MUTED}}.next-chart-unchanged summary{cursor:pointer;padding:5px 8px;font-weight:500}.next-chart-unchanged-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;background:${LINE};border-top:1px solid ${LINE}}.next-chart-unchanged-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;background:${PANEL};min-width:0}.next-chart-unchanged-name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:500}.next-chart-unchanged-scores{display:flex;gap:4px;align-items:center;flex:none}.next-chart-unchanged-score{background:transparent;border:1px solid ${LINE};border-radius:3px;padding:3px 5px;color:${MUTED};font:inherit;cursor:pointer}.next-chart-unchanged-score:hover,.next-chart-unchanged-score.is-selected{border-color:${TEAL};background:#e6efe9;color:${INK}}
-.next-chart-trend-heading{flex:none;margin:0;padding:2px 0 4px;font-size:18px;font-weight:600;line-height:1.25}
 .next-chart.is-lab-trends .next-chart-plot{min-width:0}
-.next-chart-trend-note{flex:none;padding:0 0 10px;font-size:11px;line-height:1.4;color:${MUTED}}
-.next-chart-lab-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;flex:none;padding:0 0 14px}
-.next-chart-lab{min-width:0;border-top:3px solid var(--lab-color);padding-top:6px}
+.next-chart-lab-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;flex:none;padding:0 0 6px}
+.next-chart-lab{min-width:0;border-top:3px solid var(--lab-color);padding-top:4px}
 .next-chart-lab-name{display:flex;align-items:center;gap:6px;font-size:12px;line-height:1.3;font-weight:500}.next-chart-lab-name img{width:17px;height:17px;object-fit:contain;flex:none}.next-chart-lab-name b{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
-.next-chart-lab-model{display:block;overflow-wrap:anywhere;padding-top:4px;color:${MUTED};font-size:11px;line-height:1.4}
-.next-chart-lab-all-rate{display:block;padding-top:3px;color:${MUTED};font-size:10px;line-height:1.4}
+.next-chart-lab-details{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;padding-top:2px}
+.next-chart-lab-model{max-width:100%;overflow-wrap:anywhere;color:${MUTED};font-size:11px;line-height:1.4}
+.next-chart-lab-all-rate{margin-left:auto;white-space:nowrap;color:${MUTED};font-size:10px;line-height:1.4}
 .next-chart-rate-key{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;flex:none;margin-bottom:7px;min-height:22px;font-size:11px;color:${MUTED}}
+.next-chart-trend-coverage{margin-left:auto}
 .next-chart-line-key{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.next-chart-line-key i{width:24px;border-top:2px solid ${MUTED}}.next-chart-line-key.is-dotted i{border-top-style:dashed;opacity:.65}.next-chart-line-key input{width:12px;height:12px;accent-color:${TEAL};margin:0}.next-chart-line-key:has(input){cursor:pointer}
-@media(max-width:640px){.next-chart-trend-heading{font-size:15px}.next-chart-trend-note{font-size:10px;padding-bottom:8px}.next-chart-lab-summary{gap:10px;padding-bottom:10px}.next-chart-lab-name{gap:4px;flex-wrap:wrap;font-size:11px}.next-chart-lab-name img{width:15px;height:15px}.next-chart-lab-name b{width:100%;margin:0;font-size:15px}.next-chart-lab-model{font-size:10px}}
+@media(max-width:640px){.next-chart-lab-summary{gap:10px}.next-chart-lab-name{gap:4px;flex-wrap:wrap;font-size:11px}.next-chart-lab-name img{width:15px;height:15px}.next-chart-lab-name b{width:100%;margin:0;font-size:15px}.next-chart-lab-model{font-size:10px}.next-chart-lab-all-rate{margin-left:0}}
 @media(max-width:760px){.next-chart-reasoning-grid{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr))}.next-chart-reasoning-panel .next-chart-family-axis,.next-chart-reasoning-panel .next-chart-family-row{grid-template-columns:minmax(120px,35%) minmax(80px,1fr) 37px}}
 @media(max-width:640px){.next-chart-meta{align-items:center;gap:6px}.next-chart-key{gap:5px;font-size:11px}.next-chart-table th:first-child{min-width:150px}.next-chart-model-name{max-width:170px}.next-chart-table td:first-child{max-width:220px}.next-chart-family-axis,.next-chart-family-row{grid-template-columns:minmax(100px,34%) 1fr 36px;gap:6px;padding-left:6px;padding-right:6px}.next-chart-family-title{font-size:11px}.next-chart-foot{font-size:10px}}
 `;
@@ -323,7 +323,7 @@ function chartGeometry(container, compact, snapshotSize) {
   const innerWidth = container.clientWidth - (parseFloat(computed.paddingLeft) || 0) - (parseFloat(computed.paddingRight) || 0);
   const innerHeight = container.clientHeight - (parseFloat(computed.paddingTop) || 0) - (parseFloat(computed.paddingBottom) || 0);
   const width = Math.max(container.classList.contains('is-lab-trends') ? 260 : 320, Math.round(innerWidth || 1000));
-  const keyHeight = [...container.querySelectorAll(':scope > .next-chart-color-key, :scope > .next-chart-trend-heading, :scope > .next-chart-trend-note, :scope > .next-chart-lab-summary, :scope > .next-chart-rate-key')].reduce((sum, node) => sum + node.getBoundingClientRect().height + (parseFloat(getComputedStyle(node).marginBottom) || 0), 0);
+  const keyHeight = [...container.querySelectorAll(':scope > .next-chart-color-key, :scope > .next-chart-lab-summary, :scope > .next-chart-rate-key')].reduce((sum, node) => sum + node.getBoundingClientRect().height + (parseFloat(getComputedStyle(node).marginBottom) || 0), 0);
   const fallbackHeight = compact ? 250 : Math.max(300, window.innerHeight - container.getBoundingClientRect().top - keyHeight - 24);
   const height = Math.max(220, Math.round(innerHeight > 70 ? innerHeight - keyHeight : fallbackHeight));
   return { width, height };
@@ -511,9 +511,7 @@ function renderLabTrends(container, options) {
     if (!existing || model.greenRate > existing.model.greenRate || (model.greenRate === existing.model.greenRate && model.id.localeCompare(existing.model.id) < 0)) byRelease.set(key, { model, metadata, x });
   }
   const points = [...byRelease.values()].sort((a, b) => a.x - b.x || a.model.id.localeCompare(b.model.id));
-  container.append(el('h2', { class: 'next-chart-trend-heading' }, 'OpenAI, Anthropic & Google'));
-  container.append(el('div', { class: 'next-chart-trend-note' }, `Best per lab and release${missingDates ? ` · ${missingDates} undated` : ''}`));
-  if (!points.length) return empty(container, 'No matching releases', 'Try All labs.');
+  if (!points.length) return empty(container, 'No matching releases', missingDates ? `${missingDates} variant${missingDates === 1 ? ' has' : 's have'} no release date.` : 'Try All labs.');
   const summary = el('div', { class: 'next-chart-lab-summary', 'aria-label': 'Latest plotted release per lab' });
   const latestModels = new Set();
   for (const [org, name] of labs) {
@@ -525,11 +523,13 @@ function renderLabTrends(container, options) {
     if (logo) heading.append(el('img', { src: logo, alt: '' }));
     heading.append(el('span', {}, name), el('b', {}, latest ? pct(latest.model.greenRate) : '—'));
     const modelText = latest ? `${nameOf(latest.model)} · ${effortLabel(latest.model)}` : 'No matching releases';
-    item.append(heading, el('span', { class: 'next-chart-lab-model', title: latest ? `${modelText} · ${fullDate.format(latest.x)}` : modelText }, modelText));
+    const details = el('div', { class: 'next-chart-lab-details' });
+    details.append(el('span', { class: 'next-chart-lab-model', title: latest ? `${modelText} · ${fullDate.format(latest.x)}` : modelText }, modelText));
     if (latest?.model.refusal) {
       const otherRate = options.excludeRefusals ? latest.model.greenRateAllAttempts : latest.model.greenRateExcludingRefusals;
-      item.append(el('span', { class: 'next-chart-lab-all-rate' }, `${pct(otherRate)} ${options.excludeRefusals ? 'all attempts' : 'excl. refusals'}`));
+      details.append(el('span', { class: 'next-chart-lab-all-rate' }, `${pct(otherRate)} ${options.excludeRefusals ? 'all attempts' : 'excl. refusals'}`));
     }
+    item.append(heading, details);
     summary.append(item);
   }
   container.append(summary);
@@ -549,6 +549,7 @@ function renderLabTrends(container, options) {
     comparison.append(toggle, el('i'), el('span', {}, 'All attempts'));
     key.append(comparison);
   }
+  if (missingDates) key.append(el('span', { class: 'next-chart-trend-coverage' }, `${missingDates} undated`));
   container.append(key);
   const first = new Date(points[0].x), last = points.at(-1).x;
   const ticks = [];

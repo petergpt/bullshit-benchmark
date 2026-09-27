@@ -1,5 +1,5 @@
 import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil } from './data.mjs?v=20260907-dashboard';
-import { renderExplorer } from './charts.mjs?v=20260927-chart-export';
+import { renderExplorer } from './charts.mjs?v=20260927-compact-labs';
 import { brandLogo, brandColor, brandName } from './brands.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -328,7 +328,7 @@ async function downloadChart() {
   const settings={...(dashboard ? {} : chartOptions(state.chartMode)),models,totalModels:scopeModelCount,filterLabel,version:state.version,domain:state.domain,judge:state.judge,judgeLabel:$('#judgeFilter').selectedOptions[0].textContent,excludeRefusals:dashboard ? state.excludeRefusals : true,highlighted:new Set(state.highlighted),brandLogo,brandColor,width:dashboard ? Math.max(1200,Math.min(1800,innerWidth)) : 1280};
   chartExportPending = true; updatePngButton();
   try {
-    const {exportRankingsPng,exportExplorerPng}=await import('./capture.mjs?v=20260927-chart-export');
+    const {exportRankingsPng,exportExplorerPng}=await import('./capture.mjs?v=20260927-compact-labs');
     const result=await (dashboard ? exportRankingsPng(settings) : exportExplorerPng(settings));
     const href=URL.createObjectURL(result.blob),a=document.createElement('a');a.href=href;a.download=result.filename;a.click();setTimeout(()=>URL.revokeObjectURL(href),30000);toast(dashboard ? `PNG saved · ${models.length} rows` : 'Chart PNG saved');
   } catch(error){console.error(error);toast(`PNG export failed: ${error.message}`);} finally{chartExportPending=false;updatePngButton();}
