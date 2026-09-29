@@ -2,6 +2,7 @@
   "collect": {
     "questions": "questions.v2.json",
     "models": [
+      "openai/gpt-6.1-sol",
       "openai/gpt-6-sol",
       "openai/gpt-6-sol-pro",
       "openai/gpt-6-luna",
@@ -129,6 +130,7 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "openai/gpt-6.1-sol": ["low", "max"],
       "anthropic/claude-sonnet-5.5": ["low", "max"],
       "openai/gpt-6-sol": ["none", "max"],
       "openai/gpt-6-sol-pro": ["none", "max"],
@@ -425,6 +427,13 @@
     "rate_limit_max_attempts": 20,
     "checkpoint_fsync_every": 10,
     "model_request_overrides": {
+      "openai/gpt-6.1-sol": {
+        "provider": {
+          "order": ["OpenAI"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
       "anthropic/claude-sonnet-5.5": {
         "provider": {
           "order": ["Anthropic"],
