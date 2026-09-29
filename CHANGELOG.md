@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.2] - 2026-09-29
+
+### Added
+- Added Claude Sonnet 5.5 at `low`/`max` reasoning to V2: 200 new responses, bringing V2 to 226 variants and 22,600 responses. V1 is unchanged.
+- Added the verified September 28 launch date and closed-weight metadata, and folded both completed variants into the main V2 config with strict Anthropic provider routing.
+- The new runs have zero collection errors, aggregate errors or candidate refusals. Seven answers use two valid judges after the third judge exhausted three output attempts; missing votes remain null.
+
 ## [2.1.1] - 2026-09-27
 
 ### Added

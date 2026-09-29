@@ -8,6 +8,7 @@
       "openai/gpt-6-luna-pro",
       "anthropic/claude-opus-5.5",
       "anthropic/claude-opus-5",
+      "anthropic/claude-sonnet-5.5",
       "anthropic/claude-sonnet-5",
       "anthropic/claude-fable-5.1",
       "anthropic/claude-fable-5",
@@ -128,6 +129,7 @@
     "store_request_messages": false,
     "store_response_raw": true,
     "model_reasoning_efforts": {
+      "anthropic/claude-sonnet-5.5": ["low", "max"],
       "openai/gpt-6-sol": ["none", "max"],
       "openai/gpt-6-sol-pro": ["none", "max"],
       "openai/gpt-6-luna": ["none", "max"],
@@ -423,6 +425,13 @@
     "rate_limit_max_attempts": 20,
     "checkpoint_fsync_every": 10,
     "model_request_overrides": {
+      "anthropic/claude-sonnet-5.5": {
+        "provider": {
+          "order": ["Anthropic"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
       "openai/gpt-6-sol": {
         "provider": {
           "order": [

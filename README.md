@@ -7,12 +7,12 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 **[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-Updated **September 27, 2026**. The latest completed results include **GPT-6 Sol**, **GPT-6 Sol Pro**, **GPT-6 Luna**, **GPT-6 Luna Pro** and **Claude Opus 5.5**, each tested at its lowest and maximum supported reasoning effort in both suites.
+Updated **September 29, 2026**. The latest completed results add **Claude Sonnet 5.5** at low and maximum reasoning effort in **V2**. The previous update added **GPT-6 Sol**, **GPT-6 Sol Pro**, **GPT-6 Luna**, **GPT-6 Luna Pro** and **Claude Opus 5.5** in both suites.
 
 | Suite | Questions | Model/reasoning variants | Responses |
 | --- | ---: | ---: | ---: |
 | V1 | 55 | 204 | 11,220 |
-| V2 | 100 | 224 | 22,400 |
+| V2 | 100 | 226 | 22,600 |
 
 ## Explore
 
