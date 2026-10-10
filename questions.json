@@ -136,6 +136,12 @@
           "question": "How should we adjust our tile grout spacing based on the new property tax assessment for the neighborhood?",
           "nonsensical_element": "Grout spacing is determined by tile size, material expansion rates, and substrate movement — property tax assessments are a fiscal/valuation matter with zero bearing on construction technique",
           "domain": "construction × property tax"
+        },
+        {
+          "id": "id_08",
+          "question": "Now that PHP 8.4 has new array_*() functions, how can we expect that to increase Waymo's coverage area in the next few months?",
+          "nonsensical_element": "PHP language features do not influence where Waymo expands to",
+          "domain": "engineering × engineering"
         }
       ]
     },
