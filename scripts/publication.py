@@ -584,6 +584,7 @@ def activate(stage, destination, manifest):
 
 
 def validate_incoming(args, destination):
+    from openrouter_benchmark import EMPTY_MODEL_RESPONSE_PLACEHOLDER, response_is_refusal
     responses = json_rows(args.responses_file)
     aggregates = json_rows(args.aggregate_rows)
     rmap, amap = {r['sample_id']: r for r in responses}, {r['sample_id']: r for r in aggregates}
@@ -599,6 +600,11 @@ def validate_incoming(args, destination):
         raise ValueError('Publication requires three distinct configured judges and mean consensus')
     for sample, row in amap.items():
         response = rmap[sample]
+        # Apply this guard only to new inputs, preserving historical verification.
+        text = response.get('response_text')
+        if (not response_is_refusal(response)
+                and (not isinstance(text, str) or text.strip() in ('', EMPTY_MODEL_RESPONSE_PLACEHOLDER))):
+            raise ValueError(f'Incoming sample has an empty candidate output: {sample}')
         if any(row.get(key) != response.get(key) for key in IDENTITY):
             raise ValueError(f'Incoming identity mismatch: {sample}')
         for index, judge_model in enumerate(judge_models, 1):

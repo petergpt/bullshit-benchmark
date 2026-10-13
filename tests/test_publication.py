@@ -152,6 +152,47 @@ class PublicationTests(unittest.TestCase):
                 with self.subTest(marker=marker), self.assertRaisesRegex(ValueError, 'synthetic empty-output'):
                     p.validate_incoming(args, root/'output')
 
+    def test_incoming_rejects_empty_candidate_even_with_three_real_scores(self):
+        from openrouter_benchmark import EMPTY_MODEL_RESPONSE_PLACEHOLDER
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, response, aggregate = self.incoming_fixture(root)
+            for text in (None, '', ' ', EMPTY_MODEL_RESPONSE_PLACEHOLDER):
+                with self.subTest(text=text):
+                    (root / 'responses.jsonl').write_text(json.dumps({
+                        **response, 'response_text': text, 'response_refusal': False}) + '\n')
+                    (root / 'aggregate.jsonl').write_text(json.dumps({
+                        **aggregate, 'response_text': text, 'response_refusal': False}) + '\n')
+                    with self.assertRaisesRegex(ValueError, 'empty candidate output'):
+                        p.validate_incoming(args, root / 'output')
+
+    def test_incoming_empty_native_refusal_preserves_unscored_denominator(self):
+        from openrouter_benchmark import EMPTY_MODEL_RESPONSE_PLACEHOLDER
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, response, aggregate = self.incoming_fixture(root)
+            outcome = {'response_text': EMPTY_MODEL_RESPONSE_PLACEHOLDER,
+                       'response_native_finish_reason': 'refusal', 'response_refusal': True,
+                       'response_outcome': 'refusal'}
+            (root / 'responses.jsonl').write_text(json.dumps({**response, **outcome}) + '\n')
+            (root / 'aggregate.jsonl').write_text(json.dumps({
+                **aggregate, **outcome, 'judge_1_score': None, 'judge_2_score': None,
+                'judge_3_score': None, 'consensus_score': None, 'judge_valid_count': 0,
+                'judge_expected_count': 3, 'judge_coverage': '0/3 judges',
+            }) + '\n')
+            self.assertTrue(p.validate_incoming(args, root / 'output'))
+
+    def test_historical_empty_candidate_verification_is_unchanged(self):
+        from openrouter_benchmark import EMPTY_MODEL_RESPONSE_PLACEHOLDER
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            aggregate = {'sample_id': 's', 'model': 'example/model', 'question_id': 'q',
+                         'run_index': 1, 'response_text': EMPTY_MODEL_RESPONSE_PLACEHOLDER,
+                         'judge_1_score': 1, 'judge_2_score': 0, 'judge_3_score': 0,
+                         'consensus_score': 0.3333, 'row_errors': []}
+            self.write_dataset_fixture(root, aggregate)
+            self.assertEqual(p.validate_dataset(root)['rows'], 1)
+
     def write_dataset_fixture(self, root, aggregate, legacy_error_sample_ids=None, response_changes=None):
         """Build mutually consistent published assets to exercise semantic checks."""
         from openrouter_benchmark import summarize_aggregate_rows

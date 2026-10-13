@@ -20,7 +20,7 @@ vm.runInContext(currentHtml.slice(currentHtml.indexOf('function judgeScore('), c
 // Published CSVs and immutable viewer rows must agree after the approved repair.
 const SNAPSHOTS = {
   v1: { rows: 11220, models: 204, twoJudgeAnswers: 20, recentModel: 'openai/gpt-6-sol@reasoning=none' },
-  v2: { rows: 23000, models: 230, twoJudgeAnswers: 126, recentModel: 'meta/muse-wonder@reasoning=minimal' },
+  v2: { rows: 23200, models: 232, twoJudgeAnswers: 132, recentModel: 'mistralai/mistral-large-4-0@reasoning=none' },
 };
 
 async function withFiles(fn, rewrite = bytes => bytes, virtualFiles = new Map()) {

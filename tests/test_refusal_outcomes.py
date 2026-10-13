@@ -1,6 +1,7 @@
 import importlib.util
 import pathlib
 import unittest
+from unittest.mock import Mock
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -14,6 +15,90 @@ SPEC.loader.exec_module(MODULE)
 
 
 class RefusalOutcomeTests(unittest.TestCase):
+    def collect_with_client(self, client):
+        return MODULE.collect_one(
+            {"sample_id": "sample", "run_index": 1, "model": "example/model",
+             "model_id": "example/model", "model_provider": "openrouter",
+             "question": {"id": "q1", "technique": "test", "domain": "Test",
+                          "question": "Question?", "nonsensical_element": "Invalid premise."}},
+            clients={"openrouter": client}, system_prompt="", omit_system_prompt=True,
+            temperature=None, max_tokens=0, empty_response_retries=2, retries=1,
+            pause_seconds=0, dry_run=False, store_request_messages=True, store_response_raw=True,
+        )
+
+    def test_empty_collection_exhausts_three_attempts_and_retains_diagnostics(self):
+        for content in (None, " ", MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER):
+            with self.subTest(content=content):
+                payloads = [{"id": f"empty-{i}", "model": "example/model",
+                             "usage": {"completion_tokens": i},
+                             "choices": [{"finish_reason": "stop", "native_finish_reason": "completed",
+                                          "message": {"content": content, "refusal": None}}]}
+                            for i in range(1, 4)]
+                client = Mock()
+                client.chat.side_effect = payloads
+                row = self.collect_with_client(client)
+                self.assertEqual(client.chat.call_count, 3)
+                self.assertTrue(all(call == client.chat.call_args_list[0]
+                                    for call in client.chat.call_args_list))
+                self.assertEqual(row["error_kind"], "empty_response")
+                self.assertIn("3 output attempts", row["error"])
+                self.assertFalse(row["error_retryable"])
+                self.assertFalse(row["response_refusal"])
+                self.assertEqual(row["response_outcome"], "error")
+                self.assertEqual(row["response_text"], MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER)
+                self.assertEqual(row["response_raw"], payloads[-1])
+                self.assertEqual(row["response_id"], "empty-3")
+                self.assertEqual([a["attempt"] for a in row["empty_response_attempts"]], [1, 2, 3])
+                self.assertEqual([a["response_id"] for a in row["empty_response_attempts"]],
+                                 ["empty-1", "empty-2", "empty-3"])
+                self.assertEqual([a["usage"]["completion_tokens"] for a in row["empty_response_attempts"]],
+                                 [1, 2, 3])
+
+    def test_substantive_collection_after_empty_retry_remains_valid(self):
+        client = Mock()
+        client.chat.side_effect = [
+            {"id": "empty", "choices": [{"message": {"content": None}}]},
+            {"id": "answer", "choices": [{"message": {"content": "The premise is invalid."}}]},
+        ]
+        row = self.collect_with_client(client)
+        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(row["error"], "")
+        self.assertEqual(row["response_outcome"], "response")
+        self.assertEqual(row["response_text"], "The premise is invalid.")
+        self.assertEqual(len(row["empty_response_attempts"]), 1)
+
+    def test_empty_native_refusal_collection_remains_unscored_outcome(self):
+        client = Mock()
+        client.chat.return_value = {"id": "refused", "choices": [{
+            "finish_reason": "stop", "native_finish_reason": "refusal",
+            "message": {"content": None},
+        }]}
+        row = self.collect_with_client(client)
+        self.assertEqual(row["error"], "")
+        self.assertTrue(row["response_refusal"])
+        self.assertEqual(row["response_outcome"], "refusal")
+        self.assertEqual(row["response_native_finish_reason"], "refusal")
+
+    def test_grade_rejects_empty_outputs_without_judge_call(self):
+        for content in (None, " ", MODULE.EMPTY_MODEL_RESPONSE_PLACEHOLDER):
+            with self.subTest(content=content):
+                client = Mock()
+                row = {"sample_id": "sample", "model": "example/model", "question_id": "q1",
+                       "question": "Question?", "nonsensical_element": "Invalid premise.",
+                       "response_text": content, "response_refusal": False, "error": ""}
+                grade = MODULE.grade_one(
+                    row, clients={"openrouter": client}, judge_model="example/judge",
+                    judge_provider="openrouter", judge_system_prompt="Judge.",
+                    judge_user_template="{question}\n{response}", judge_user_template_control="",
+                    judge_no_hint=False, judge_temperature=None, judge_reasoning_effort="off",
+                    judge_max_tokens=100, judge_output_retries=2, store_judge_response_raw=True,
+                    retries=1, pause_seconds=0, dry_run=False,
+                )
+                client.chat.assert_not_called()
+                self.assertIn("Cannot grade empty response_text", grade["error"])
+                self.assertIsNone(grade["judge_score"])
+                self.assertEqual(grade["judge_attempt_count"], 0)
+
     def test_fable_minimal_normalizes_to_native_low(self) -> None:
         variants = MODULE.build_model_variants(
             ["anthropic/claude-fable-5"],

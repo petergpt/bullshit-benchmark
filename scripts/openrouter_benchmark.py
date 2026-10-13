@@ -3053,7 +3053,7 @@ def collect_one(
                 if store_response_raw:
                     record["response_raw"] = payload
                 response_text = extract_model_text(payload)
-                if response_text.strip():
+                if response_text.strip() and response_text.strip() != EMPTY_MODEL_RESPONSE_PLACEHOLDER:
                     break
 
                 refusal_text = extract_message_refusal(payload)
@@ -3063,6 +3063,14 @@ def collect_one(
                     break
 
                 finish_reason = extract_finish_reason(payload)
+                record.setdefault("empty_response_attempts", []).append({
+                    "attempt": empty_attempt + 1,
+                    "response_id": str(payload.get("id", "")),
+                    "finish_reason": finish_reason,
+                    "native_finish_reason": extract_native_finish_reason(payload),
+                    "raw_text_chars": len(response_text),
+                    "usage": payload.get("usage", {}),
+                })
                 if empty_attempt < empty_response_retries:
                     empty_attempt += 1
                     continue
@@ -3083,6 +3091,12 @@ def collect_one(
         record["response_usage"] = payload.get("usage", {})
         record["response_finish_reason"] = extract_finish_reason(payload)
         annotate_response_outcome(record, payload)
+        if response_text.strip() == EMPTY_MODEL_RESPONSE_PLACEHOLDER and not record["response_refusal"]:
+            attempts = len(record.get("empty_response_attempts", []))
+            record["error"] = f"Model returned no answer after {attempts} output attempts."
+            record["error_kind"] = "empty_response"
+            record["error_retryable"] = False
+            annotate_response_outcome(record, payload)
         if record["response_finish_reason"] in {"length", "max_output_tokens"}:
             record["warnings"].append("response_finish_reason=length (possible truncation)")
         if store_response_raw and record["response_raw"] is None:
@@ -3938,8 +3952,8 @@ def grade_one(
             )
             grade_row["judge_warnings"].append("grading_skipped=response_refusal")
             return grade_row
-        response_text = str(grade_row["response_text"]).strip()
-        if not response_text:
+        response_text = str(grade_row["response_text"] or "").strip()
+        if not response_text or response_text == EMPTY_MODEL_RESPONSE_PLACEHOLDER:
             raise RuntimeError("Cannot grade empty response_text.")
 
         if pause_seconds > 0:

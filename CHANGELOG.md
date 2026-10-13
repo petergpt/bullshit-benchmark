@@ -2,6 +2,16 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.4] - 2026-10-13
+
+### Added
+- Completed Claude Haiku 5.5 at `low`/`max` and Mistral Large 4 at `none`/`high` in V2. The four variants cover 400 responses; V2 now has 232 variants and 23,200 responses. V1 is unchanged.
+- All original responses and grades remain unchanged. One native Haiku max refusal stays unscored; 13 answers in the four new variants use the exhausted-retry two-valid-judge policy with missing votes retained as null.
+
+### Fixed
+- Withdrawn the earlier Muse Wonder minimal result after audit found that one empty API output had been graded as placeholder text. Both Muse reasoning variants retain 99 valid responses locally and remain blocked by that question; no Muse Wonder score is published.
+- Empty candidate output without a provider-declared refusal is now a collection error, and its placeholder cannot be graded or included in new publications. Native refusal treatment is preserved.
+
 ## [2.1.3] - 2026-10-13
 
 ### Added

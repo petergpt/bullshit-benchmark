@@ -2,9 +2,7 @@
   "collect": {
     "questions": "questions.v2.json",
     "models": [
-      "meta/muse-wonder",
-      "anthropic/claude-haiku-5.5",
-      "mistralai/mistral-large-4-0"
+      "meta/muse-wonder"
     ],
     "models_file": "",
     "model_providers": {
@@ -15,24 +13,6 @@
         "provider": {
           "order": [
             "Meta"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "anthropic/claude-haiku-5.5": {
-        "provider": {
-          "order": [
-            "Anthropic"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      },
-      "mistralai/mistral-large-4-0": {
-        "provider": {
-          "order": [
-            "Mistral"
           ],
           "allow_fallbacks": false,
           "require_parameters": true
@@ -49,14 +29,8 @@
     "store_response_raw": true,
     "model_reasoning_efforts": {
       "meta/muse-wonder": [
+        "minimal",
         "max"
-      ],
-      "anthropic/claude-haiku-5.5": [
-        "max"
-      ],
-      "mistralai/mistral-large-4-0": [
-        "none",
-        "high"
       ]
     },
     "shuffle_tasks": true,

@@ -110,8 +110,8 @@
       "deepseek/deepseek-v4-pro-0813",
       "meta/muse-spark-1.2",
       "qwen/qwen3.8-max",
-      "meta/muse-wonder",
-      "anthropic/claude-haiku-5.5"
+      "anthropic/claude-haiku-5.5",
+      "mistralai/mistral-large-4-0"
     ],
     "models_file": "",
     "model_providers": {
@@ -418,11 +418,13 @@
         "none",
         "xhigh"
       ],
-      "meta/muse-wonder": [
-        "minimal"
-      ],
       "anthropic/claude-haiku-5.5": [
-        "low"
+        "low",
+        "max"
+      ],
+      "mistralai/mistral-large-4-0": [
+        "none",
+        "high"
       ]
     },
     "shuffle_tasks": true,
@@ -669,16 +671,16 @@
           "require_parameters": true
         }
       },
-      "meta/muse-wonder": {
+      "anthropic/claude-haiku-5.5": {
         "provider": {
-          "order": ["Meta"],
+          "order": ["Anthropic"],
           "allow_fallbacks": false,
           "require_parameters": true
         }
       },
-      "anthropic/claude-haiku-5.5": {
+      "mistralai/mistral-large-4-0": {
         "provider": {
-          "order": ["Anthropic"],
+          "order": ["Mistral"],
           "allow_fallbacks": false,
           "require_parameters": true
         }

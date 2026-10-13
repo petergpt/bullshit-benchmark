@@ -432,6 +432,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "mistralai/mistral-large-4-0@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 7,
+      "score_1": 13,
+      "score_2": 80,
+      "score_3": 0,
+      "avg_score": 1.7333,
+      "detection_rate_score_2": 0.8,
+      "full_engagement_rate_score_0": 0.07,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 2.0,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 2.0,
+        "fabricated_authority": 1.697,
+        "false_granularity": 1.7222,
+        "misapplied_mechanism": 1.9487,
+        "nested_nonsense": 1.3333,
+        "plausible_nonexistent_framework": 1.6667,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 1.25,
+        "sunk_cost_framing": 2.0,
+        "temporal_category_error": 1.8333,
+        "wrong_unit_of_analysis": 1.2
+      },
+      "run_average_scores": {
+        "1": 1.7333
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "anthropic/claude-opus-5@reasoning=xhigh",
       "count": 100,
       "scored_count": 89,
@@ -1173,6 +1212,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "mistralai/mistral-large-4-0@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 9,
+      "score_1": 23,
+      "score_2": 68,
+      "score_3": 0,
+      "avg_score": 1.5983,
+      "detection_rate_score_2": 0.68,
+      "full_engagement_rate_score_0": 0.09,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.7407,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.2,
+        "fabricated_authority": 1.8182,
+        "false_granularity": 2.0,
+        "misapplied_mechanism": 1.2308,
+        "nested_nonsense": 1.619,
+        "plausible_nonexistent_framework": 1.7083,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.9167,
+        "sunk_cost_framing": 1.6667,
+        "temporal_category_error": 1.8055,
+        "wrong_unit_of_analysis": 1.5333
+      },
+      "run_average_scores": {
+        "1": 1.5983
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "anthropic/claude-sonnet-4.5@reasoning=none",
       "count": 100,
       "scored_count": 100,
@@ -1754,6 +1832,45 @@
       },
       "run_average_scores": {
         "1": 1.4717
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5@reasoning=max",
+      "count": 100,
+      "scored_count": 99,
+      "answered_count": 99,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 1,
+      "control_refusal_count": 0,
+      "score_0": 8,
+      "score_1": 34,
+      "score_2": 57,
+      "score_3": 0,
+      "avg_score": 1.4714,
+      "detection_rate_score_2": 0.57,
+      "full_engagement_rate_score_0": 0.08,
+      "refusal_rate": 0.01,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.3704,
+        "confident_extrapolation": 1.9167,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.8485,
+        "false_granularity": 1.8889,
+        "misapplied_mechanism": 1.359,
+        "nested_nonsense": 1.3333,
+        "plausible_nonexistent_framework": 1.375,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 0.7143,
+        "sunk_cost_framing": 1.3809,
+        "temporal_category_error": 1.8889,
+        "wrong_unit_of_analysis": 1.6667
+      },
+      "run_average_scores": {
+        "1": 1.4714
       },
       "run_average_stddev": null
     },
@@ -2612,45 +2729,6 @@
       },
       "run_average_scores": {
         "1": 1.34
-      },
-      "run_average_stddev": null
-    },
-    {
-      "model": "meta/muse-wonder@reasoning=minimal",
-      "count": 100,
-      "scored_count": 100,
-      "answered_count": 100,
-      "nonsense_count": 100,
-      "control_count": 0,
-      "refusal_count": 0,
-      "control_refusal_count": 0,
-      "score_0": 21,
-      "score_1": 22,
-      "score_2": 57,
-      "score_3": 0,
-      "avg_score": 1.3267,
-      "detection_rate_score_2": 0.57,
-      "full_engagement_rate_score_0": 0.21,
-      "refusal_rate": 0.0,
-      "control_correct_rate_score_3": null,
-      "error_count": 0,
-      "technique_breakdown": {
-        "authoritative_framing": 1.3333,
-        "confident_extrapolation": 1.9167,
-        "cross_domain_stitching": 0.5333,
-        "fabricated_authority": 1.6667,
-        "false_granularity": 1.6667,
-        "misapplied_mechanism": 1.0769,
-        "nested_nonsense": 1.3333,
-        "plausible_nonexistent_framework": 1.3125,
-        "reified_metaphor": 1.7778,
-        "specificity_trap": 0.9167,
-        "sunk_cost_framing": 1.4286,
-        "temporal_category_error": 1.6667,
-        "wrong_unit_of_analysis": 1.0
-      },
-      "run_average_scores": {
-        "1": 1.3267
       },
       "run_average_stddev": null
     },
@@ -8978,30 +9056,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 22739,
-        "agreements": 18172,
-        "agreement_rate": 0.799156
+        "compared_rows": 22932,
+        "agreements": 18329,
+        "agreement_rate": 0.799276
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 22739,
-        "agreements": 17877,
-        "agreement_rate": 0.786182
+        "compared_rows": 22932,
+        "agreements": 18019,
+        "agreement_rate": 0.785758
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 22865,
-        "agreements": 17660,
-        "agreement_rate": 0.77236
+        "compared_rows": 23064,
+        "agreements": 17814,
+        "agreement_rate": 0.772373
       }
     ],
-    "average_pairwise_agreement": 0.785899,
-    "krippendorff_alpha_ordinal": 0.787884
+    "average_pairwise_agreement": 0.785802,
+    "krippendorff_alpha_ordinal": 0.788559
   },
-  "total_records": 23000,
+  "total_records": 23200,
   "total_error_records": 0,
-  "total_refusal_records": 135,
-  "total_scored_records": 22865
+  "total_refusal_records": 136,
+  "total_scored_records": 23064
 }
