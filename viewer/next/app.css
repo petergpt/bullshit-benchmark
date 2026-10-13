@@ -159,6 +159,7 @@
 
 /* Published consensus provenance; counts refer only to affected answers in scope. */
 .model-identity{display:flex;align-items:baseline;min-width:0;gap:4px}.model-identity .model-name{max-width:100%}.judge-coverage{display:inline-block;flex:none;max-width:100%;width:max-content;white-space:nowrap;border:1px solid #d6c392;background:#f6f0df;color:#70581e;border-radius:3px;padding:1px 4px;font-size:9px;font-weight:500;line-height:1.25}.inspector-main>.judge-coverage{margin-top:9px}.answer-metrics{flex-wrap:wrap}.answer-metrics .judge-coverage{font-size:10px}.next-chart-lab>.judge-coverage{margin-top:3px}
+.refusal-basis-note{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.4;white-space:normal}
 
 .denominator-toggle{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:var(--teal);font-size:12px;cursor:pointer;min-height:30px}.denominator-toggle input{accent-color:var(--teal);margin:0;width:13px;height:13px}.inspector-rate-comparison{font-size:11px;line-height:1.5;color:var(--muted);margin:8px 0}
 @media(max-width:480px){.denominator-toggle{font-size:11px}}

@@ -1,4 +1,4 @@
-import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil } from './data.mjs?v=20260907-dashboard';
+import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil, refusalBasisNote } from './data.mjs?v=20261013-refusal-basis';
 import { renderExplorer } from './charts.mjs?v=20260927-compact-labs';
 import { brandLogo, brandColor, brandName } from './brands.mjs';
 
@@ -382,7 +382,9 @@ async function hydrateAnswers() {
       const text = details.get(row.sample_id);
       if (text === undefined) throw new Error('Response missing.');
       currentAnswerTexts[index] = text;
-      target.innerHTML = text.trim() ? answerMarkup(text) : '<div class="empty-answer">Empty response.</div>';
+      const basis = refusalBasisNote(row);
+      target.innerHTML = (basis ? `<p class="refusal-basis-note">${esc(basis)}</p>` : '')
+        + (text.trim() ? answerMarkup(text) : '<div class="empty-answer">Empty response.</div>');
       $(`[data-copy-answer="${index}"]`).disabled = !text;
     });
   } catch (error) {

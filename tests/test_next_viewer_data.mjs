@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import vm from 'node:vm';
 import test from 'node:test';
-import { classify, summarizeRows, groupModels, modelBase, modelLabel, flattenQuestions, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil } from '../viewer/next/data.mjs';
+import { classify, summarizeRows, groupModels, modelBase, modelLabel, flattenQuestions, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil, refusalBasisNote } from '../viewer/next/data.mjs';
 
 const root = new URL('../', import.meta.url);
 let importId = 0;
@@ -20,7 +20,7 @@ vm.runInContext(currentHtml.slice(currentHtml.indexOf('function judgeScore('), c
 // Published CSVs and immutable viewer rows must agree after the approved repair.
 const SNAPSHOTS = {
   v1: { rows: 11220, models: 204, twoJudgeAnswers: 20, recentModel: 'openai/gpt-6-sol@reasoning=none' },
-  v2: { rows: 23200, models: 232, twoJudgeAnswers: 132, recentModel: 'mistralai/mistral-large-4-0@reasoning=none' },
+  v2: { rows: 23400, models: 234, twoJudgeAnswers: 139, recentModel: 'mistralai/mistral-large-4-0@reasoning=none' },
 };
 
 async function withFiles(fn, rewrite = bytes => bytes, virtualFiles = new Map()) {
@@ -97,6 +97,39 @@ test('score buckets, missing grades, refusals and the exclusion denominator', ()
   assert.equal(excluded.refusalRate, 20);
   assert.equal(excluded.refusalDisplayRate, 0);
   assert.equal(excluded.rateRows, 4);
+});
+
+test('answer detail distinguishes user-directed empty-output classification from native refusal', async () => {
+  const app = (await read('viewer/next/app.mjs')).toString();
+  const hydration = app.slice(app.indexOf('function answerMarkup('), app.indexOf('function renderView('));
+  const placeholder = '[Model returned an empty response.]';
+  const manual = { sample_id: 'manual', response_refusal: true, response_outcome: 'refusal',
+    response_refusal_basis: 'user_directed_empty_output', response_native_finish_reason: 'completed',
+    consensus_score: null };
+  const native = { sample_id: 'native', response_refusal: true, response_outcome: 'refusal',
+    response_native_finish_reason: 'refusal', consensus_score: null };
+  for (const row of [manual, native]) {
+    const before = structuredClone(row), target = { innerHTML: '' }, copy = { disabled: true };
+    const context = vm.createContext({
+      state: { question: 'q', compare: ['example/model'], view: 'responses' }, answerGeneration: 0,
+      answerRow: () => row, refusalBasisNote,
+      dataset: { getDetails: async () => new Map([[row.sample_id, placeholder]]) },
+      $: selector => selector.startsWith('#answerText') ? target : copy,
+      esc: value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      console,
+    });
+    await vm.runInContext(`${hydration}\nhydrateAnswers();`, context);
+    assert.equal(target.innerHTML.includes('refusal-basis-note'), row === manual);
+    if (row === manual) {
+      assert.match(target.innerHTML, /counted as refusal by user instruction/);
+      assert.match(target.innerHTML, /no native refusal marker/);
+    }
+    assert.ok(target.innerHTML.includes(placeholder), 'preserve the recorded missing output');
+    assert.equal(classify(row), 'refusal');
+    assert.equal(summarizeRows([row]).scored, 0);
+    assert.deepEqual(row, before, 'displaying provenance does not rewrite outcome or native evidence');
+  }
+  assert.equal(refusalBasisNote({ ...manual, response_refusal: false }), '');
 });
 
 test('refusal exclusion removes only candidate refusals and preserves failed attempts and score evidence', () => {

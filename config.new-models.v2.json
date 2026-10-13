@@ -1,24 +1,12 @@
 {
   "collect": {
     "questions": "questions.v2.json",
-    "models": [
-      "meta/muse-wonder"
-    ],
+    "models": [],
     "models_file": "",
     "model_providers": {
       "*": "openrouter"
     },
-    "model_request_overrides": {
-      "meta/muse-wonder": {
-        "provider": {
-          "order": [
-            "Meta"
-          ],
-          "allow_fallbacks": false,
-          "require_parameters": true
-        }
-      }
-    },
+    "model_request_overrides": {},
     "num_runs": 1,
     "parallelism": 32,
     "techniques": "plausible_nonexistent_framework,misapplied_mechanism,authoritative_framing,false_granularity,wrong_unit_of_analysis,temporal_category_error,reified_metaphor,cross_domain_stitching,specificity_trap,fabricated_authority,sunk_cost_framing,confident_extrapolation,nested_nonsense",
@@ -27,12 +15,7 @@
     "response_reasoning_effort": "off",
     "store_request_messages": false,
     "store_response_raw": true,
-    "model_reasoning_efforts": {
-      "meta/muse-wonder": [
-        "minimal",
-        "max"
-      ]
-    },
+    "model_reasoning_efforts": {},
     "shuffle_tasks": true,
     "max_inflight_per_model": 16,
     "retries": 3,

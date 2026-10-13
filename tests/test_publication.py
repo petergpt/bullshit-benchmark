@@ -329,6 +329,18 @@ class PublicationTests(unittest.TestCase):
                 with self.subTest(changes=changes), self.assertRaises(ValueError):
                     p.validate_dataset(root)
 
+    def test_user_directed_refusal_basis_must_survive_publication(self):
+        response = {'sample_id': 's', 'model': 'example/model', 'question_id': 'q',
+                    'run_index': 1, 'response_text': '', 'response_refusal': True,
+                    'response_outcome': 'refusal', 'response_native_finish_reason': 'completed',
+                    'response_refusal_basis': 'user_directed_empty_output'}
+        aggregate = {**response, 'consensus_score': None, 'judge_valid_count': 0,
+                     'judge_expected_count': 3, 'judge_coverage': '0/3 judges'}
+        p.validate_judge_panel(response, aggregate, 'Fixture')
+        for basis in (None, 'provider_declared'):
+            with self.subTest(basis=basis), self.assertRaisesRegex(ValueError, 'refusal basis'):
+                p.validate_judge_panel(response, {**aggregate, 'response_refusal_basis': basis}, 'Fixture')
+
     def test_refusal_preserves_genuine_votes_without_scored_coverage(self):
         response = {'sample_id': 's', 'model': 'example/model', 'question_id': 'q',
                     'run_index': 1, 'response_text': '', 'response_refusal': True,

@@ -1,20 +1,23 @@
 {
-  "generated_at_utc": "2026-10-13T09:33:03Z",
+  "generated_at_utc": "2026-10-13T17:23:41Z",
   "publish_mode": "supplemental",
   "window_days": 7,
-  "window_start_utc": "2026-10-06T09:33:03Z",
+  "window_start_utc": "2026-10-06T17:23:41Z",
   "models": [
     "anthropic/claude-haiku-5.5@reasoning=low",
     "anthropic/claude-haiku-5.5@reasoning=max",
+    "meta/muse-wonder@reasoning=max",
+    "meta/muse-wonder@reasoning=minimal",
     "mistralai/mistral-large-4-0@reasoning=high",
     "mistralai/mistral-large-4-0@reasoning=none"
   ],
   "model_bases": [
     "anthropic/claude-haiku-5.5",
+    "meta/muse-wonder",
     "mistralai/mistral-large-4-0"
   ],
-  "model_count": 4,
-  "model_base_count": 2,
+  "model_count": 6,
+  "model_base_count": 3,
   "model_first_seen_utc": {
     "ai21/jamba-large-1.7@reasoning=default": "2026-03-18T18:06:12Z",
     "anthropic/claude-3-haiku@reasoning=default": "2026-03-01T01:51:28Z",
@@ -105,6 +108,8 @@
     "meta-llama/llama-4-scout@reasoning=default": "2026-03-07T20:22:06Z",
     "meta/muse-spark-1.2@reasoning=minimal": "2026-08-24T21:42:36Z",
     "meta/muse-spark-1.2@reasoning=xhigh": "2026-08-24T21:42:36Z",
+    "meta/muse-wonder@reasoning=max": "2026-10-13T08:19:32Z",
+    "meta/muse-wonder@reasoning=minimal": "2026-10-13T08:19:32Z",
     "minimax/minimax-m2.5@reasoning=high": "2026-03-01T01:51:28Z",
     "minimax/minimax-m2.5@reasoning=low": "2026-03-01T01:51:28Z",
     "minimax/minimax-m2.7@reasoning=high": "2026-04-07T16:18:34Z",
@@ -303,6 +308,7 @@
     "meta-llama/llama-4-maverick": "2026-03-07T20:22:06Z",
     "meta-llama/llama-4-scout": "2026-03-07T20:22:06Z",
     "meta/muse-spark-1.2": "2026-08-24T21:42:36Z",
+    "meta/muse-wonder": "2026-10-13T08:19:32Z",
     "minimax/minimax-m2.5": "2026-03-01T01:51:28Z",
     "minimax/minimax-m2.7": "2026-04-07T16:18:34Z",
     "minimax/minimax-m3": "2026-06-01T05:32:08Z",

@@ -2733,6 +2733,84 @@
       "run_average_stddev": null
     },
     {
+      "model": "meta/muse-wonder@reasoning=minimal",
+      "count": 100,
+      "scored_count": 99,
+      "answered_count": 99,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 1,
+      "control_refusal_count": 0,
+      "score_0": 20,
+      "score_1": 22,
+      "score_2": 57,
+      "score_3": 0,
+      "avg_score": 1.3367,
+      "detection_rate_score_2": 0.57,
+      "full_engagement_rate_score_0": 0.2,
+      "refusal_rate": 0.01,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.3333,
+        "confident_extrapolation": 1.9167,
+        "cross_domain_stitching": 0.5333,
+        "fabricated_authority": 1.8,
+        "false_granularity": 1.6667,
+        "misapplied_mechanism": 1.0769,
+        "nested_nonsense": 1.3333,
+        "plausible_nonexistent_framework": 1.3125,
+        "reified_metaphor": 1.7778,
+        "specificity_trap": 0.9167,
+        "sunk_cost_framing": 1.4286,
+        "temporal_category_error": 1.6667,
+        "wrong_unit_of_analysis": 1.0
+      },
+      "run_average_scores": {
+        "1": 1.3367
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "meta/muse-wonder@reasoning=max",
+      "count": 100,
+      "scored_count": 99,
+      "answered_count": 99,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 1,
+      "control_refusal_count": 0,
+      "score_0": 18,
+      "score_1": 29,
+      "score_2": 52,
+      "score_3": 0,
+      "avg_score": 1.3333,
+      "detection_rate_score_2": 0.52,
+      "full_engagement_rate_score_0": 0.18,
+      "refusal_rate": 0.01,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.4444,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 0.4,
+        "fabricated_authority": 1.9,
+        "false_granularity": 1.3333,
+        "misapplied_mechanism": 1.3077,
+        "nested_nonsense": 1.2381,
+        "plausible_nonexistent_framework": 1.25,
+        "reified_metaphor": 1.6667,
+        "specificity_trap": 1.0,
+        "sunk_cost_framing": 1.3333,
+        "temporal_category_error": 1.7222,
+        "wrong_unit_of_analysis": 0.7333
+      },
+      "run_average_scores": {
+        "1": 1.3333
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "x-ai/grok-4.5@reasoning=low",
       "count": 100,
       "scored_count": 100,
@@ -9056,30 +9134,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 22932,
-        "agreements": 18329,
-        "agreement_rate": 0.799276
+        "compared_rows": 23123,
+        "agreements": 18474,
+        "agreement_rate": 0.798945
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 22932,
-        "agreements": 18019,
-        "agreement_rate": 0.785758
+        "compared_rows": 23123,
+        "agreements": 18166,
+        "agreement_rate": 0.785625
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 23064,
-        "agreements": 17814,
-        "agreement_rate": 0.772373
+        "compared_rows": 23262,
+        "agreements": 17963,
+        "agreement_rate": 0.772204
       }
     ],
-    "average_pairwise_agreement": 0.785802,
-    "krippendorff_alpha_ordinal": 0.788559
+    "average_pairwise_agreement": 0.785591,
+    "krippendorff_alpha_ordinal": 0.787948
   },
-  "total_records": 23200,
+  "total_records": 23400,
   "total_error_records": 0,
-  "total_refusal_records": 136,
-  "total_scored_records": 23064
+  "total_refusal_records": 138,
+  "total_scored_records": 23262
 }

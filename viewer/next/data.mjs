@@ -97,6 +97,10 @@ export function usesTwoJudgeFallback(row) {
 export function judgeCoverageNote(count) {
   return count > 0 ? `2/3 judges · ${count} answer${count === 1 ? '' : 's'}` : '';
 }
+export function refusalBasisNote(row) {
+  return isRefusal(row) && row?.response_refusal_basis === 'user_directed_empty_output'
+    ? 'Empty output counted as refusal by user instruction. The provider returned no native refusal marker.' : '';
+}
 export function summarizeRows(rows, { excludeRefusals = false, judge = 'consensus' } = {}) {
   const counts = { green: 0, amber: 0, red: 0, refusal: 0, error: 0 };
   const scores = [], tokens = [], reasoningTokens = [], outputTokens = [], costs = [];

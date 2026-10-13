@@ -290,6 +290,8 @@ def validate_judge_panel(response, row, label, legacy_error_sample_ids=frozenset
     refused = response_is_refusal(response)
     if response_is_refusal(row) != refused:
         raise ValueError(f'{label} response/aggregate refusal classification differs: {sample}')
+    if response.get('response_refusal_basis') != row.get('response_refusal_basis'):
+        raise ValueError(f'{label} response/aggregate refusal basis differs: {sample}')
     for source in (response, row):
         outcome = source.get('response_outcome')
         if outcome in ('response', 'refusal') and (outcome == 'refusal') != response_is_refusal(source):

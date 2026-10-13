@@ -347,6 +347,24 @@ class RefusalOutcomeTests(unittest.TestCase):
         self.assertIsNone(grade["judge_score"])
         self.assertIn("grading_skipped=response_refusal", grade["judge_warnings"])
 
+    def test_user_directed_empty_refusal_preserves_provenance_without_native_marker(self):
+        row = {"sample_id": "sample", "model": "example/model", "question_id": "q1",
+               "question": "Question?", "response_text": "", "response_refusal": True,
+               "response_outcome": "refusal", "response_native_finish_reason": "completed",
+               "response_refusal_basis": "user_directed_empty_output", "error": ""}
+        grade = MODULE.grade_one(
+            row, clients=None, judge_model="example/judge", judge_provider="openrouter",
+            judge_system_prompt="Judge.", judge_user_template="{question}\n{response}",
+            judge_user_template_control="", judge_no_hint=False, judge_temperature=None,
+            judge_reasoning_effort="off", judge_max_tokens=100, judge_output_retries=0,
+            store_judge_response_raw=False, retries=1, pause_seconds=0, dry_run=False)
+        self.assertEqual(grade["error"], "")
+        self.assertIsNone(grade["judge_score"])
+        self.assertEqual(grade["response_refusal_basis"], "user_directed_empty_output")
+        self.assertEqual(grade["response_native_finish_reason"], "completed")
+        self.assertIn("explicit user instruction", grade["judge_justification"])
+        self.assertNotIn("Provider-declared", grade["judge_justification"])
+
 
 if __name__ == "__main__":
     unittest.main()

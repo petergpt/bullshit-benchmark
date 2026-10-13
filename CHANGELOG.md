@@ -2,6 +2,16 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.5] - 2026-10-13
+
+### Added
+- Published Muse Wonder at `minimal`/`max` reasoning in V2, bringing V2 to 234 variants and 23,400 outcomes. V1 and all previously published rows are unchanged.
+- One persistently empty API output per Muse variant is counted as an unscored refusal by explicit user instruction. Both variants retain all 100 questions, with 99 substantive answers each. Published provenance and answer details distinguish this classification from a provider-declared refusal; native API evidence is preserved.
+- Folded both Muse variants into the durable V2 config and removed them from the catch-up queue. Seven substantive answers use two valid judge votes after the third judge exhausted its output attempts; missing votes remain null.
+
+### Fixed
+- The earlier Muse placeholder score remains withdrawn. Empty output is never graded or assigned a synthetic zero. The explicit two-sample refusal adjudication does not change the default collection-error treatment for other empty outputs.
+
 ## [2.1.4] - 2026-10-13
 
 ### Added

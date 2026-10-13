@@ -3906,6 +3906,8 @@ def grade_one(
         "response_reasoning_effort": response_row.get("response_reasoning_effort"),
         "response_outcome": response_row.get("response_outcome", ""),
         "response_refusal": response_is_refusal(response_row),
+        **({"response_refusal_basis": response_row["response_refusal_basis"]}
+           if response_row.get("response_refusal_basis") else {}),
         "response_native_finish_reason": response_row.get(
             "response_native_finish_reason"
         ),
@@ -3948,7 +3950,9 @@ def grade_one(
         if grade_row["response_refusal"]:
             grade_row["response_outcome"] = "refusal"
             grade_row["judge_justification"] = (
-                "Provider-declared refusal; judge scoring skipped."
+                "Empty output classified as refusal by explicit user instruction; judge scoring skipped."
+                if response_row.get("response_refusal_basis") == "user_directed_empty_output"
+                else "Provider-declared refusal; judge scoring skipped."
             )
             grade_row["judge_warnings"].append("grading_skipped=response_refusal")
             return grade_row
@@ -5516,6 +5520,8 @@ def align_grade_rows(grade_sets: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "response_reasoning_effort": base.get("response_reasoning_effort"),
             "response_outcome": base.get("response_outcome", ""),
             "response_refusal": response_is_refusal(base),
+            **({"response_refusal_basis": base["response_refusal_basis"]}
+               if base.get("response_refusal_basis") else {}),
             "response_native_finish_reason": base.get(
                 "response_native_finish_reason"
             ),
@@ -6454,6 +6460,8 @@ def run_report(args: argparse.Namespace) -> int:
                     "response_native_finish_reason"
                 ),
                 "response_refusal": response_is_refusal(response_row),
+                **({"response_refusal_basis": response_row["response_refusal_basis"]}
+                   if response_row.get("response_refusal_basis") else {}),
                 "response_outcome": (
                     "refusal"
                     if response_is_refusal(response_row)
