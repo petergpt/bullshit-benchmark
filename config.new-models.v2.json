@@ -1,30 +1,74 @@
 {
   "collect": {
     "questions": "questions.v2.json",
-    "models": [],
+    "models": [
+      "meta/muse-wonder",
+      "anthropic/claude-haiku-5.5",
+      "mistralai/mistral-large-4-0"
+    ],
     "models_file": "",
     "model_providers": {
       "*": "openrouter"
     },
-    "model_request_overrides": {},
+    "model_request_overrides": {
+      "meta/muse-wonder": {
+        "provider": {
+          "order": [
+            "Meta"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "anthropic/claude-haiku-5.5": {
+        "provider": {
+          "order": [
+            "Anthropic"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "mistralai/mistral-large-4-0": {
+        "provider": {
+          "order": [
+            "Mistral"
+          ],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      }
+    },
     "num_runs": 1,
-    "parallelism": 48,
+    "parallelism": 32,
     "techniques": "plausible_nonexistent_framework,misapplied_mechanism,authoritative_framing,false_granularity,wrong_unit_of_analysis,temporal_category_error,reified_metaphor,cross_domain_stitching,specificity_trap,fabricated_authority,sunk_cost_framing,confident_extrapolation,nested_nonsense",
     "temperature": null,
     "omit_response_system_prompt": true,
     "response_reasoning_effort": "off",
     "store_request_messages": false,
     "store_response_raw": true,
-    "model_reasoning_efforts": {},
+    "model_reasoning_efforts": {
+      "meta/muse-wonder": [
+        "max"
+      ],
+      "anthropic/claude-haiku-5.5": [
+        "max"
+      ],
+      "mistralai/mistral-large-4-0": [
+        "none",
+        "high"
+      ]
+    },
     "shuffle_tasks": true,
-    "max_inflight_per_model": 3,
+    "max_inflight_per_model": 16,
     "retries": 3,
     "rate_limit_requeue": true,
     "rate_limit_cooldown_seconds": 20.0,
     "rate_limit_cooldown_max_seconds": 240.0,
     "rate_limit_cooldown_jitter_seconds": 1.5,
     "rate_limit_max_attempts": 20,
-    "checkpoint_fsync_every": 10
+    "checkpoint_fsync_every": 10,
+    "timeout_seconds": 600
   },
   "grade": {
     "judge_model": "anthropic/claude-sonnet-4.6",
@@ -41,7 +85,8 @@
     "judge_reasoning_effort": "medium",
     "judge_max_tokens": 0,
     "store_judge_response_raw": true,
-    "judge_no_hint": true
+    "judge_no_hint": true,
+    "judge_output_retries": 2
   },
   "grade_panel": {
     "judge_models": [
@@ -53,6 +98,7 @@
     "consensus_method": "mean",
     "parallel_primary_judges": true,
     "tiebreaker_model": "",
-    "parallelism": 20
+    "parallelism": 20,
+    "judge_output_retries": 2
   }
 }

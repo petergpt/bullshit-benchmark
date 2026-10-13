@@ -21,6 +21,7 @@ const PROVIDERS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', 
   baidu: 'Baidu', 'prime-intellect': 'Prime Intellect', 'z-ai': 'Z.AI', stealth: 'Stealth',
   nvidia: 'NVIDIA', ai21: 'AI21', poolside: 'Poolside', cohere: 'Cohere' };
 const ALIASES = { 'ox-alpha': 'OX Alpha', 'mistral-large-2512': 'Mistral Large 3',
+  'mistral-large-4-0': 'Mistral Large 4',
   'mistral-small-2603': 'Mistral Small 4', 'grok-4.20-beta': 'Grok 4.20',
   'grok-4.20-multi-agent-beta': 'Grok 4.20 Multi-Agent', 'o3': 'o3',
   'o4-mini': 'o4-mini', 'o4mini': 'o4-mini' };

@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.3] - 2026-10-13
+
+### Added
+- Added Muse Wonder at `minimal` reasoning and Claude Haiku 5.5 at `low` reasoning to V2: 200 responses, bringing V2 to 230 variants and 23,000 responses. V1 is unchanged.
+- Added verified launch and parameter metadata for Muse Wonder, Haiku 5.5 and Mistral Large 4, and corrected the Mistral Large 4 dashboard label.
+- The published additions have zero collection errors, aggregate errors or candidate refusals. Seven answers use two valid judges after the third exhausted three output attempts; missing votes remain null. Incomplete variants remain in the V2 catch-up queue.
+
 ## [2.1.2] - 2026-09-29
 
 ### Added
