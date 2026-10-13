@@ -112,7 +112,8 @@
       "qwen/qwen3.8-max",
       "anthropic/claude-haiku-5.5",
       "mistralai/mistral-large-4-0",
-      "meta/muse-wonder"
+      "meta/muse-wonder",
+      "google/gemini-4-argon"
     ],
     "models_file": "",
     "model_providers": {
@@ -427,7 +428,8 @@
         "none",
         "high"
       ],
-      "meta/muse-wonder": ["minimal", "max"]
+      "meta/muse-wonder": ["minimal", "max"],
+      "google/gemini-4-argon": ["low", "high"]
     },
     "shuffle_tasks": true,
     "max_inflight_per_model": 2,
@@ -690,6 +692,13 @@
       "meta/muse-wonder": {
         "provider": {
           "order": ["Meta"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-4-argon": {
+        "provider": {
+          "order": ["Google"],
           "allow_fallbacks": false,
           "require_parameters": true
         }

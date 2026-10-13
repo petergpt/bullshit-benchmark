@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.6] - 2026-10-13
+
+### Added
+- Published Gemini 4 Argon (`google/gemini-4-argon`) in V2 at its supported low/high reasoning extremes, with strict Google routing and no provider fallbacks. Both variants have 100 substantive answers and no refusals or collection errors: clear pushback is 66% at low and 65% at high.
+- V2 now contains 236 variants and 23,600 outcomes. All earlier responses and grades are preserved; V1 is unchanged. Six new answers use two valid judges after the third exhausted three output attempts, with missing votes retained as null.
+- Added primary-source launch and parameter metadata, folded both variants into the durable V2 config, and cleared the catch-up queue. Launch metadata distinguishes October 13 public API availability from the earlier restricted announcement; undisclosed size and licensing information remains unknown.
+
 ## [2.1.5] - 2026-10-13
 
 ### Added

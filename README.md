@@ -7,12 +7,12 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 **[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-Updated **October 13, 2026**. The latest completed V2 results add **Muse Wonder** at minimal/maximum reasoning, **Claude Haiku 5.5** at low/maximum reasoning and **Mistral Large 4** at none/high reasoning. Each variant covers all 100 V2 questions. Muse has one empty output per variant classified as an unscored refusal by explicit user instruction; the provider did not declare a refusal. V1 is unchanged.
+Updated **October 13, 2026**. The latest completed V2 results add **Gemini 4 Argon** at low/high reasoning, **Muse Wonder** at minimal/maximum reasoning, **Claude Haiku 5.5** at low/maximum reasoning and **Mistral Large 4** at none/high reasoning. Each variant covers all 100 V2 questions. Muse has one empty output per variant classified as an unscored refusal by explicit user instruction; the provider did not declare a refusal. V1 is unchanged.
 
 | Suite | Questions | Model/reasoning variants | Responses |
 | --- | ---: | ---: | ---: |
 | V1 | 55 | 204 | 11,220 |
-| V2 | 100 | 234 | 23,400 |
+| V2 | 100 | 236 | 23,600 |
 
 ## Explore
 
