@@ -128,18 +128,6 @@ function drawImageContained(ctx, image, x, y, width, height) {
   const w = image.naturalWidth * ratio, h = image.naturalHeight * ratio;
   ctx.drawImage(image, x + (width - w) / 2, y + (height - h) / 2, w, h);
 }
-function drawPin(ctx, x, y) {
-  ctx.save();
-  ctx.translate(x, y); ctx.rotate(-Math.PI / 5);
-  ctx.strokeStyle = PALETTE.forest; ctx.fillStyle = PALETTE.forest;
-  ctx.lineWidth = 1.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-3.5, -5); ctx.lineTo(3.5, -5); ctx.lineTo(2.5, 0);
-  ctx.lineTo(4.5, 2); ctx.lineTo(-4.5, 2); ctx.lineTo(-2.5, 0); ctx.closePath();
-  ctx.fill();
-  ctx.beginPath(); ctx.moveTo(0, 2); ctx.lineTo(0, 7); ctx.stroke();
-  ctx.restore();
-}
 function denominator(model, excludeRefusals) {
   return Math.max(0, count(model.total) - (excludeRefusals ? count(model.refusal) : 0));
 }
@@ -459,7 +447,7 @@ function drawHeader(ctx, { width, height, version, domain, mascot }) {
  * Export the supplied ranking rows, in their supplied order. No data is fetched
  * apart from the same-origin mascot and provider images. Neither DOM nor UI
  * state is changed. `width` is in CSS pixels; returned dimensions are PNG pixels.
- * Highlighted IDs add an outline, pin and bold name without dimming other rows.
+ * Highlighted rows use a tinted background, an outline and a bold name.
  * The checkbox controls bar composition; the Clear score always excludes refusals.
  * `filterLabel` records any additional provider, reasoning or selection filters.
  * @returns {Promise<{blob: Blob, filename: string, width: number, height: number}>}
@@ -504,7 +492,7 @@ export async function exportRankingsPng({
   if (filters) fittedText(ctx, filters, pad, headerHeight + 17, innerWidth, { size: 12, minimum: 10, weight: 600, color: PALETTE.teal });
 
   rectangle(ctx, pad, tableY, innerWidth, tableHeadHeight, '#e7ebdf', 4);
-  text(ctx, '#', pad + 29, tableY + 17, { size: 12, weight: 500, color: PALETTE.muted, align: 'center' });
+  text(ctx, '#', pad + rankWidth / 2, tableY + 17, { size: 12, weight: 500, color: PALETTE.muted, align: 'center' });
   text(ctx, 'Model', modelX + 3, tableY + 17, { size: 12, weight: 500, color: PALETTE.muted });
   text(ctx, 'Reasoning', effortX + 8, tableY + 17, { size: 12, weight: 500, color: PALETTE.muted });
   text(ctx, 'Clear', rateX + rateWidth - 18, tableY + 17, { size: 12, weight: 500, color: PALETTE.muted, align: 'right' });
@@ -523,9 +511,8 @@ export async function exportRankingsPng({
     if (pinned) {
       roundPath(ctx, pad + 1, rowY + 1, innerWidth - 2, ROW_HEIGHT - 2, 4);
       ctx.strokeStyle = PALETTE.teal; ctx.lineWidth = 1.5; ctx.stroke();
-      drawPin(ctx, pad + 10, centerY - 1);
     }
-    text(ctx, model.rank ?? index + 1, pad + 30, centerY, { size: 13, color: pinned ? PALETTE.forest : PALETTE.muted, weight: pinned ? 600 : 400, align: 'center' });
+    text(ctx, model.rank ?? index + 1, pad + rankWidth / 2, centerY, { size: 13, color: pinned ? PALETTE.forest : PALETTE.muted, weight: pinned ? 600 : 400, align: 'center' });
     const companyImage = logos.get(model.org);
     if (companyImage) drawImageContained(ctx, companyImage, modelX + 3, centerY - 11, 22, 22);
     else {
