@@ -113,7 +113,14 @@
       "anthropic/claude-haiku-5.5",
       "mistralai/mistral-large-4-0",
       "meta/muse-wonder",
-      "google/gemini-4-argon"
+      "google/gemini-4-argon",
+      "tencent/hy4",
+      "meta/muse-ember",
+      "google/gemini-4-carbon",
+      "anthropic/claude-fable-5.2",
+      "x-ai/grok-4.7",
+      "openai/gpt-6.1-terra",
+      "moonshotai/kimi-k3.1-pro"
     ],
     "models_file": "",
     "model_providers": {
@@ -429,7 +436,14 @@
         "high"
       ],
       "meta/muse-wonder": ["minimal", "max"],
-      "google/gemini-4-argon": ["low", "high"]
+      "google/gemini-4-argon": ["low", "high"],
+      "tencent/hy4": ["none", "high"],
+      "meta/muse-ember": ["minimal", "max"],
+      "google/gemini-4-carbon": ["low", "high"],
+      "anthropic/claude-fable-5.2": ["low", "max"],
+      "x-ai/grok-4.7": ["low", "xhigh"],
+      "openai/gpt-6.1-terra": ["none", "max"],
+      "moonshotai/kimi-k3.1-pro": ["none", "max"]
     },
     "shuffle_tasks": true,
     "max_inflight_per_model": 2,
@@ -699,6 +713,55 @@
       "google/gemini-4-argon": {
         "provider": {
           "order": ["Google"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "tencent/hy4": {
+        "provider": {
+          "order": ["Tencent"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "meta/muse-ember": {
+        "provider": {
+          "order": ["Meta"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-4-carbon": {
+        "provider": {
+          "order": ["google-vertex/us", "google-vertex/eu"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "anthropic/claude-fable-5.2": {
+        "provider": {
+          "order": ["anthropic"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "x-ai/grok-4.7": {
+        "provider": {
+          "order": ["xAI"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6.1-terra": {
+        "provider": {
+          "order": ["OpenAI"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "moonshotai/kimi-k3.1-pro": {
+        "provider": {
+          "order": ["Moonshot AI"],
           "allow_fallbacks": false,
           "require_parameters": true
         }

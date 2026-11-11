@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.7] - 2026-11-11
+
+### Added
+- Published 1,400 V2 outcomes across seven models. Claude Fable 5.2 ran at low/max, Gemini 4 Carbon at low/high, Grok 4.7 at low/xhigh, Kimi K3.1 Pro and GPT-6.1 Terra at none/max, Muse Ember at minimal/max, and Tencent Hy4 at none/high.
+- V2 now includes 250 variants and 25,000 outcomes. The three-judge panel produced 45 reduced panels after same-judge retries. All fourteen variants cover 100 questions with zero collection errors.
+- The new outcomes include 6 unscored refusals. Meta returned empty content on `sw_fa_02` at both Ember settings. Both are marked as refusals by explicit user instruction, and their answer details identify the classification and preserve the native evidence.
+
 ## [2.1.6] - 2026-10-13
 
 ### Added
