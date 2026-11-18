@@ -159,6 +159,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "qwen/qwen4-max@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 2,
+      "score_1": 8,
+      "score_2": 90,
+      "score_3": 0,
+      "avg_score": 1.8667,
+      "detection_rate_score_2": 0.9,
+      "full_engagement_rate_score_0": 0.02,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 2.0,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.5333,
+        "fabricated_authority": 1.9394,
+        "false_granularity": 2.0,
+        "misapplied_mechanism": 1.7949,
+        "nested_nonsense": 1.8571,
+        "plausible_nonexistent_framework": 1.8542,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 1.6667,
+        "sunk_cost_framing": 1.8095,
+        "temporal_category_error": 2.0,
+        "wrong_unit_of_analysis": 1.9333
+      },
+      "run_average_scores": {
+        "1": 1.8667
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "anthropic/claude-sonnet-4.6@reasoning=none",
       "count": 100,
       "scored_count": 100,
@@ -233,6 +272,45 @@
       },
       "run_average_scores": {
         "1": 1.8433
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "google/gemini-4-hydrogen@reasoning=xhigh",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 2,
+      "score_1": 8,
+      "score_2": 90,
+      "score_3": 0,
+      "avg_score": 1.84,
+      "detection_rate_score_2": 0.9,
+      "full_engagement_rate_score_0": 0.02,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.3704,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.6,
+        "fabricated_authority": 2.0,
+        "false_granularity": 1.6111,
+        "misapplied_mechanism": 1.9231,
+        "nested_nonsense": 1.9524,
+        "plausible_nonexistent_framework": 1.8958,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 1.8333,
+        "sunk_cost_framing": 2.0,
+        "temporal_category_error": 2.0,
+        "wrong_unit_of_analysis": 1.6667
+      },
+      "run_average_scores": {
+        "1": 1.84
       },
       "run_average_stddev": null
     },
@@ -737,6 +815,45 @@
         "sunk_cost_framing": 1.8571,
         "temporal_category_error": 1.5556,
         "wrong_unit_of_analysis": 1.6
+      },
+      "run_average_scores": {
+        "1": 1.67
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "qwen/qwen4-max@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 11,
+      "score_1": 10,
+      "score_2": 79,
+      "score_3": 0,
+      "avg_score": 1.67,
+      "detection_rate_score_2": 0.79,
+      "full_engagement_rate_score_0": 0.11,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.8519,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.5333,
+        "fabricated_authority": 1.9697,
+        "false_granularity": 2.0,
+        "misapplied_mechanism": 1.5385,
+        "nested_nonsense": 1.7619,
+        "plausible_nonexistent_framework": 1.5625,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.8333,
+        "sunk_cost_framing": 1.9048,
+        "temporal_category_error": 1.8333,
+        "wrong_unit_of_analysis": 1.3333
       },
       "run_average_scores": {
         "1": 1.67
@@ -1641,6 +1758,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "qwen/qwen3.8-flash@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 16,
+      "score_1": 14,
+      "score_2": 70,
+      "score_3": 0,
+      "avg_score": 1.5367,
+      "detection_rate_score_2": 0.7,
+      "full_engagement_rate_score_0": 0.16,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.5926,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.7333,
+        "fabricated_authority": 1.8182,
+        "false_granularity": 1.7222,
+        "misapplied_mechanism": 1.8205,
+        "nested_nonsense": 1.1429,
+        "plausible_nonexistent_framework": 1.4167,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.8333,
+        "sunk_cost_framing": 1.3333,
+        "temporal_category_error": 1.6111,
+        "wrong_unit_of_analysis": 1.2667
+      },
+      "run_average_scores": {
+        "1": 1.5367
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "openai/gpt-6.1-sol@reasoning=low",
       "count": 100,
       "scored_count": 100,
@@ -1871,6 +2027,84 @@
       },
       "run_average_scores": {
         "1": 1.5
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "qwen/qwen3.8-omni-flash@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 17,
+      "score_1": 13,
+      "score_2": 70,
+      "score_3": 0,
+      "avg_score": 1.4967,
+      "detection_rate_score_2": 0.7,
+      "full_engagement_rate_score_0": 0.17,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.7037,
+        "confident_extrapolation": 2.0,
+        "cross_domain_stitching": 1.7333,
+        "fabricated_authority": 1.8182,
+        "false_granularity": 1.6667,
+        "misapplied_mechanism": 1.9231,
+        "nested_nonsense": 0.9524,
+        "plausible_nonexistent_framework": 1.4792,
+        "reified_metaphor": 1.3333,
+        "specificity_trap": 0.2917,
+        "sunk_cost_framing": 1.3333,
+        "temporal_category_error": 1.7778,
+        "wrong_unit_of_analysis": 1.2
+      },
+      "run_average_scores": {
+        "1": 1.4967
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "google/gemini-4-hydrogen@reasoning=low",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 11,
+      "score_1": 27,
+      "score_2": 62,
+      "score_3": 0,
+      "avg_score": 1.4967,
+      "detection_rate_score_2": 0.62,
+      "full_engagement_rate_score_0": 0.11,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.2222,
+        "confident_extrapolation": 1.6666,
+        "cross_domain_stitching": 1.2667,
+        "fabricated_authority": 1.7273,
+        "false_granularity": 1.3333,
+        "misapplied_mechanism": 1.7179,
+        "nested_nonsense": 1.3333,
+        "plausible_nonexistent_framework": 1.3958,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 1.0,
+        "sunk_cost_framing": 1.7143,
+        "temporal_category_error": 1.7222,
+        "wrong_unit_of_analysis": 1.7333
+      },
+      "run_average_scores": {
+        "1": 1.4967
       },
       "run_average_stddev": null
     },
@@ -2456,6 +2690,45 @@
       },
       "run_average_scores": {
         "1": 1.4411
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "openai/gpt-6.2-astra@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 10,
+      "score_1": 35,
+      "score_2": 55,
+      "score_3": 0,
+      "avg_score": 1.44,
+      "detection_rate_score_2": 0.55,
+      "full_engagement_rate_score_0": 0.1,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.1111,
+        "confident_extrapolation": 1.6667,
+        "cross_domain_stitching": 1.2,
+        "fabricated_authority": 1.8788,
+        "false_granularity": 1.5,
+        "misapplied_mechanism": 1.641,
+        "nested_nonsense": 1.2381,
+        "plausible_nonexistent_framework": 1.4167,
+        "reified_metaphor": 1.8889,
+        "specificity_trap": 0.7917,
+        "sunk_cost_framing": 1.2857,
+        "temporal_category_error": 1.8889,
+        "wrong_unit_of_analysis": 1.3334
+      },
+      "run_average_scores": {
+        "1": 1.44
       },
       "run_average_stddev": null
     },
@@ -3240,6 +3513,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "openai/gpt-6.2-astra@reasoning=low",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 11,
+      "score_1": 40,
+      "score_2": 49,
+      "score_3": 0,
+      "avg_score": 1.3533,
+      "detection_rate_score_2": 0.49,
+      "full_engagement_rate_score_0": 0.11,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.8148,
+        "confident_extrapolation": 1.6666,
+        "cross_domain_stitching": 0.9333,
+        "fabricated_authority": 1.697,
+        "false_granularity": 1.5,
+        "misapplied_mechanism": 1.6923,
+        "nested_nonsense": 1.2857,
+        "plausible_nonexistent_framework": 1.3125,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.7084,
+        "sunk_cost_framing": 1.0952,
+        "temporal_category_error": 1.8889,
+        "wrong_unit_of_analysis": 1.2667
+      },
+      "run_average_scores": {
+        "1": 1.3533
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "qwen/qwen3.7-max@reasoning=xhigh",
       "count": 100,
       "scored_count": 100,
@@ -3942,6 +4254,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "openai/gpt-6.2-sol@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 17,
+      "score_1": 41,
+      "score_2": 42,
+      "score_3": 0,
+      "avg_score": 1.2167,
+      "detection_rate_score_2": 0.42,
+      "full_engagement_rate_score_0": 0.17,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.7778,
+        "confident_extrapolation": 1.75,
+        "cross_domain_stitching": 0.4667,
+        "fabricated_authority": 1.7273,
+        "false_granularity": 1.5,
+        "misapplied_mechanism": 1.3077,
+        "nested_nonsense": 1.1429,
+        "plausible_nonexistent_framework": 1.2083,
+        "reified_metaphor": 1.4445,
+        "specificity_trap": 0.7083,
+        "sunk_cost_framing": 0.9524,
+        "temporal_category_error": 1.8889,
+        "wrong_unit_of_analysis": 1.0
+      },
+      "run_average_scores": {
+        "1": 1.2167
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "meta/muse-spark-1.2@reasoning=minimal",
       "count": 100,
       "scored_count": 100,
@@ -4094,6 +4445,45 @@
       },
       "run_average_scores": {
         "1": 1.1967
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "openai/gpt-6.2-sol@reasoning=low",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 25,
+      "score_1": 29,
+      "score_2": 46,
+      "score_3": 0,
+      "avg_score": 1.18,
+      "detection_rate_score_2": 0.46,
+      "full_engagement_rate_score_0": 0.25,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.8519,
+        "confident_extrapolation": 1.6667,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.6364,
+        "false_granularity": 1.4445,
+        "misapplied_mechanism": 1.359,
+        "nested_nonsense": 1.0952,
+        "plausible_nonexistent_framework": 1.0208,
+        "reified_metaphor": 2.0,
+        "specificity_trap": 0.4167,
+        "sunk_cost_framing": 0.7619,
+        "temporal_category_error": 1.8333,
+        "wrong_unit_of_analysis": 0.9333
+      },
+      "run_average_scores": {
+        "1": 1.18
       },
       "run_average_stddev": null
     },
@@ -4286,6 +4676,45 @@
         "sunk_cost_framing": 0.9524,
         "temporal_category_error": 1.5555,
         "wrong_unit_of_analysis": 1.3333
+      },
+      "run_average_scores": {
+        "1": 1.1367
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "tencent/hy4-flash@reasoning=high",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 29,
+      "score_1": 27,
+      "score_2": 44,
+      "score_3": 0,
+      "avg_score": 1.1367,
+      "detection_rate_score_2": 0.44,
+      "full_engagement_rate_score_0": 0.29,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.1481,
+        "confident_extrapolation": 1.5833,
+        "cross_domain_stitching": 1.0,
+        "fabricated_authority": 1.6061,
+        "false_granularity": 0.9444,
+        "misapplied_mechanism": 1.1282,
+        "nested_nonsense": 0.9048,
+        "plausible_nonexistent_framework": 0.9167,
+        "reified_metaphor": 1.3333,
+        "specificity_trap": 0.7917,
+        "sunk_cost_framing": 1.3333,
+        "temporal_category_error": 1.6111,
+        "wrong_unit_of_analysis": 0.7333
       },
       "run_average_scores": {
         "1": 1.1367
@@ -4601,6 +5030,45 @@
       },
       "run_average_scores": {
         "1": 1.0867
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "tencent/hy4-flash@reasoning=none",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 33,
+      "score_1": 24,
+      "score_2": 43,
+      "score_3": 0,
+      "avg_score": 1.0817,
+      "detection_rate_score_2": 0.43,
+      "full_engagement_rate_score_0": 0.33,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.0185,
+        "confident_extrapolation": 1.9167,
+        "cross_domain_stitching": 1.3333,
+        "fabricated_authority": 1.2424,
+        "false_granularity": 0.8889,
+        "misapplied_mechanism": 0.9487,
+        "nested_nonsense": 1.0,
+        "plausible_nonexistent_framework": 0.8958,
+        "reified_metaphor": 1.1111,
+        "specificity_trap": 0.5417,
+        "sunk_cost_framing": 1.4762,
+        "temporal_category_error": 1.3889,
+        "wrong_unit_of_analysis": 1.1333
+      },
+      "run_average_scores": {
+        "1": 1.0817
       },
       "run_average_stddev": null
     },
@@ -5697,6 +6165,45 @@
       "run_average_stddev": null
     },
     {
+      "model": "qwen/qwen3.8-flash@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 25,
+      "score_1": 50,
+      "score_2": 25,
+      "score_3": 0,
+      "avg_score": 0.9267,
+      "detection_rate_score_2": 0.25,
+      "full_engagement_rate_score_0": 0.25,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 1.0,
+        "confident_extrapolation": 1.5,
+        "cross_domain_stitching": 0.2667,
+        "fabricated_authority": 1.0909,
+        "false_granularity": 0.8333,
+        "misapplied_mechanism": 0.8718,
+        "nested_nonsense": 1.0952,
+        "plausible_nonexistent_framework": 0.6667,
+        "reified_metaphor": 1.7778,
+        "specificity_trap": 0.6667,
+        "sunk_cost_framing": 0.7619,
+        "temporal_category_error": 1.6111,
+        "wrong_unit_of_analysis": 0.8
+      },
+      "run_average_scores": {
+        "1": 0.9267
+      },
+      "run_average_stddev": null
+    },
+    {
       "model": "deepseek/deepseek-v4-pro-0813@reasoning=low",
       "count": 100,
       "scored_count": 100,
@@ -6122,6 +6629,45 @@
       },
       "run_average_scores": {
         "1": 0.84
+      },
+      "run_average_stddev": null
+    },
+    {
+      "model": "qwen/qwen3.8-omni-flash@reasoning=max",
+      "count": 100,
+      "scored_count": 100,
+      "answered_count": 100,
+      "nonsense_count": 100,
+      "control_count": 0,
+      "refusal_count": 0,
+      "control_refusal_count": 0,
+      "score_0": 33,
+      "score_1": 48,
+      "score_2": 19,
+      "score_3": 0,
+      "avg_score": 0.8367,
+      "detection_rate_score_2": 0.19,
+      "full_engagement_rate_score_0": 0.33,
+      "refusal_rate": 0.0,
+      "control_correct_rate_score_3": null,
+      "error_count": 0,
+      "technique_breakdown": {
+        "authoritative_framing": 0.7037,
+        "confident_extrapolation": 1.5833,
+        "cross_domain_stitching": 0.4,
+        "fabricated_authority": 1.1818,
+        "false_granularity": 0.7778,
+        "misapplied_mechanism": 0.8205,
+        "nested_nonsense": 1.0476,
+        "plausible_nonexistent_framework": 0.6458,
+        "reified_metaphor": 0.8889,
+        "specificity_trap": 0.625,
+        "sunk_cost_framing": 0.8571,
+        "temporal_category_error": 1.1111,
+        "wrong_unit_of_analysis": 0.5333
+      },
+      "run_average_scores": {
+        "1": 0.8367
       },
       "run_average_stddev": null
     },
@@ -9758,30 +10304,30 @@
       {
         "judge_i": 1,
         "judge_j": 2,
-        "compared_rows": 24666,
-        "agreements": 19609,
-        "agreement_rate": 0.794981
+        "compared_rows": 26022,
+        "agreements": 20625,
+        "agreement_rate": 0.792599
       },
       {
         "judge_i": 1,
         "judge_j": 3,
-        "compared_rows": 24666,
-        "agreements": 19288,
-        "agreement_rate": 0.781967
+        "compared_rows": 26022,
+        "agreements": 20300,
+        "agreement_rate": 0.780109
       },
       {
         "judge_i": 2,
         "judge_j": 3,
-        "compared_rows": 24856,
-        "agreements": 19131,
-        "agreement_rate": 0.769673
+        "compared_rows": 26256,
+        "agreements": 20151,
+        "agreement_rate": 0.767482
       }
     ],
-    "average_pairwise_agreement": 0.782207,
-    "krippendorff_alpha_ordinal": 0.785739
+    "average_pairwise_agreement": 0.780063,
+    "krippendorff_alpha_ordinal": 0.782983
   },
-  "total_records": 25000,
+  "total_records": 26400,
   "total_error_records": 0,
   "total_refusal_records": 144,
-  "total_scored_records": 24856
+  "total_scored_records": 26256
 }

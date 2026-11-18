@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.8] - 2026-11-18
+
+### Added
+- Published 1,400 V2 outcomes across 7 models and 14 reasoning variants. The release covers Qwen 4 Max, Qwen 3.8 Omni Flash, Qwen 3.8 Flash, GPT-6.2 Astra, GPT-6.2 Sol, Gemini 4 Hydrogen and Tencent HY4 Flash.
+- Each variant covers all 100 questions with zero collection errors. The new outcomes include 0 refusals and 44 answers with two valid judge votes after retries.
+- Added launch and model metadata, and folded the completed variants into the durable V2 collection config. V2 now has 264 variants and 26,400 outcomes.
+
 ## [2.1.7] - 2026-11-11
 
 ### Added

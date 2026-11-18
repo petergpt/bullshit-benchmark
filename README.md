@@ -7,12 +7,12 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 **[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-Updated **November 11, 2026**. The latest V2 results cover Claude Fable 5.2, Gemini 4 Carbon, Grok 4.7, Kimi K3.1 Pro, GPT-6.1 Terra, Muse Ember and Tencent Hy4 at two reasoning settings each. Each setting covers all 100 questions. For Muse Ember, the viewer marks one persistently empty output per setting as an unscored refusal following explicit user adjudication.
+Updated **November 18, 2026**. The latest V2 results cover Qwen 4 Max, Qwen 3.8 Omni Flash, Qwen 3.8 Flash, GPT-6.2 Astra, GPT-6.2 Sol, Gemini 4 Hydrogen and Tencent HY4 Flash. Each reasoning variant covers all 100 questions.
 
 | Suite | Questions | Model/reasoning variants | Responses |
 | --- | ---: | ---: | ---: |
 | V1 | 55 | 204 | 11,220 |
-| V2 | 100 | 250 | 25,000 |
+| V2 | 100 | 264 | 26,400 |
 
 ## Explore
 

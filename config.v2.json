@@ -120,7 +120,14 @@
       "anthropic/claude-fable-5.2",
       "x-ai/grok-4.7",
       "openai/gpt-6.1-terra",
-      "moonshotai/kimi-k3.1-pro"
+      "moonshotai/kimi-k3.1-pro",
+      "qwen/qwen4-max",
+      "qwen/qwen3.8-omni-flash",
+      "openai/gpt-6.2-astra",
+      "openai/gpt-6.2-sol",
+      "google/gemini-4-hydrogen",
+      "tencent/hy4-flash",
+      "qwen/qwen3.8-flash"
     ],
     "models_file": "",
     "model_providers": {
@@ -443,7 +450,14 @@
       "anthropic/claude-fable-5.2": ["low", "max"],
       "x-ai/grok-4.7": ["low", "xhigh"],
       "openai/gpt-6.1-terra": ["none", "max"],
-      "moonshotai/kimi-k3.1-pro": ["none", "max"]
+      "moonshotai/kimi-k3.1-pro": ["none", "max"],
+      "qwen/qwen4-max": ["none", "max"],
+      "qwen/qwen3.8-omni-flash": ["none", "max"],
+      "openai/gpt-6.2-astra": ["low", "max"],
+      "openai/gpt-6.2-sol": ["low", "max"],
+      "google/gemini-4-hydrogen": ["low", "xhigh"],
+      "tencent/hy4-flash": ["none", "high"],
+      "qwen/qwen3.8-flash": ["none", "max"]
     },
     "shuffle_tasks": true,
     "max_inflight_per_model": 2,
@@ -762,6 +776,55 @@
       "moonshotai/kimi-k3.1-pro": {
         "provider": {
           "order": ["Moonshot AI"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen4-max": {
+        "provider": {
+          "order": ["alibaba"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen3.8-omni-flash": {
+        "provider": {
+          "order": ["alibaba"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6.2-astra": {
+        "provider": {
+          "order": ["openai"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "openai/gpt-6.2-sol": {
+        "provider": {
+          "order": ["openai"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-4-hydrogen": {
+        "provider": {
+          "order": ["google-ai-studio"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "tencent/hy4-flash": {
+        "provider": {
+          "order": ["tencent/fp8"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "qwen/qwen3.8-flash": {
+        "provider": {
+          "order": ["alibaba"],
           "allow_fallbacks": false,
           "require_parameters": true
         }
