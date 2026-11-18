@@ -36,11 +36,12 @@ export function modelBase(model) {
 }
 // Recency follows the first benchmark test, never the model's release or the
 // latest publication date. An exact reasoning variant takes precedence.
+export const NEW_BADGE_DAYS = 3;
 export function newModelUntil(model, recentInfo = {}, now = Date.now()) {
   const id = typeof model === 'string' ? model : model?.id;
   const firstSeen = Date.parse(recentInfo.model_first_seen_utc?.[id]
     ?? recentInfo.model_base_first_seen_utc?.[model?.base || modelBase(id)]);
-  const until = firstSeen + 7 * 86400000;
+  const until = firstSeen + NEW_BADGE_DAYS * 86400000;
   return Number.isFinite(firstSeen) && firstSeen <= now && now < until ? until : null;
 }
 export function providerLabel(org) { const key = orgKey(org); return PROVIDERS[key] || title(key); }

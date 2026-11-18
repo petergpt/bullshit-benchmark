@@ -1,4 +1,4 @@
-import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, newModelUntil, refusalBasisNote } from './data.mjs?v=20261013-refusal-basis';
+import { loadBenchmark, modelLabel, groupModels, summarizeRows, classify, usesTwoJudgeFallback, judgeCoverageNote, NEW_BADGE_DAYS, newModelUntil, refusalBasisNote } from './data.mjs?v=20261118-new-badge';
 import { renderExplorer } from './charts.mjs?v=20260927-compact-labs';
 import { brandLogo, brandColor, brandName } from './brands.mjs';
 
@@ -42,7 +42,7 @@ function companyMark(model) { const logo = brandLogo(model.org); return logo ? `
 const fullName = model => model ? `${model.name} · ${reasoningLabel(model.reasoning)}` : 'Choose a model';
 function newBadge(model) {
   const until = newModelUntil(model, dataset.recentInfo);
-  return until ? `<span class="new-badge" data-new-until="${until}" title="First tested in the past 7 days">New</span>` : '';
+  return until ? `<span class="new-badge" data-new-until="${until}" title="First benchmarked in the past ${NEW_BADGE_DAYS} days">New</span>` : '';
 }
 let newBadgeTimer;
 function expireNewBadges() {

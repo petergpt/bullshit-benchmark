@@ -60,8 +60,8 @@ test('labels, metadata flattening and reasoning variants remain separate', () =>
   assert.equal(groups[0].provider, 'Anthropic');
 });
 
-test('New lasts exactly seven days from the first test of each variant', () => {
-  const first = Date.parse('2026-09-01T12:00:00Z'), expiry = first + 7 * 86400000;
+test('New lasts exactly three days from the first test of each variant', () => {
+  const first = Date.parse('2026-09-01T12:00:00Z'), expiry = first + 3 * 86400000;
   const model = { id: 'example/model@reasoning=max', base: 'example/model' };
   const recent = {
     generated_at_utc: '2026-09-30T00:00:00Z', models: [model.id],
