@@ -2,6 +2,13 @@
 
 All notable benchmark, data, and viewer changes are tracked in this file.
 
+## [2.1.9] - 2026-11-19
+
+### Added
+
+- Published Gemini 4 Neon at low and extra-high reasoning in V2. Clear pushback rose from 67% to 84% across the same 100 questions per variant.
+- Both variants used Google AI Studio routing. All 200 answers were scored, including six with two valid judge votes after retries. V2 now contains 266 variants and 26,600 outcomes.
+
 ## [2.1.8] - 2026-11-18
 
 ### Added

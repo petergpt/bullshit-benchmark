@@ -127,7 +127,8 @@
       "openai/gpt-6.2-sol",
       "google/gemini-4-hydrogen",
       "tencent/hy4-flash",
-      "qwen/qwen3.8-flash"
+      "qwen/qwen3.8-flash",
+      "google/gemini-4-neon"
     ],
     "models_file": "",
     "model_providers": {
@@ -457,7 +458,8 @@
       "openai/gpt-6.2-sol": ["low", "max"],
       "google/gemini-4-hydrogen": ["low", "xhigh"],
       "tencent/hy4-flash": ["none", "high"],
-      "qwen/qwen3.8-flash": ["none", "max"]
+      "qwen/qwen3.8-flash": ["none", "max"],
+      "google/gemini-4-neon": ["low", "xhigh"]
     },
     "shuffle_tasks": true,
     "max_inflight_per_model": 2,
@@ -825,6 +827,13 @@
       "qwen/qwen3.8-flash": {
         "provider": {
           "order": ["alibaba"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      },
+      "google/gemini-4-neon": {
+        "provider": {
+          "order": ["google-ai-studio"],
           "allow_fallbacks": false,
           "require_parameters": true
         }

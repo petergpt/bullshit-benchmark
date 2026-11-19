@@ -7,12 +7,12 @@ BullshitBench measures whether models detect nonsense, call it out clearly, and 
 
 **[Explore the results](https://petergpt.github.io/bullshit-benchmark/)** · [Methodology](docs/TECHNICAL.md) · [Data](#data)
 
-Updated **November 18, 2026**. The latest V2 results cover Qwen 4 Max, Qwen 3.8 Omni Flash, Qwen 3.8 Flash, GPT-6.2 Astra, GPT-6.2 Sol, Gemini 4 Hydrogen and Tencent HY4 Flash. Each reasoning variant covers all 100 questions.
+Updated **November 19, 2026**. Gemini 4 Neon detected nonsense on 67% of questions at low reasoning and 84% at extra high. Both V2 runs cover all 100 questions.
 
 | Suite | Questions | Model/reasoning variants | Responses |
 | --- | ---: | ---: | ---: |
 | V1 | 55 | 204 | 11,220 |
-| V2 | 100 | 264 | 26,400 |
+| V2 | 100 | 266 | 26,600 |
 
 ## Explore
 
